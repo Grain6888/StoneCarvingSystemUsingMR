@@ -642,7 +642,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: feeef8d85de8db242bdda70cc7ff5acd, type: 3}
   m_Name: OculusTouchControllerProfile Standalone
   m_EditorClassIdentifier: 
-  m_enabled: 0
+  m_enabled: 1
   nameUi: Oculus Touch Controller Profile
   version: 0.0.1
   featureIdInternal: com.unity.openxr.feature.input.oculustouch
@@ -784,7 +784,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5a1f07dc5afe854f9f12a4194aca3fb, type: 3}
   m_Name: WebGL
   m_EditorClassIdentifier: 
-  features: []
+  features:
+  - {fileID: 8731477923542804192}
   m_renderMode: 1
   m_latencyOptimization: 0
   m_autoColorSubmissionMode: 1
@@ -796,7 +797,7 @@ MonoBehaviour:
   m_symmetricProjection: 0
   m_optimizeMultiviewRenderRegions: 0
   m_multiviewRenderRegionsOptimizationMode: 0
-  m_hasMigratedMultiviewRenderRegionSetting: 0
+  m_hasMigratedMultiviewRenderRegionSetting: 1
   m_foveatedRenderingApi: 0
 --- !u!114 &995997413053943414
 MonoBehaviour:
@@ -1133,7 +1134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: feeef8d85de8db242bdda70cc7ff5acd, type: 3}
   m_Name: OculusTouchControllerProfile Android
   m_EditorClassIdentifier: 
-  m_enabled: 0
+  m_enabled: 1
   nameUi: Oculus Touch Controller Profile
   version: 0.0.1
   featureIdInternal: com.unity.openxr.feature.input.oculustouch
@@ -1153,7 +1154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4710975c7840e7d499bbb3757c22b0a5, type: 3}
   m_Name: MetaXRSubsampledLayout Android
   m_EditorClassIdentifier: 
-  m_enabled: 0
+  m_enabled: 1
   nameUi: Meta XR Subsampled Layout
   version: 0.0.1
   featureIdInternal: com.meta.openxr.feature.subsampledLayout
@@ -1254,7 +1255,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6096094d69d82cc40947df806f66ab34, type: 3}
   m_Name: OpenXRCompositionLayersFeature Android
   m_EditorClassIdentifier: 
-  m_enabled: 0
+  m_enabled: 1
   nameUi: Composition Layers Support
   version: 1.0.0
   featureIdInternal: com.unity.openxr.feature.compositionlayers
@@ -1420,42 +1421,42 @@ MonoBehaviour:
   m_Name: Android
   m_EditorClassIdentifier: 
   features:
-  - {fileID: -123694366410245417}
-  - {fileID: -4094112223328314956}
-  - {fileID: 2803987915385623541}
-  - {fileID: 7081226264240256799}
-  - {fileID: -3965056799005199420}
-  - {fileID: 9039185557257943004}
-  - {fileID: 7675525166090618701}
-  - {fileID: -3911101415514301922}
-  - {fileID: 3531770543795906449}
-  - {fileID: 5539151620954685223}
-  - {fileID: 2854939053369832570}
-  - {fileID: 3142144656293460163}
-  - {fileID: -7238542510001961216}
-  - {fileID: -5186113737839550943}
-  - {fileID: 6426618877708307589}
-  - {fileID: 4754357175454804191}
-  - {fileID: 2683423356940430681}
-  - {fileID: -6815213570764727250}
-  - {fileID: -2791859945706593622}
-  - {fileID: -2952931338183395135}
-  - {fileID: 2724600342437026718}
-  - {fileID: 1477951136407198023}
-  - {fileID: -2524645043265066132}
-  - {fileID: -7213171696724062040}
-  - {fileID: 4243794170897793724}
-  - {fileID: -709434977102164455}
-  - {fileID: -7619378489457631733}
-  - {fileID: -8644241529803230491}
   - {fileID: -1578534276420044118}
-  - {fileID: 2439690380728839717}
+  - {fileID: 7675525166090618701}
+  - {fileID: 4754357175454804191}
+  - {fileID: -3965056799005199420}
+  - {fileID: -6815213570764727250}
+  - {fileID: 9039185557257943004}
+  - {fileID: 5539151620954685223}
+  - {fileID: -2791859945706593622}
+  - {fileID: 2683423356940430681}
+  - {fileID: -3911101415514301922}
+  - {fileID: 7081226264240256799}
+  - {fileID: -5186113737839550943}
+  - {fileID: 3531770543795906449}
+  - {fileID: -2524645043265066132}
+  - {fileID: 2724600342437026718}
+  - {fileID: -709434977102164455}
+  - {fileID: 4243794170897793724}
+  - {fileID: -7619378489457631733}
   - {fileID: -3427868747221688066}
-  - {fileID: 6498853790153838413}
+  - {fileID: -2952931338183395135}
+  - {fileID: 1477951136407198023}
+  - {fileID: -7213171696724062040}
+  - {fileID: 2439690380728839717}
+  - {fileID: -8644241529803230491}
   - {fileID: 5662359758250613592}
   - {fileID: 995997413053943414}
+  - {fileID: 6498853790153838413}
   - {fileID: 3071084085897562674}
   - {fileID: 3462253529411328557}
+  - {fileID: 2854939053369832570}
+  - {fileID: 2803987915385623541}
+  - {fileID: -4094112223328314956}
+  - {fileID: 3142144656293460163}
+  - {fileID: 6426618877708307589}
+  - {fileID: -123694366410245417}
+  - {fileID: -7238542510001961216}
   m_renderMode: 1
   m_latencyOptimization: 0
   m_autoColorSubmissionMode: 1
@@ -1467,7 +1468,7 @@ MonoBehaviour:
   m_symmetricProjection: 0
   m_optimizeMultiviewRenderRegions: 0
   m_multiviewRenderRegionsOptimizationMode: 0
-  m_hasMigratedMultiviewRenderRegionSetting: 0
+  m_hasMigratedMultiviewRenderRegionSetting: 1
   m_foveatedRenderingApi: 0
 --- !u!114 &6426618877708307589
 MonoBehaviour:
@@ -1575,7 +1576,7 @@ MonoBehaviour:
   lateLatchingDebug: 0
   optimizeMultiviewRenderRegions: 0
   multiviewRenderRegionsOptimizationMode: 0
-  m_hasMigratedMultiviewRenderRegions: 0
+  m_hasMigratedMultiviewRenderRegions: 1
   spacewarpMotionVectorTextureFormat: 0
 --- !u!114 &7675525166090618701
 MonoBehaviour:
@@ -1609,7 +1610,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6096094d69d82cc40947df806f66ab34, type: 3}
   m_Name: OpenXRCompositionLayersFeature Standalone
   m_EditorClassIdentifier: 
-  m_enabled: 0
+  m_enabled: 1
   nameUi: Composition Layers Support
   version: 1.0.0
   featureIdInternal: com.unity.openxr.feature.compositionlayers
@@ -1673,42 +1674,42 @@ MonoBehaviour:
   m_Name: Standalone
   m_EditorClassIdentifier: 
   features:
-  - {fileID: -6112461748735262897}
-  - {fileID: 1370525117977878911}
-  - {fileID: -2775519471482422036}
-  - {fileID: -5956110339819413940}
-  - {fileID: 1365614656278148122}
-  - {fileID: 4647666696171166232}
-  - {fileID: -2175078791242781287}
-  - {fileID: -7572241053669534822}
-  - {fileID: -978175288878143990}
-  - {fileID: 3007280899378586832}
-  - {fileID: 1548617708396142698}
-  - {fileID: -6207869535170927886}
-  - {fileID: -231323695726964205}
-  - {fileID: 1760155143354855043}
+  - {fileID: 5493773427698460441}
   - {fileID: 7965350684152903677}
+  - {fileID: -2775519471482422036}
+  - {fileID: 2666309668125546341}
+  - {fileID: -5956110339819413940}
+  - {fileID: -2175078791242781287}
+  - {fileID: 6372196109219462457}
   - {fileID: -1019340504337257592}
   - {fileID: -5407110789919808420}
   - {fileID: 6319991917821838347}
-  - {fileID: 2666309668125546341}
-  - {fileID: 6372196109219462457}
-  - {fileID: 4553338283104187790}
-  - {fileID: 6427967369768410749}
-  - {fileID: -7776790540869275675}
+  - {fileID: 1365614656278148122}
+  - {fileID: 1548617708396142698}
+  - {fileID: 4647666696171166232}
   - {fileID: 77767220551430548}
-  - {fileID: 8581107098066565877}
-  - {fileID: -5942695744771159856}
+  - {fileID: 6427967369768410749}
   - {fileID: -955969268460387729}
+  - {fileID: -5942695744771159856}
   - {fileID: 6131924620912327226}
-  - {fileID: -7572655044973824764}
-  - {fileID: 5493773427698460441}
-  - {fileID: -6688550367476257316}
   - {fileID: -8573924626348244497}
-  - {fileID: 4923258753944227852}
+  - {fileID: 4553338283104187790}
+  - {fileID: -7776790540869275675}
+  - {fileID: 8581107098066565877}
+  - {fileID: -6688550367476257316}
+  - {fileID: -7572655044973824764}
   - {fileID: -8728051152496882197}
   - {fileID: -2896700621335291271}
+  - {fileID: 4923258753944227852}
   - {fileID: 8421996589461252194}
+  - {fileID: -7572241053669534822}
+  - {fileID: 1760155143354855043}
+  - {fileID: 1370525117977878911}
+  - {fileID: -978175288878143990}
+  - {fileID: -231323695726964205}
+  - {fileID: -6112461748735262897}
+  - {fileID: -6207869535170927886}
+  - {fileID: 3007280899378586832}
   m_renderMode: 1
   m_latencyOptimization: 0
   m_autoColorSubmissionMode: 1
@@ -1720,7 +1721,7 @@ MonoBehaviour:
   m_symmetricProjection: 0
   m_optimizeMultiviewRenderRegions: 0
   m_multiviewRenderRegionsOptimizationMode: 0
-  m_hasMigratedMultiviewRenderRegionSetting: 0
+  m_hasMigratedMultiviewRenderRegionSetting: 1
   m_foveatedRenderingApi: 0
 --- !u!114 &8731477923542804192
 MonoBehaviour:
@@ -1735,11 +1736,11 @@ MonoBehaviour:
   m_Name: XrPerformanceSettingsFeature WebGL
   m_EditorClassIdentifier: 
   m_enabled: 0
-  nameUi: 
-  version: 
-  featureIdInternal: 
-  openxrExtensionStrings: 
-  company: 
+  nameUi: XR Performance Settings
+  version: 1.0.0
+  featureIdInternal: com.unity.openxr.feature.extension.performance_settings
+  openxrExtensionStrings: XR_EXT_performance_settings
+  company: Unity
   priority: 0
   required: 0
 --- !u!114 &9039185557257943004
