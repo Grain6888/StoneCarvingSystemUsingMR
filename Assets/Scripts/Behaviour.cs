@@ -39,10 +39,14 @@ public class Behaviour : MonoBehaviour
         _renderer = new Renderer(_voxelMesh, _voxelMaterial, localToWorldMatrix);
 
         DataChunk initialXZLayer = _voxelDataChunk.GetXZLayer(0);
-        //for (int i = 0; i < initialXZLayer.Length; i++)
-        //{
-        //    initialXZLayer.AddFlag(i, CellFlags.IsFilled);
-        //}
+        for (int i = 0; i < initialXZLayer.Length; i++)
+        {
+            if (i % 2 == 0)
+            {
+                continue;
+            }
+            initialXZLayer.AddFlag(i, CellFlags.IsFilled);
+        }
     }
 
     /// <summary>
@@ -55,22 +59,37 @@ public class Behaviour : MonoBehaviour
     /// </summary>
     private bool _isAllLayerRendered = false;
 
+    /// <summary>
+    /// フレームカウンター
+    /// </summary>
+    private int _frameCounter = 0;
+
     // Update is called once per frame
     void Update()
     {
         if (_currentYIndex < _voxelDataChunk.yLength)
         {
+            _frameCounter++;
+            if (_frameCounter < 10)
+            {
+                return;
+            }
+            _frameCounter = 0;
+
             if (_currentYIndex == 0)
             {
                 _renderer.AddRenderBuffer(_voxelDataChunk.GetXZLayer(0), 0);
             }
             else
             {
-                //DataChunk prevXZLayer = _voxelDataChunk.GetXZLayer(_currentYIndex - 1);
                 DataChunk currentXZLayer = _voxelDataChunk.GetXZLayer(_currentYIndex);
 
                 for (int i = 0; i < currentXZLayer.Length; i++)
                 {
+                    if (i % 2 == 0)
+                    {
+                        continue;
+                    }
                     currentXZLayer.AddFlag(i, CellFlags.IsFilled);
                 }
 
@@ -100,5 +119,21 @@ public class Behaviour : MonoBehaviour
     {
         _renderer.Dispose();
         _voxelDataChunk.Dispose();
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (_voxelDataChunk.Equals(default(DataChunk))) return;
+
+        // 現在のY層
+        int y = _currentYIndex;
+        // スケールをボクセルサイズとして使用
+        Vector3 voxelSize = transform.localScale;
+        if (y < 0 || y >= _voxelDataChunk.yLength) return;
+
+        Bounds bounds = _voxelDataChunk.GetXZLayerBounds(y, voxelSize);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireCube(bounds.center, bounds.size);
     }
 }
