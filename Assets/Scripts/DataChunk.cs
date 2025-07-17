@@ -53,7 +53,7 @@ public struct DataChunk : IDisposable
 
         // y層のXZ平面を切り出して新しいDataChunkを生成
         // y=0でy層の高さ情報が無視される
-        return new DataChunk(xLength, 0, zLength, _data.GetSubArray(startIndex, length));
+        return new DataChunk(xLength, 1, zLength, _data.GetSubArray(startIndex, length));
     }
 
     ///// <summary>
