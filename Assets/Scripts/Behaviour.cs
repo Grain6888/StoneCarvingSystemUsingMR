@@ -89,6 +89,10 @@ public class Behaviour : MonoBehaviour
 
                     for (int i = 0; i < currentXZLayer.Length; i++)
                     {
+                        //if (i % 2 == 0)
+                        //{
+                        //    continue;
+                        //}
                         currentXZLayer.AddFlag(i, CellFlags.IsFilled);
                     }
 
@@ -128,16 +132,17 @@ public class Behaviour : MonoBehaviour
     private void OnDrawGizmos()
     {
         if (_voxelDataChunk.Equals(default(DataChunk))) return;
+        if (_currentYIndex < 0 || _currentYIndex >= _voxelDataChunk.yLength) return;
 
-        // 現在のY層
-        int y = _currentYIndex;
-        // スケールをボクセルサイズとして使用
-        Vector3 voxelSize = transform.localScale;
-        if (y < 0 || y >= _voxelDataChunk.yLength) return;
+        DataChunk xzLayer = _voxelDataChunk.GetXZLayer(_currentYIndex);
+        Vector3 scale = transform.localScale;
 
-        Bounds bounds = _voxelDataChunk.GetXZLayerBounds(y, voxelSize);
-
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(bounds.center, bounds.size);
+        for (int i = 0; i < xzLayer.Length; i++)
+        {
+            xzLayer.GetPosition(i, out int x, out _, out int z);
+            Gizmos.color = Color.green;
+            Vector3 position = new(x * scale.x + scale.x / 2, _currentYIndex * scale.y + scale.y / 2, z * scale.z + scale.z / 2);
+            Gizmos.DrawWireCube(position, scale);
+        }
     }
 }
