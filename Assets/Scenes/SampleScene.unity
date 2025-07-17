@@ -3693,6 +3693,8 @@ MonoBehaviour:
     x: 10
     y: 10
     z: 10
+  _layerAddInterval: 0
+  _drawLayerPerFrame: 1
   _voxelMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   _voxelMaterial: {fileID: 2100000, guid: f07cb93e85d10a34798cac9e79536d58, type: 2}
 --- !u!4 &591202684

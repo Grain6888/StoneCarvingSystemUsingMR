@@ -9,6 +9,16 @@ public class Behaviour : MonoBehaviour
     public int3 size = new(100, 100, 100);
 
     /// <summary>
+    /// 層を追加するフレーム間隔
+    /// </summary>
+    [SerializeField, Min(0)] private int _layerAddInterval = 60;
+
+    /// <summary>
+    /// フレームごとに描画する
+    /// </summary>
+    [SerializeField] private bool _drawLayerPerFrame = true;
+
+    /// <summary>
     /// 彫刻素材のボクセルデータを保存するDataChunk
     /// </summary>
     private DataChunk _voxelDataChunk;
@@ -41,10 +51,6 @@ public class Behaviour : MonoBehaviour
         DataChunk initialXZLayer = _voxelDataChunk.GetXZLayer(0);
         for (int i = 0; i < initialXZLayer.Length; i++)
         {
-            if (i % 2 == 0)
-            {
-                continue;
-            }
             initialXZLayer.AddFlag(i, CellFlags.IsFilled);
         }
     }
@@ -60,58 +66,56 @@ public class Behaviour : MonoBehaviour
     private bool _isAllLayerRendered = false;
 
     /// <summary>
-    /// フレームカウンター
+    /// フレームカウンター (_layerAddFIntervalフレームごとに層を追加)
     /// </summary>
     private int _frameCounter = 0;
 
-    // Update is called once per frame
     void Update()
     {
         if (_currentYIndex < _voxelDataChunk.yLength)
         {
             _frameCounter++;
-            if (_frameCounter < 10)
+            if (_frameCounter >= _layerAddInterval)
             {
-                return;
-            }
-            _frameCounter = 0;
+                _frameCounter = 0;
 
-            if (_currentYIndex == 0)
-            {
-                _renderer.AddRenderBuffer(_voxelDataChunk.GetXZLayer(0), 0);
-            }
-            else
-            {
-                DataChunk currentXZLayer = _voxelDataChunk.GetXZLayer(_currentYIndex);
-
-                for (int i = 0; i < currentXZLayer.Length; i++)
+                if (_currentYIndex == 0)
                 {
-                    if (i % 2 == 0)
+                    _renderer.AddRenderBuffer(_voxelDataChunk.GetXZLayer(0), 0);
+                }
+                else
+                {
+                    DataChunk currentXZLayer = _voxelDataChunk.GetXZLayer(_currentYIndex);
+
+                    for (int i = 0; i < currentXZLayer.Length; i++)
                     {
-                        continue;
+                        currentXZLayer.AddFlag(i, CellFlags.IsFilled);
                     }
-                    currentXZLayer.AddFlag(i, CellFlags.IsFilled);
+
+                    _renderer.AddRenderBuffer(currentXZLayer, _currentYIndex);
                 }
 
-                _renderer.AddRenderBuffer(currentXZLayer, _currentYIndex);
+                _currentYIndex++;
             }
-
-            _currentYIndex++;
-            return;
         }
 
-        if (_currentYIndex >= _voxelDataChunk.yLength)
+        if (_drawLayerPerFrame)
         {
             Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(size.x, size.y, size.z));
             Bounds boundingBox = new();
             boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
             _renderer.RenderMeshes(new Bounds(boundingBoxSize * 0.5f, boundingBoxSize));
-
+        }
+        else if (_currentYIndex >= _voxelDataChunk.yLength)
+        {
+            Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(size.x, size.y, size.z));
+            Bounds boundingBox = new();
+            boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
+            _renderer.RenderMeshes(new Bounds(boundingBoxSize * 0.5f, boundingBoxSize));
             if (!_isAllLayerRendered)
             {
                 _isAllLayerRendered = true;
             }
-            return;
         }
     }
 
