@@ -1,11 +1,14 @@
 ﻿using Unity.Mathematics;
 
-public class VertexData
+namespace MRSculpture
 {
-    public struct VertexNativeData
+    public class VertexData
     {
-        public float3 position;
-        public float3 normal;
-        public float2 uv;
+        public struct VertexNativeData
+        {
+            public float3 position;
+            public float3 normal;
+            public float2 uv;
+        }
     }
 }
