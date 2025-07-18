@@ -6,7 +6,7 @@ public class Behaviour : MonoBehaviour
     /// <summary>
     /// 彫刻素材の生成範囲
     /// </summary>
-    public int3 size = new(100, 100, 100);
+    public int3 _boundsSize = new(100, 100, 100);
 
     /// <summary>
     /// 層を追加するフレーム間隔
@@ -41,7 +41,7 @@ public class Behaviour : MonoBehaviour
     private void Awake()
     {
         // DataChunkを生成し，3Dデータを保持
-        _voxelDataChunk = new DataChunk(size.x, size.y, size.z);
+        _voxelDataChunk = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
 
         // ローカル → ワールド座標系の変換行列
         Matrix4x4 localToWorldMatrix = transform.localToWorldMatrix;
@@ -105,14 +105,14 @@ public class Behaviour : MonoBehaviour
 
         if (_drawLayerPerFrame)
         {
-            Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(size.x, size.y, size.z));
+            Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(_boundsSize.x, _boundsSize.y, _boundsSize.z));
             Bounds boundingBox = new();
             boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
             _renderer.RenderMeshes(new Bounds(boundingBoxSize * 0.5f, boundingBoxSize));
         }
         else if (_currentYIndex >= _voxelDataChunk.yLength)
         {
-            Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(size.x, size.y, size.z));
+            Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(_boundsSize.x, _boundsSize.y, _boundsSize.z));
             Bounds boundingBox = new();
             boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
             _renderer.RenderMeshes(new Bounds(boundingBoxSize * 0.5f, boundingBoxSize));
