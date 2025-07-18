@@ -89,10 +89,6 @@ public class Behaviour : MonoBehaviour
 
                     for (int i = 0; i < currentXZLayer.Length; i++)
                     {
-                        //if (i % 2 == 0)
-                        //{
-                        //    continue;
-                        //}
                         currentXZLayer.AddFlag(i, CellFlags.IsFilled);
                     }
 
