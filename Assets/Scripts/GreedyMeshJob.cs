@@ -27,11 +27,19 @@ public struct GreedyMeshJob : IJob
                 continue;
             }
 
-            GetFaceLength(ref input, index, out int xLength, out int zLength);
-            index += xLength;
-
+            // ここから メッシュ結合処理
             input.GetPosition(index, out int x, out _, out int z);
+
+            GetFaceLength(ref input, index, out int xLength, out int zLength);
+
             CreateCube(x, currentYIndex, z, xLength, 1, zLength);
+            // ここまで メッシュ結合処理
+
+            // ここから メッシュ結合無効化時の処理
+            //input.GetPosition(index, out int x, out _, out int z);
+            //CreateCube(x, currentYIndex, z, 1, 1, 1);
+            //input.AddFlag(index, CellFlags.IsMeshGenerated);
+            // ここまで メッシュ結合無効化時の処理
         }
     }
 
