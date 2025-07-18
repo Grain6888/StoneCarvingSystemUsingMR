@@ -1,7 +1,7 @@
 ﻿using Unity.Mathematics;
 using UnityEngine;
 
-public class Behaviour : MonoBehaviour
+public class MRSculptureBehaviour : MonoBehaviour
 {
     /// <summary>
     /// 彫刻素材の生成範囲
@@ -89,10 +89,6 @@ public class Behaviour : MonoBehaviour
 
                     for (int i = 0; i < currentXZLayer.Length; i++)
                     {
-                        //if (i % 2 == 0)
-                        //{
-                        //    continue;
-                        //}
                         currentXZLayer.AddFlag(i, CellFlags.IsFilled);
                     }
 
