@@ -1,8 +1,6 @@
 ﻿using System;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
-using UnityEngine;
-using UnityEngine.UIElements;
 
 public struct DataChunk : IDisposable
 {

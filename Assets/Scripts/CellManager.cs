@@ -1,6 +1,4 @@
-﻿using System.Dynamic;
-
-public struct CellManager
+﻿public struct CellManager
 {
     public uint status;
 }
