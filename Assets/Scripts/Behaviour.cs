@@ -51,7 +51,32 @@ public class Behaviour : MonoBehaviour
         DataChunk initialXZLayer = _voxelDataChunk.GetXZLayer(0);
         for (int i = 0; i < initialXZLayer.Length; i++)
         {
-            initialXZLayer.AddFlag(i, CellFlags.IsFilled);
+            //initialXZLayer.AddFlag(i, CellFlags.IsFilled);
+
+            // インデックスからXZ座標を取得
+            initialXZLayer.GetPosition(i, out int x, out _, out int z);
+
+            // 球体の中心座標（全体の中央）
+            float centerX = (_boundsSize.x - 1) / 2.0f;
+            float centerY = (_boundsSize.y - 1) / 2.0f;
+            float centerZ = (_boundsSize.z - 1) / 2.0f;
+
+            // 球体の半径（BoundsSizeの最小値/2）
+            float radius = math.min(_boundsSize.x, math.min(_boundsSize.y, _boundsSize.z)) / 2.0f;
+
+            // 現在のY層
+            float y = _currentYIndex;
+
+            // 球体の方程式で判定
+            float dx = x - centerX;
+            float dy = y - centerY;
+            float dz = z - centerZ;
+            float distanceSq = dx * dx + dy * dy + dz * dz;
+
+            if (distanceSq <= radius * radius)
+            {
+                initialXZLayer.AddFlag(i, CellFlags.IsFilled);
+            }
         }
     }
 
@@ -89,7 +114,32 @@ public class Behaviour : MonoBehaviour
 
                     for (int i = 0; i < currentXZLayer.Length; i++)
                     {
-                        currentXZLayer.AddFlag(i, CellFlags.IsFilled);
+                        //currentXZLayer.AddFlag(i, CellFlags.IsFilled);
+
+                        // インデックスからXZ座標を取得
+                        currentXZLayer.GetPosition(i, out int x, out _, out int z);
+
+                        // 球体の中心座標（全体の中央）
+                        float centerX = (_boundsSize.x - 1) / 2.0f;
+                        float centerY = (_boundsSize.y - 1) / 2.0f;
+                        float centerZ = (_boundsSize.z - 1) / 2.0f;
+
+                        // 球体の半径（BoundsSizeの最小値/2）
+                        float radius = math.min(_boundsSize.x, math.min(_boundsSize.y, _boundsSize.z)) / 2.0f;
+
+                        // 現在のY層
+                        float y = _currentYIndex;
+
+                        // 球体の方程式で判定
+                        float dx = x - centerX;
+                        float dy = y - centerY;
+                        float dz = z - centerZ;
+                        float distanceSq = dx * dx + dy * dy + dz * dz;
+
+                        if (distanceSq <= radius * radius)
+                        {
+                            currentXZLayer.AddFlag(i, CellFlags.IsFilled);
+                        }
                     }
 
                     _renderer.AddRenderBuffer(currentXZLayer, _currentYIndex);
