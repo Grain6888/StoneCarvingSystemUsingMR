@@ -3795,7 +3795,7 @@ GameObject:
   - component: {fileID: 591202684}
   - component: {fileID: 591202683}
   m_Layer: 0
-  m_Name: Behaviour
+  m_Name: MainBehaviour
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

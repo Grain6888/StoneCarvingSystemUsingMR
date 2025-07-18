@@ -1,7 +1,7 @@
 ﻿using Unity.Mathematics;
 using UnityEngine;
 
-public class Behaviour : MonoBehaviour
+public class MainBehaviour : MonoBehaviour
 {
     /// <summary>
     /// 彫刻素材の生成範囲
