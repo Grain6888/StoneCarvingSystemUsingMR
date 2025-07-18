@@ -10,7 +10,6 @@ public class Renderer : IDisposable
     private readonly List<Mesh> _meshes = new();
     private readonly RenderParams _renderParams;
     private MeshData.MeshNativeData _mesh;
-    private readonly Material _material;
     private readonly Matrix4x4 _localToWorld;
 
     public Renderer(Mesh mesh, Material material, Matrix4x4 localToWorld)
@@ -20,7 +19,6 @@ public class Renderer : IDisposable
             shadowCastingMode = ShadowCastingMode.On,
             reflectionProbeUsage = ReflectionProbeUsage.BlendProbesAndSkybox
         };
-        _material = material;
         _localToWorld = localToWorld;
 
         // メッシュの頂点情報をNativeArrayに変換して保存
