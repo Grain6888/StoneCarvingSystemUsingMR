@@ -56,6 +56,27 @@ public struct DataChunk : IDisposable
         return new DataChunk(xLength, 1, zLength, _data.GetSubArray(startIndex, length));
     }
 
+    ///// <summary>
+    ///// y層のXZ平面のBoundsを取得 (voxelSizeを考慮)
+    ///// </summary>
+    ///// <param name="y"></param>
+    ///// <param name="voxelSize"></param>
+    ///// <returns>y層のXZ平面のBounds</returns>
+    //public Bounds GetXZLayerBounds(int y, Vector3 voxelSize)
+    //{
+    //    Vector3 center = new(
+    //        xLength * voxelSize.x / 2.0f,
+    //        y + voxelSize.y / 2.0f,
+    //        zLength * voxelSize.z / 2.0f
+    //    );
+    //    Vector3 size = new(
+    //        xLength * voxelSize.x,
+    //        voxelSize.y,
+    //        zLength * voxelSize.z
+    //    );
+    //    return new Bounds(center, size);
+    //}
+
     /// <summary>
     /// 配列の長さを取得
     /// </summary>
