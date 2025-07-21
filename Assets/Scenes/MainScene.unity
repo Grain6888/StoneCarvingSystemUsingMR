@@ -3814,9 +3814,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _boundsSize:
-    x: 128
-    y: 128
-    z: 128
+    x: 10
+    y: 10
+    z: 10
   _layerAddInterval: 0
   _drawLayerPerFrame: 1
   _voxelMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
