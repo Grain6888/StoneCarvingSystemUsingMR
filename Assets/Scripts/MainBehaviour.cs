@@ -33,6 +33,7 @@ namespace MRSculpture
         private int _currentLayerToClear = 0;
         private int _frameCounter = 0;
         private bool _firstUpdate = true;
+        public int _startFlame = 1000;
 
         private void Awake()
         {
@@ -76,7 +77,7 @@ namespace MRSculpture
             boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
             _frameCounter++;
 
-            if (_firstUpdate && _frameCounter <= 100)
+            if (_firstUpdate && _frameCounter <= _startFlame)
             {
                 boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
                 _renderer.RenderMeshes(new Bounds(boundingBoxSize * 0.5f, boundingBoxSize));
