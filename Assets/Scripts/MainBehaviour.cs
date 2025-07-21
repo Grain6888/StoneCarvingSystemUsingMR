@@ -30,6 +30,10 @@ namespace MRSculpture
         /// </summary>
         [SerializeField] private Material _voxelMaterial;
 
+        private int _currentLayerToClear = 0;
+        private int _frameCounter = 0;
+        private bool _firstUpdate = true;
+
         private void Awake()
         {
             // DataChunkを生成し，3Dデータを保持
@@ -70,6 +74,29 @@ namespace MRSculpture
             Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(_boundsSize.x, _boundsSize.y, _boundsSize.z));
             Bounds boundingBox = new();
             boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
+            _frameCounter++;
+
+            if (_firstUpdate && _frameCounter <= 100)
+            {
+                boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
+                _renderer.RenderMeshes(new Bounds(boundingBoxSize * 0.5f, boundingBoxSize));
+                return;
+            }
+            _firstUpdate = false;
+
+            if (_frameCounter >= 0 && _currentLayerToClear < _voxelDataChunk.yLength)
+            {
+                _frameCounter = 0;
+                DataChunk xzLayer = _voxelDataChunk.GetXZLayer(_currentLayerToClear);
+                for (int i = 0; i < xzLayer.Length; i++)
+                {
+                    xzLayer.RemoveAllFlags(i);
+                    xzLayer.AddFlag(i, CellFlags.IsFilled);
+                }
+                _renderer.UpdateRenderBuffer(xzLayer, _currentLayerToClear);
+                _currentLayerToClear++;
+            }
+
             _renderer.RenderMeshes(new Bounds(boundingBoxSize * 0.5f, boundingBoxSize));
         }
 

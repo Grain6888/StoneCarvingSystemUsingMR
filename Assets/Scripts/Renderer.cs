@@ -77,6 +77,21 @@ namespace MRSculpture
             }
         }
 
+        public void UpdateRenderBuffer(DataChunk xzLayer, int y)
+        {
+            ClearRenderBuffer(xzLayer, y);
+            AddRenderBuffer(xzLayer, y);
+        }
+
+        public void ClearRenderBuffer(DataChunk xzLayer, int layerIndex)
+        {
+            Mesh emptyMesh = new();
+            if (layerIndex >= 0 && layerIndex < _meshes.Count)
+            {
+                _meshes[layerIndex] = emptyMesh;
+            }
+        }
+
         public void Dispose()
         {
             _mesh.vertices.Dispose();
