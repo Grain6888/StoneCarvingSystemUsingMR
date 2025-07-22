@@ -35,6 +35,9 @@ namespace MRSculpture
         private bool _firstUpdate = true;
         public int _startFlame = 1000;
 
+        public GameObject leftController = null;
+        public GameObject rightController = null;
+
         private void Awake()
         {
             // DataChunkを生成し，3Dデータを保持
@@ -56,15 +59,16 @@ namespace MRSculpture
 
                 for (int i = 0; i < xzLayer.Length; i++)
                 {
-                    xzLayer.GetPosition(i, out int x, out _, out int z);
-                    float dx = x - centerX;
-                    float dy = y - centerY;
-                    float dz = z - centerZ;
-                    float distanceSq = dx * dx + dy * dy + dz * dz;
-                    if (distanceSq <= radius * radius)
-                    {
-                        xzLayer.AddFlag(i, CellFlags.IsFilled);
-                    }
+                    //xzLayer.GetPosition(i, out int x, out _, out int z);
+                    //float dx = x - centerX;
+                    //float dy = y - centerY;
+                    //float dz = z - centerZ;
+                    //float distanceSq = dx * dx + dy * dy + dz * dz;
+                    //if (distanceSq <= radius * radius)
+                    //{
+                    //    xzLayer.AddFlag(i, CellFlags.IsFilled);
+                    //}
+                    xzLayer.AddFlag(i, CellFlags.IsFilled);
                 }
                 _renderer.AddRenderBuffer(xzLayer, y);
             }
@@ -72,30 +76,73 @@ namespace MRSculpture
 
         void Update()
         {
+            Vector3 leftControllerPosition = leftController.transform.position;
+            //Vector3 rightControllerPosition = rightController.transform.position;
+
             Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(_boundsSize.x, _boundsSize.y, _boundsSize.z));
             Bounds boundingBox = new();
             boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
-            _frameCounter++;
 
-            if (_firstUpdate && _frameCounter <= _startFlame)
-            {
-                boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
-                _renderer.RenderMeshes(new Bounds(boundingBoxSize * 0.5f, boundingBoxSize));
-                return;
-            }
-            _firstUpdate = false;
+            //_frameCounter++;
 
-            if (_frameCounter >= 0 && _currentLayerToClear < _voxelDataChunk.yLength)
+            //if (_firstUpdate && _frameCounter <= _startFlame)
+            //{
+            //    _renderer.RenderMeshes(new Bounds(boundingBoxSize * 0.5f, boundingBoxSize));
+            //    return;
+            //}
+            //_firstUpdate = false;
+
+            //if (_frameCounter >= 0 && _currentLayerToClear < _voxelDataChunk.yLength)
+            //{
+            //    _frameCounter = 0;
+            //    DataChunk xzLayer = _voxelDataChunk.GetXZLayer(_currentLayerToClear);
+            //    float centerX = (_boundsSize.x - 1) / 2.0f;
+            //    float centerY = (_boundsSize.y - 1) / 2.0f;
+            //    float centerZ = (_boundsSize.z - 1) / 2.0f;
+            //    float radius = math.min(_boundsSize.x, math.min(_boundsSize.y, _boundsSize.z)) / 2.0f;
+
+            //    for (int i = 0; i < xzLayer.Length; i++)
+            //    {
+            //        xzLayer.GetPosition(i, out int x, out _, out int z);
+            //        float dx = x - centerX;
+            //        float dy = _currentLayerToClear - centerY;
+            //        float dz = z - centerZ;
+            //        float distanceSq = dx * dx + dy * dy + dz * dz;
+            //        xzLayer.RemoveAllFlags(i);
+            //        if (distanceSq <= radius * radius)
+            //        {
+            //            xzLayer.AddFlag(i, CellFlags.IsFilled);
+            //        }
+            //        //xzLayer.AddFlag(i, CellFlags.IsFilled);
+            //    }
+            //    _renderer.UpdateRenderBuffer(xzLayer, _currentLayerToClear);
+            //    _currentLayerToClear++;
+            //}
+
+            // ワールド座標→ローカル座標（必要なら）
+            Vector3 localPos = transform.InverseTransformPoint(leftControllerPosition);
+
+            // ローカル座標→ボクセルグリッド座標
+            int x = Mathf.FloorToInt(localPos.x);
+            int y = Mathf.FloorToInt(localPos.y);
+            int z = Mathf.FloorToInt(localPos.z);
+
+            if (x >= 0 && x < _voxelDataChunk.xLength &&
+                y >= 0 && y < _voxelDataChunk.yLength &&
+                z >= 0 && z < _voxelDataChunk.zLength)
             {
-                _frameCounter = 0;
-                DataChunk xzLayer = _voxelDataChunk.GetXZLayer(_currentLayerToClear);
+                DataChunk xzLayer = _voxelDataChunk.GetXZLayer(y);
+                //xzLayer.RemoveAllFlags(x, y, z);
                 for (int i = 0; i < xzLayer.Length; i++)
                 {
                     xzLayer.RemoveAllFlags(i);
-                    xzLayer.AddFlag(i, CellFlags.IsFilled);
+                    //if (i != 0)
+                    //{
+                    //    xzLayer.AddFlag(i, CellFlags.IsFilled);
+                    //}
                 }
-                _renderer.UpdateRenderBuffer(xzLayer, _currentLayerToClear);
-                _currentLayerToClear++;
+                _renderer.UpdateRenderBuffer(xzLayer, y);
+                Debug.Log("x:" + x + "y:" + y + "z:" + z);
             }
 
             _renderer.RenderMeshes(new Bounds(boundingBoxSize * 0.5f, boundingBoxSize));
