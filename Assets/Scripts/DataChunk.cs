@@ -119,6 +119,35 @@ namespace MRSculpture
         }
 
         /// <summary>
+        /// 3次元座標に対応するセルのフラグを削除
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        /// <param name="flags"></param>
+        public unsafe void RemoveFlag(int x, int y, int z, CellFlags flags)
+        {
+            int index = GetIndex(x, y, z);
+            // 1次元配列の先頭ポインタ + index で index番目の要素にアクセス
+            CellManager* cell = (CellManager*)_data.GetUnsafePtr() + index;
+            cell->RemoveFlag(flags);
+        }
+
+        /// <summary>
+        /// 3次元座標に対応するセルのすべてのフラグを削除
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        public unsafe void RemoveAllFlags(int x, int y, int z)
+        {
+            int index = GetIndex(x, y, z);
+            // 1次元配列の先頭ポインタ + index で index番目の要素にアクセス
+            CellManager* cell = (CellManager*)_data.GetUnsafePtr() + index;
+            cell->RemoveAllFlags();
+        }
+
+        /// <summary>
         /// インデクスに対応するセルにフラグを追加
         /// </summary>
         /// <param name="index"></param>
@@ -141,6 +170,29 @@ namespace MRSculpture
             // 1次元配列の先頭ポインタ + index で index番目の要素にアクセス
             CellManager* cell = (CellManager*)_data.GetUnsafePtr() + index;
             return cell->HasFlag(flags);
+        }
+
+        /// <summary>
+        /// インデクスに対応するセルのフラグを削除
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="flags"></param>
+        public unsafe void RemoveFlag(int index, CellFlags flags)
+        {
+            // 1次元配列の先頭ポインタ + index で index番目の要素にアクセス
+            CellManager* cell = (CellManager*)_data.GetUnsafePtr() + index;
+            cell->RemoveFlag(flags);
+        }
+
+        /// <summary>
+        /// インデクスに対応するセルのすべてのフラグを削除
+        /// </summary>
+        /// <param name="index"></param>
+        public unsafe void RemoveAllFlags(int index)
+        {
+            // 1次元配列の先頭ポインタ + index で index番目の要素にアクセス
+            CellManager* cell = (CellManager*)_data.GetUnsafePtr() + index;
+            cell->RemoveAllFlags();
         }
 
         public void Dispose()

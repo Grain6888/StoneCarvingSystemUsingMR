@@ -69,6 +69,16 @@ namespace MRSculpture
             _meshes.Add(mesh);
         }
 
+        public void UpdateRenderBuffer(DataChunk xzLayer, int y)
+        {
+            for (int i = 0; i < xzLayer.Length; i++)
+            {
+                xzLayer.RemoveFlag(i, CellFlags.IsMeshGenerated);
+            }
+            Mesh mesh = MeshData.CreateMesh(ref xzLayer, y, ref _mesh);
+            _meshes[y] = mesh;
+        }
+
         public void RenderMeshes(Bounds boundingBox)
         {
             foreach (Mesh mesh in _meshes)

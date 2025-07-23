@@ -17,6 +17,11 @@
             cell.status &= ~(uint)flags;
         }
 
+        public static void RemoveAllFlags(ref this CellManager cell)
+        {
+            cell.status = 0;
+        }
+
         public static bool HasFlag(ref this CellManager cell, CellFlags flags)
         {
             return (cell.status & (uint)flags) != 0;
