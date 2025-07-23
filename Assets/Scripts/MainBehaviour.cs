@@ -61,92 +61,66 @@ namespace MRSculpture
 
         void Update()
         {
-            Vector3 leftControllerWorldPosition = leftControllerAnchor.transform.position;
-
             Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(_boundsSize.x, _boundsSize.y, _boundsSize.z));
             Bounds boundingBox = new();
             boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
 
-            //for (int y = 0; y < _voxelDataChunk.yLength; y++)
-            //{
-            //    DataChunk xzLayer = _voxelDataChunk.GetXZLayer(y);
-            //    for (int i = 0; i < xzLayer.Length; i++)
-            //    {
-            //        xzLayer.GetPosition(i, out int x, out _, out int z);
-            //        Vector3 localPos = new(x + 0.5f, y + 0.5f, z + 0.5f);
-            //        Vector3 worldPos = transform.TransformPoint(localPos);
-
-            //        if ((worldPos - leftControllerWorldPosition).sqrMagnitude > visibleDistance * visibleDistance)
-            //        {
-            //            xzLayer.RemoveFlag(i, CellFlags.IsSelected);
-            //        }
-            //        else
-            //        {
-            //            xzLayer.AddFlag(i, CellFlags.IsSelected);
-            //            xzLayer.RemoveFlag(i, CellFlags.IsFilled);
-            //        }
-            //    }
-            //    _renderer.UpdateRenderBuffer(xzLayer, y);
-            //}
-
-            //Vector3 leftControllerLocalPosition = mainBehaviourTransform.InverseTransformPoint(leftControllerWorldPosition);
-            //Vector3Int leftControllerGridPosition = new(
-            //    (int)(leftControllerLocalPosition.x),
-            //    (int)(leftControllerLocalPosition.y),
-            //    (int)(leftControllerLocalPosition.z)
-            //);
-
-            //if (leftControllerGridPosition.x >= 0 &&
-            //    leftControllerGridPosition.x < _voxelDataChunk.xLength &&
-            //    leftControllerGridPosition.y >= 0 &&
-            //    leftControllerGridPosition.y < _voxelDataChunk.yLength &&
-            //    leftControllerGridPosition.z >= 0 &&
-            //    leftControllerGridPosition.z < _voxelDataChunk.zLength)
-            //{
-            //    DataChunk xzLayer = _voxelDataChunk.GetXZLayer(leftControllerGridPosition.y);
-            //    xzLayer.AddFlag(leftControllerGridPosition.x, 0, leftControllerGridPosition.z, CellFlags.IsSelected);
-            //    xzLayer.RemoveFlag(leftControllerGridPosition.x, 0, leftControllerGridPosition.z, CellFlags.IsFilled);
-            //    _renderer.UpdateRenderBuffer(xzLayer, leftControllerGridPosition.y);
-            //}
-
-            //_renderer.RenderMeshes(new Bounds(boundingBoxSize * 0.5f, boundingBoxSize));
-
+            // 左コントローラーのワールド座標を取得
+            Vector3 leftControllerWorldPosition = leftControllerAnchor.transform.position;
+            // コントローラーのワールド座標を、MainBehaviourのローカル座標系に変換
             Vector3 leftControllerLocalPosition = mainBehaviourTransform.InverseTransformPoint(leftControllerWorldPosition);
+            // コントローラー位置を基準に、最も近いボクセルグリッド座標（整数）を算出
             Vector3Int center = new(
                 Mathf.RoundToInt(leftControllerLocalPosition.x),
                 Mathf.RoundToInt(leftControllerLocalPosition.y),
                 Mathf.RoundToInt(leftControllerLocalPosition.z)
             );
 
+            // X方向の探索範囲（visibleDistance分だけ前後に拡張、範囲外はクランプ）
             int minX = Mathf.Max(0, center.x - visibleDistance);
             int maxX = Mathf.Min(_voxelDataChunk.xLength - 1, center.x + visibleDistance);
+            // Y方向の探索範囲
             int minY = Mathf.Max(0, center.y - visibleDistance);
             int maxY = Mathf.Min(_voxelDataChunk.yLength - 1, center.y + visibleDistance);
+            // Z方向の探索範囲
             int minZ = Mathf.Max(0, center.z - visibleDistance);
             int maxZ = Mathf.Min(_voxelDataChunk.zLength - 1, center.z + visibleDistance);
 
+            // 距離判定用にvisibleDistanceの2乗を事前計算（パフォーマンス向上のため）
             float sqrVisibleDistance = visibleDistance * visibleDistance;
 
+            // 各XZレイヤごとに処理
             for (int y = minY; y <= maxY; y++)
             {
+                // Y層のXZ平面のDataChunkを取得
                 DataChunk xzLayer = _voxelDataChunk.GetXZLayer(y);
-                bool updated = false;
+                bool layerBufferNeedsUpdate = false; // レンダーバッファ更新が必要かどうか
+
+                // X方向の範囲をループ
                 for (int x = minX; x <= maxX; x++)
                 {
+                    // Z方向の範囲をループ
                     for (int z = minZ; z <= maxZ; z++)
                     {
-                        // セル中心座標
+                        // セルのローカル空間での中心座標を計算（各軸+0.5でセル中心）
                         Vector3 cellLocalPos = new(x + 0.5f, y + 0.5f, z + 0.5f);
-                        if ((cellLocalPos - leftControllerLocalPosition).sqrMagnitude > sqrVisibleDistance)
-                            continue;
 
+                        // コントローラーとの距離がvisibleDistance以内か判定
+                        if ((cellLocalPos - leftControllerLocalPosition).sqrMagnitude > sqrVisibleDistance)
+                            continue; // 範囲外ならスキップ
+
+                        // 対象セルにIsSelectedフラグを追加
                         xzLayer.AddFlag(x, 0, z, CellFlags.IsSelected);
+                        // 対象セルからIsFilledフラグを削除
                         xzLayer.RemoveFlag(x, 0, z, CellFlags.IsFilled);
-                        updated = true;
+                        layerBufferNeedsUpdate = true; // このレイヤーのバッファ更新が必要
                     }
                 }
-                if (updated)
+                // 現在のレイヤに含まれる何らかのセルが更新された場合のみレンダーバッファを更新
+                if (layerBufferNeedsUpdate)
+                {
                     _renderer.UpdateRenderBuffer(xzLayer, y);
+                }
             }
 
             _renderer.RenderMeshes(new Bounds(boundingBoxSize * 0.5f, boundingBoxSize));
