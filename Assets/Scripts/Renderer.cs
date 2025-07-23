@@ -69,18 +69,18 @@ namespace MRSculpture
             _meshes.Add(mesh);
         }
 
+        public void UpdateRenderBuffer(DataChunk xzLayer, int y)
+        {
+            Mesh mesh = MeshData.CreateMesh(ref xzLayer, y, ref _mesh);
+            _meshes[y] = mesh;
+        }
+
         public void RenderMeshes(Bounds boundingBox)
         {
             foreach (Mesh mesh in _meshes)
             {
                 Graphics.RenderMesh(_renderParams, mesh, 0, _localToWorld * Matrix4x4.identity);
             }
-        }
-
-        public void UpdateRenderBuffer(DataChunk xzLayer, int y)
-        {
-            ClearRenderBuffer(xzLayer, y);
-            AddRenderBuffer(xzLayer, y);
         }
 
         public void ClearRenderBuffer(DataChunk xzLayer, int layerIndex)

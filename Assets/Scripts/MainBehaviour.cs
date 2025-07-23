@@ -30,8 +30,10 @@ namespace MRSculpture
         /// </summary>
         [SerializeField] private Material _voxelMaterial;
 
-        public GameObject leftController = null;
-        public GameObject rightController = null;
+        public GameObject leftControllerAnchor = null;
+        public GameObject rightControllerAnchor = null;
+        [SerializeField] private Transform mainBehaviourTransform;
+
 
         private void Awake()
         {
@@ -58,36 +60,66 @@ namespace MRSculpture
 
         void Update()
         {
-            Vector3 leftControllerPosition = leftController.transform.position;
+            Vector3 leftControllerWorldPosition = leftControllerAnchor.transform.position;
+            float visibleDistance = 0.25f;
 
             Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(_boundsSize.x, _boundsSize.y, _boundsSize.z));
             Bounds boundingBox = new();
             boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
 
-            //// ワールド座標→ローカル座標（必要なら）
-            //Vector3 localPos = transform.InverseTransformPoint(leftControllerPosition);
+            for (int y = 0; y < _voxelDataChunk.yLength; y++)
+            {
 
-            //// ローカル座標→ボクセルグリッド座標
-            //int x = Mathf.FloorToInt(localPos.x);
-            //int y = Mathf.FloorToInt(localPos.y);
-            //int z = Mathf.FloorToInt(localPos.z);
+                DataChunk xzLayer = _voxelDataChunk.GetXZLayer(y);
+                for (int i = 0; i < xzLayer.Length; i++)
+                {
+                    xzLayer.GetPosition(i, out int x, out _, out int z);
+                    Vector3 localPos = new(x + 0.5f, y + 0.5f, z + 0.5f);
+                    Vector3 worldPos = transform.TransformPoint(localPos);
 
-            //if (x >= 0 && x < _voxelDataChunk.xLength &&
-            //    y >= 0 && y < _voxelDataChunk.yLength &&
-            //    z >= 0 && z < _voxelDataChunk.zLength)
+                    if ((worldPos - leftControllerWorldPosition).sqrMagnitude > visibleDistance * visibleDistance)
+                    {
+                        xzLayer.RemoveFlag(i, CellFlags.IsSelected);
+                    }
+                    else
+                    {
+                        xzLayer.AddFlag(i, CellFlags.IsSelected);
+                        xzLayer.RemoveFlag(i, CellFlags.IsFilled);
+                    }
+                }
+            }
+
+            //Vector3 leftControllerLocalPosition = mainBehaviourTransform.InverseTransformPoint(leftControllerWorldPosition);
+
+            //// 範囲内セルのインデックス範囲を計算
+            //int minX = Mathf.Max(0, Mathf.FloorToInt(leftControllerLocalPosition.x - visibleDistance));
+            //int maxX = Mathf.Min(_voxelDataChunk.xLength - 1, Mathf.FloorToInt(leftControllerLocalPosition.x + visibleDistance));
+            //int minY = Mathf.Max(0, Mathf.FloorToInt(leftControllerLocalPosition.y - visibleDistance));
+            //int maxY = Mathf.Min(_voxelDataChunk.yLength - 1, Mathf.FloorToInt(leftControllerLocalPosition.y + visibleDistance));
+            //int minZ = Mathf.Max(0, Mathf.FloorToInt(leftControllerLocalPosition.z - visibleDistance));
+            //int maxZ = Mathf.Min(_voxelDataChunk.zLength - 1, Mathf.FloorToInt(leftControllerLocalPosition.z + visibleDistance));
+
+            //for (int y = minY; y <= maxY; y++)
             //{
-            //    DataChunk xzLayer = _voxelDataChunk.GetXZLayer(y);
-            //    //xzLayer.RemoveAllFlags(x, y, z);
-            //    for (int i = 0; i < xzLayer.Length; i++)
+            //    for (int x = minX; x <= maxX; x++)
             //    {
-            //        xzLayer.RemoveAllFlags(i);
-            //        //if (i != 0)
-            //        //{
-            //        //    xzLayer.AddFlag(i, CellFlags.IsFilled);
-            //        //}
+            //        for (int z = minZ; z <= maxZ; z++)
+            //        {
+            //            Vector3 cellLocalPos = new(x + 0.5f, y + 0.5f, z + 0.5f);
+            //            Vector3 cellWorldPos = transform.TransformPoint(cellLocalPos);
+
+            //            // ワールド空間での距離判定
+            //            if ((cellWorldPos - leftControllerLocalPosition).sqrMagnitude <= visibleDistance * visibleDistance)
+            //            {
+            //                _voxelDataChunk.AddFlag(x, y, z, CellFlags.IsSelected);
+            //                //_voxelDataChunk.RemoveFlag(x, y, z, CellFlags.IsFilled);
+            //            }
+            //            else
+            //            {
+            //                _voxelDataChunk.RemoveFlag(x, y, z, CellFlags.IsSelected);
+            //            }
+            //        }
             //    }
-            //    _renderer.UpdateRenderBuffer(xzLayer, y);
-            //    Debug.Log("x:" + x + "y:" + y + "z:" + z);
             //}
 
             _renderer.RenderMeshes(new Bounds(boundingBoxSize * 0.5f, boundingBoxSize));
@@ -114,7 +146,10 @@ namespace MRSculpture
                 DataChunk xzLayer = _voxelDataChunk.GetXZLayer(y);
                 for (int i = 0; i < xzLayer.Length; i++)
                 {
-                    if (!xzLayer.HasFlag(i, CellFlags.IsFilled)) continue;
+                    if (!xzLayer.HasFlag(i, CellFlags.IsFilled))
+                    {
+                        continue;
+                    }
 
                     xzLayer.GetPosition(i, out int x, out _, out int z);
                     Vector3 localPos = new(x + 0.5f, y + 0.5f, z + 0.5f);
@@ -125,10 +160,18 @@ namespace MRSculpture
                         continue;
                     }
 
-                    Gizmos.color = Color.green;
-                    Gizmos.DrawWireCube(worldPos, scale);
+                    if (xzLayer.HasFlag(i, CellFlags.IsSelected))
+                    {
+                        Gizmos.color = Color.red;
+                        Gizmos.DrawWireCube(worldPos, scale);
+                    }
+                    else
+                    {
+                        Gizmos.color = Color.white;
+                        Gizmos.DrawWireCube(worldPos, scale);
+                    }
 
-                    UnityEditor.Handles.Label(worldPos, $"({x},{y},{z})");
+                    UnityEditor.Handles.Label(worldPos, $"({worldPos.x},{worldPos.y},{worldPos.z})");
                 }
             }
         }

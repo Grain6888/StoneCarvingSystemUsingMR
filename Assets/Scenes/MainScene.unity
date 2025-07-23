@@ -3823,8 +3823,9 @@ MonoBehaviour:
     z: 5
   _voxelMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   _voxelMaterial: {fileID: 2100000, guid: f07cb93e85d10a34798cac9e79536d58, type: 2}
-  leftController: {fileID: 842036936}
-  rightController: {fileID: 666522195}
+  leftControllerAnchor: {fileID: 842036936}
+  rightControllerAnchor: {fileID: 666522195}
+  mainBehaviourTransform: {fileID: 591202684}
 --- !u!4 &591202684
 Transform:
   m_ObjectHideFlags: 0
