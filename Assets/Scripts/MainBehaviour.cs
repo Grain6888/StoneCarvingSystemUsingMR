@@ -69,7 +69,6 @@ namespace MRSculpture
 
             for (int y = 0; y < _voxelDataChunk.yLength; y++)
             {
-
                 DataChunk xzLayer = _voxelDataChunk.GetXZLayer(y);
                 for (int i = 0; i < xzLayer.Length; i++)
                 {
@@ -87,6 +86,7 @@ namespace MRSculpture
                         xzLayer.RemoveFlag(i, CellFlags.IsFilled);
                     }
                 }
+                _renderer.UpdateRenderBuffer(xzLayer, y);
             }
 
             //Vector3 leftControllerLocalPosition = mainBehaviourTransform.InverseTransformPoint(leftControllerWorldPosition);
