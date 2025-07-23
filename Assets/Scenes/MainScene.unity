@@ -1997,7 +1997,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -2196,6 +2196,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 379629018}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &329429356 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2839118588326079241, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
+  m_PrefabInstance: {fileID: 384150399}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -2724,6 +2729,10 @@ PrefabInstance:
       propertyPath: _centerEyeCamera
       value: 
       objectReference: {fileID: 1690647506}
+    - target: {fileID: 1168042863143544391, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2336446269904782542, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
       propertyPath: _leftEyeAnchor
       value: 
@@ -2736,6 +2745,10 @@ PrefabInstance:
       propertyPath: _centerEyeCamera
       value: 
       objectReference: {fileID: 1690647506}
+    - target: {fileID: 3414076797089406170, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 5e033cc50483fb54ca3e586f66c9112f, type: 2}
     - target: {fileID: 4148778239110795873, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
       propertyPath: m_Name
       value: '[BuildingBlock] OVRInteractionComprehensive'
@@ -2796,6 +2809,14 @@ PrefabInstance:
       propertyPath: _ovrCameraRig
       value: 
       objectReference: {fileID: 1271979295}
+    - target: {fileID: 8702425413754196323, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8839895569409382208, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3818,13 +3839,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _boundsSize:
-    x: 128
-    y: 128
-    z: 128
+    x: 256
+    y: 256
+    z: 256
   _voxelMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   _voxelMaterial: {fileID: 2100000, guid: f07cb93e85d10a34798cac9e79536d58, type: 2}
-  leftControllerAnchor: {fileID: 842036936}
-  rightControllerAnchor: {fileID: 666522195}
+  leftControllerAnchor: {fileID: 823018363}
+  rightControllerAnchor: {fileID: 329429356}
   mainBehaviourTransform: {fileID: 591202684}
 --- !u!4 &591202684
 Transform:
@@ -5017,6 +5038,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 193546069}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &823018363 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2233370270530122085, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
+  m_PrefabInstance: {fileID: 384150399}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &826514326
 GameObject:
   m_ObjectHideFlags: 0
