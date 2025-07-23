@@ -99,13 +99,15 @@ namespace MRSculpture
             _voxelDataChunk.Dispose();
         }
 
+#if UNITY_EDITOR
         private void OnDrawGizmos()
         {
             if (_voxelDataChunk.Equals(default(DataChunk))) return;
 
-            // 距離判定の基準点（例：Sceneビューのカメラ位置）
             Vector3 referencePos = Camera.current != null ? Camera.current.transform.position : Vector3.zero;
-            float visibleDistance = 3.0f; // しきい値（必要に応じて調整）
+            float visibleDistance = 3.0f;
+
+            Vector3 scale = transform.lossyScale;
 
             for (int y = 0; y < _voxelDataChunk.yLength; y++)
             {
@@ -115,21 +117,21 @@ namespace MRSculpture
                     if (!xzLayer.HasFlag(i, CellFlags.IsFilled)) continue;
 
                     xzLayer.GetPosition(i, out int x, out _, out int z);
-                    Vector3 localPos = new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);
+                    Vector3 localPos = new(x + 0.5f, y + 0.5f, z + 0.5f);
                     Vector3 worldPos = transform.TransformPoint(localPos);
 
-                    // 距離判定
                     if ((worldPos - referencePos).sqrMagnitude > visibleDistance * visibleDistance)
+                    {
                         continue;
+                    }
 
                     Gizmos.color = Color.green;
-                    Gizmos.DrawWireCube(worldPos, Vector3.one);
+                    Gizmos.DrawWireCube(worldPos, scale);
 
-#if UNITY_EDITOR
                     UnityEditor.Handles.Label(worldPos, $"({x},{y},{z})");
-#endif
                 }
             }
         }
+#endif
     }
 }
