@@ -3839,14 +3839,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _boundsSize:
-    x: 256
-    y: 256
-    z: 256
+    x: 128
+    y: 128
+    z: 128
   _voxelMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   _voxelMaterial: {fileID: 2100000, guid: f07cb93e85d10a34798cac9e79536d58, type: 2}
-  leftControllerAnchor: {fileID: 823018363}
-  rightControllerAnchor: {fileID: 329429356}
+  leftPokeLocation: {fileID: 823018363}
+  rightPokeLocation: {fileID: 329429356}
   mainBehaviourTransform: {fileID: 591202684}
+  visibleDistance: 10
 --- !u!4 &591202684
 Transform:
   m_ObjectHideFlags: 0
@@ -3856,7 +3857,7 @@ Transform:
   m_GameObject: {fileID: 591202682}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2, y: 0.5, z: 3}
+  m_LocalPosition: {x: 2, y: 0.1, z: 3}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_ConstrainProportionsScale: 1
   m_Children: []

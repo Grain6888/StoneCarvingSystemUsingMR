@@ -30,8 +30,8 @@ namespace MRSculpture
         /// </summary>
         [SerializeField] private Material _voxelMaterial;
 
-        public GameObject leftControllerAnchor = null;
-        public GameObject rightControllerAnchor = null;
+        public GameObject leftPokeLocation = null;
+        public GameObject rightPokeLocation = null;
         [SerializeField] private Transform mainBehaviourTransform;
         [SerializeField] private int visibleDistance = 10;
 
@@ -66,7 +66,7 @@ namespace MRSculpture
             boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
 
             // 左コントローラーのワールド座標を取得
-            Vector3 leftControllerWorldPosition = leftControllerAnchor.transform.position;
+            Vector3 leftControllerWorldPosition = leftPokeLocation.transform.position;
             // コントローラーのワールド座標を、MainBehaviourのローカル座標系に変換
             Vector3 leftControllerLocalPosition = mainBehaviourTransform.InverseTransformPoint(leftControllerWorldPosition);
             // コントローラー位置を基準に、最も近いボクセルグリッド座標（整数）を算出
