@@ -529,15 +529,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4319853145546081333, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 4319853145546081333, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 4319853145546081333, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 4319853145546081333, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4102,15 +4102,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4054348215497106339, guid: d54442b3834095b4c89a983676ac6063, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.2
       objectReference: {fileID: 0}
     - target: {fileID: 4054348215497106339, guid: d54442b3834095b4c89a983676ac6063, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 4054348215497106339, guid: d54442b3834095b4c89a983676ac6063, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 4054348215497106339, guid: d54442b3834095b4c89a983676ac6063, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4139,6 +4139,22 @@ PrefabInstance:
     - target: {fileID: 4054348215497106339, guid: d54442b3834095b4c89a983676ac6063, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7498369125255797015, guid: d54442b3834095b4c89a983676ac6063, type: 3}
+      propertyPath: _scaleConstraints.XAxis.ConstrainAxis
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7498369125255797015, guid: d54442b3834095b4c89a983676ac6063, type: 3}
+      propertyPath: _scaleConstraints.YAxis.ConstrainAxis
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7498369125255797015, guid: d54442b3834095b4c89a983676ac6063, type: 3}
+      propertyPath: _scaleConstraints.ZAxis.ConstrainAxis
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7498369125255797015, guid: d54442b3834095b4c89a983676ac6063, type: 3}
+      propertyPath: _scaleConstraints.ConstraintsAreRelative
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
