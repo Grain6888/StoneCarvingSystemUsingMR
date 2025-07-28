@@ -668,7 +668,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _monoscopic: 0
   _sharpenType: 0
-  _enableDynamicResolution: 0
+  _enableDynamicResolution: 1
   minDynamicResolutionScale: 1
   maxDynamicResolutionScale: 1
   quest2MinDynamicResolutionScale: 0.7
@@ -718,7 +718,7 @@ MonoBehaviour:
   requestBodyTrackingPermissionOnStartup: 0
   requestFaceTrackingPermissionOnStartup: 0
   requestEyeTrackingPermissionOnStartup: 0
-  requestScenePermissionOnStartup: 0
+  requestScenePermissionOnStartup: 1
   requestRecordAudioPermissionOnStartup: 0
   _localDimming: 1
   _trackingOriginType: 1
@@ -8016,6 +8016,16 @@ MonoBehaviour:
   installationRoutineCheckpoint:
     _installationRoutineId: 2063f481-1b63-4eda-9ee8-a00df98536bc
     _installationVariants: []
+--- !u!1 &1524763635 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2839118588326079241, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
+  m_PrefabInstance: {fileID: 1524763631}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1524763636 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2233370270530122085, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
+  m_PrefabInstance: {fileID: 1524763631}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1535347193
 GameObject:
   m_ObjectHideFlags: 0
@@ -10559,6 +10569,60 @@ Transform:
   m_Children: []
   m_Father: {fileID: 338486182}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2001941703
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2001941704}
+  - component: {fileID: 2001941705}
+  m_Layer: 0
+  m_Name: HandToolsController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2001941704
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2001941703}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2001941705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2001941703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e68e674bc4ee82e4494774a37ca7f914, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  leftPokeLocation: {fileID: 1524763636}
+  rightPokeLocation: {fileID: 1524763635}
+  chiselPrefabs:
+  - {fileID: 6955052816944707637, guid: 714eddedffa5c6b4e8c83e531c9c2ac4, type: 3}
+  - {fileID: 5927972486143210384, guid: 934b6b36f58b59f43bc54549f95370d8, type: 3}
+  - {fileID: 5605806032719478185, guid: 2e51df5a7341d57429b345285b1be67b, type: 3}
+  - {fileID: 566170985886902695, guid: 55f8c013b8dd53a4cae9e5348db9c4b0, type: 3}
+  - {fileID: 1376753027252175299, guid: b7af25e171c69b045a8ceecd9a8c6957, type: 3}
+  - {fileID: 2974016233469693475, guid: 7dea3f5adb06eb242a7ddb455439891c, type: 3}
+  hammerPrefab: {fileID: 7589249167500000603, guid: 1954c62668f6eb64f871d4d4f94f6eda, type: 3}
 --- !u!1 &2006523391
 GameObject:
   m_ObjectHideFlags: 0
@@ -11452,3 +11516,4 @@ SceneRoots:
   - {fileID: 77182293}
   - {fileID: 1909884826}
   - {fileID: 1266798017}
+  - {fileID: 2001941704}

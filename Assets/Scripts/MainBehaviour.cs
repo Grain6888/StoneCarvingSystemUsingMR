@@ -30,8 +30,8 @@ namespace MRSculpture
         /// </summary>
         [SerializeField] private Material _voxelMaterial;
 
-        public GameObject leftPokeLocation = null;
-        public GameObject rightPokeLocation = null;
+        [SerializeField] private GameObject leftPokeLocation = null;
+        [SerializeField] private GameObject rightPokeLocation = null;
         [SerializeField] private Transform mainBehaviourTransform;
         [SerializeField] private int visibleDistance = 10;
 
