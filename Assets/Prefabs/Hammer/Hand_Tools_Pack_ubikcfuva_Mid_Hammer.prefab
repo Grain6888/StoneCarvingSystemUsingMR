@@ -119,22 +119,10 @@ PrefabInstance:
       addedObject: {fileID: 1661873145031277832}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1cef2fa4d5b05ff4ea3ad849bf6ced2b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5739104168206262339}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1cef2fa4d5b05ff4ea3ad849bf6ced2b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7828665132075859988}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1cef2fa4d5b05ff4ea3ad849bf6ced2b, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 4807904683518266426}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1cef2fa4d5b05ff4ea3ad849bf6ced2b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6044122100701805967}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1cef2fa4d5b05ff4ea3ad849bf6ced2b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 974731488084055625}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1cef2fa4d5b05ff4ea3ad849bf6ced2b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1824474807581280203}
   m_SourcePrefab: {fileID: 100100000, guid: 1cef2fa4d5b05ff4ea3ad849bf6ced2b, type: 3}
 --- !u!1 &3510805639411572367 stripped
 GameObject:
@@ -208,7 +196,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -297,86 +285,6 @@ MonoBehaviour:
         Min: 1
         Max: 1
   _resetScaleResponsivenessOnConstraintOvershoot: 0
---- !u!114 &5739104168206262339
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3510805639411572367}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e9a7676b01585ce43908639a27765dfc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _interactorFilters: []
-  _maxInteractors: -1
-  _maxSelectingInteractors: -1
-  _data: {fileID: 0}
-  _pointableElement: {fileID: 1844846212548999178}
-  _rigidbody: {fileID: 468838233882127974}
-  _physicsGrabbable: {fileID: 0}
-  _resetGrabOnGrabsUpdated: 1
-  _scoringModifier:
-    _positionRotationWeight: 0.8
-  _slippiness: 0
-  _supportedGrabTypes: 3
-  _pinchGrabRules:
-    _thumbRequirement: 1
-    _indexRequirement: 1
-    _middleRequirement: 1
-    _ringRequirement: 0
-    _pinkyRequirement: 0
-    _unselectMode: 0
-  _palmGrabRules:
-    _thumbRequirement: 1
-    _indexRequirement: 2
-    _middleRequirement: 2
-    _ringRequirement: 2
-    _pinkyRequirement: 1
-    _unselectMode: 0
-  _movementProvider: {fileID: 0}
-  _handAligment: 1
-  _handGrabPoses: []
---- !u!114 &7828665132075859988
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3510805639411572367}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: baed3e011583e1844a6e85b1cd0657f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _interactorFilters: []
-  _maxInteractors: -1
-  _maxSelectingInteractors: -1
-  _data: {fileID: 0}
-  _pointableElement: {fileID: 1844846212548999178}
-  _rigidbody: {fileID: 468838233882127974}
-  _physicsGrabbable: {fileID: 0}
-  _resetGrabOnGrabsUpdated: 1
-  _slippiness: 0
-  _supportedGrabTypes: 3
-  _pinchGrabRules:
-    _thumbRequirement: 1
-    _indexRequirement: 1
-    _middleRequirement: 1
-    _ringRequirement: 0
-    _pinkyRequirement: 0
-    _unselectMode: 0
-  _palmGrabRules:
-    _thumbRequirement: 1
-    _indexRequirement: 2
-    _middleRequirement: 2
-    _ringRequirement: 2
-    _pinkyRequirement: 1
-    _unselectMode: 0
-  _movementProvider: {fileID: 0}
-  _handAligment: 1
-  _handGrabPoses: []
 --- !u!114 &4807904683518266426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -422,40 +330,6 @@ MonoBehaviour:
   _resetGrabOnGrabsUpdated: 1
   _physicsGrabbable: {fileID: 0}
   _movementProvider: {fileID: 0}
---- !u!114 &974731488084055625
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3510805639411572367}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb86ba9d4c5126e48bfef9b0c9550e9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _interactorFilters: []
-  _maxInteractors: -1
-  _maxSelectingInteractors: -1
-  _data: {fileID: 0}
-  _pointableElement: {fileID: 0}
-  _surface: {fileID: 1824474807581280203}
-  _selectSurface: {fileID: 0}
-  _movementProvider: {fileID: 0}
-  _tiebreakerScore: 0
---- !u!114 &1824474807581280203
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3510805639411572367}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2140d2b457bea84881488302059889b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _collider: {fileID: 8631765205834481145}
 --- !u!4 &4319853145546081333 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1cef2fa4d5b05ff4ea3ad849bf6ced2b, type: 3}

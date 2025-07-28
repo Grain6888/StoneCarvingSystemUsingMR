@@ -7,7 +7,7 @@ namespace MRSculpture
     {
         [SerializeField] private GameObject leftPokeLocation = null;
         [SerializeField] private GameObject rightPokeLocation = null;
-        [SerializeField] private List<GameObject> chiselPrefabs = null;
+        [SerializeField] private GameObject chiselPrefab = null;
         private GameObject chiselInstance = null;
         private Vector3 chiselPosition = Vector3.zero;
         private Quaternion chiselRotation = Quaternion.identity;
@@ -18,19 +18,17 @@ namespace MRSculpture
 
         void Start()
         {
-            chiselPosition = chiselPrefabs[0].transform.position;
-            chiselRotation = chiselPrefabs[0].transform.rotation;
-            chiselInstance = Instantiate(chiselPrefabs[0], leftPokeLocation.transform.position + chiselPosition, leftPokeLocation.transform.rotation * chiselRotation);
+            chiselPosition = chiselPrefab.transform.position;
+            chiselRotation = chiselPrefab.transform.rotation;
+            chiselInstance = Instantiate(chiselPrefab, chiselPosition, chiselRotation);
 
             hammerPosition = hammerPrefab.transform.position;
             hammerRotation = hammerPrefab.transform.rotation;
-            hammerInstance = Instantiate(hammerPrefab, rightPokeLocation.transform.position + hammerPosition, rightPokeLocation.transform.rotation * hammerRotation);
+            hammerInstance = Instantiate(hammerPrefab, hammerPosition, hammerRotation);
         }
 
         void Update()
         {
-            chiselInstance.transform.SetPositionAndRotation(leftPokeLocation.transform.position + chiselPosition, leftPokeLocation.transform.rotation * chiselRotation);
-            hammerInstance.transform.SetPositionAndRotation(rightPokeLocation.transform.position + hammerPosition, rightPokeLocation.transform.rotation * hammerRotation);
         }
     }
 }
