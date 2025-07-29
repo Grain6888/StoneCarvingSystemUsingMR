@@ -1,54 +1,64 @@
 ﻿using UnityEngine;
 
-public class CollisionDetector : MonoBehaviour
+namespace MRSculpture
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public class CollisionDetector : MonoBehaviour
     {
+        // 衝撃の強さを保持するフィールド
+        private float _impactMagnitude = 0.0f;
 
-    }
+        // 外部から取得できるプロパティ
+        public float ImpactMagnitude => _impactMagnitude;
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.name != "Hammer")
+        // Start is called once before the first execution of Update after the MonoBehaviour is created
+        void Start()
         {
-            return;
+
         }
 
-        // 衝突時のインパルス（力のベクトル）を取得
-        Vector3 impulse = collision.impulse;
-        // インパルスの大きさ（衝撃の強さ）を計算
-        float impactMagnitude = impulse.magnitude;
-
-        if (impactMagnitude <= 0.0f)
+        // Update is called once per frame
+        void Update()
         {
-            return;
+
         }
 
-        // 他のColliderと衝突した瞬間に呼ばれる
-        Debug.Log("UNCHI Collision Detected with " + collision.gameObject.name);
-
-        // 衝撃の強さをデバッグログに出力
-        Debug.Log("UNCHI Impact Magnitude: " + impactMagnitude);
-
-        // 衝突した全ての接触点について処理
-        foreach (ContactPoint contact in collision.contacts)
+        void OnCollisionEnter(Collision collision)
         {
-            // 接触点の座標を取得
-            Vector3 contactPoint = contact.point;
-            // 接触点の法線（面の向き）を取得
-            Vector3 contactNormal = contact.normal;
+            if (collision.gameObject.name != "Hammer")
+            {
+                _impactMagnitude = 0.0f;
+                return;
+            }
 
-            // 接触点の座標をデバッグログに出力
-            Debug.Log("UNCHI Contact Point: " + contactPoint);
-            // 接触点の法線をデバッグログに出力
-            Debug.Log("UNCHI Contact Normal: " + contactNormal);
+            // 衝突時のインパルス（力のベクトル）を取得
+            Vector3 impulse = collision.impulse;
+            // インパルスの大きさ（衝撃の強さ）を計算
+            _impactMagnitude = impulse.magnitude;
+
+            if (_impactMagnitude <= 0.0f)
+            {
+                _impactMagnitude = 0.0f;
+                return;
+            }
+
+            // 衝突した全ての接触点について処理
+            foreach (ContactPoint contact in collision.contacts)
+            {
+                // 接触点の座標を取得
+                Vector3 contactPoint = contact.point;
+                // 接触点の法線（面の向き）を取得
+                Vector3 contactNormal = contact.normal;
+            }
+        }
+
+        void OnCollisionExit(Collision collision)
+        {
+            if (collision.gameObject.name != "Hammer")
+            {
+                return;
+            }
+            // 衝突が終了したときに衝撃の強さをリセット
+            _impactMagnitude = 0.0f;
         }
     }
 }
