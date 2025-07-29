@@ -292,10 +292,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6899434193926556819, guid: d54442b3834095b4c89a983676ac6063, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1575,7 +1571,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2001941704
 Transform:
   m_ObjectHideFlags: 0
@@ -1603,10 +1599,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e68e674bc4ee82e4494774a37ca7f914, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftPokeLocation: {fileID: 0}
-  rightPokeLocation: {fileID: 0}
-  chiselPrefab: {fileID: 3677224915888634137, guid: d54442b3834095b4c89a983676ac6063, type: 3}
-  hammerPrefab: {fileID: 3510805639411572367, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
 --- !u!1 &2058741587
 GameObject:
   m_ObjectHideFlags: 0
@@ -1689,10 +1681,6 @@ PrefabInstance:
     - target: {fileID: 4319853145546081333, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7466954487663262901, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
