@@ -33,7 +33,8 @@ namespace MRSculpture
         [SerializeField] private GameObject epicenter = null;
         [SerializeField] private Transform mainBehaviourTransform;
         [SerializeField] private GameObject chisel = null;
-        private CollisionDetector collisionAlgorithm;
+        [SerializeField] private GameObject hammer = null;
+        private AccelerationDetector collisionAlgorithm;
         [SerializeField] private int visibleDistance = 0;
 
 
@@ -59,14 +60,15 @@ namespace MRSculpture
                 _renderer.AddRenderBuffer(xzLayer, y);
             }
 
-            collisionAlgorithm = chisel.GetComponent<CollisionDetector>();
+            collisionAlgorithm = hammer.GetComponent<AccelerationDetector>();
         }
 
         void Update()
         {
             if (collisionAlgorithm != null)
             {
-                visibleDistance = (int)(collisionAlgorithm.ImpactMagnitude);
+                visibleDistance = (int)(collisionAlgorithm.ImpactMagnitude * 5);
+                Debug.Log("UNCHI Visible Distance: " + visibleDistance);
             }
 
             Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(_boundsSize.x, _boundsSize.y, _boundsSize.z));
