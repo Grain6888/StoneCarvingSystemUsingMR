@@ -16,14 +16,23 @@ public class CollisionDetector : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        // 衝突した相手のGameObject名をデバッグログに出力
-        Debug.Log("UNCHI Collision Detected: " + collision.gameObject.name);
+        if (collision.gameObject.name != "Hammer")
+        {
+            return;
+        }
 
         // 衝突時のインパルス（力のベクトル）を取得
         Vector3 impulse = collision.impulse;
-
         // インパルスの大きさ（衝撃の強さ）を計算
         float impactMagnitude = impulse.magnitude;
+
+        if (impactMagnitude <= 0.0f)
+        {
+            return;
+        }
+
+        // 他のColliderと衝突した瞬間に呼ばれる
+        Debug.Log("UNCHI Collision Detected with " + collision.gameObject.name);
 
         // 衝撃の強さをデバッグログに出力
         Debug.Log("UNCHI Impact Magnitude: " + impactMagnitude);
