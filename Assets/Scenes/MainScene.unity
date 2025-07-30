@@ -626,16 +626,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _boundsSize:
-    x: 64
-    y: 64
-    z: 64
+    x: 100
+    y: 100
+    z: 100
   _voxelMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   _voxelMaterial: {fileID: 2100000, guid: f07cb93e85d10a34798cac9e79536d58, type: 2}
-  epicenter: {fileID: 202767827}
-  mainBehaviourTransform: {fileID: 591202684}
-  chisel: {fileID: 487324546}
-  hammer: {fileID: 1370726366}
-  visibleDistance: 10
+  _impactCenter: {fileID: 202767827}
+  _mainBehaviourTransform: {fileID: 591202684}
+  _chisel: {fileID: 487324546}
+  _hammer: {fileID: 1370726366}
 --- !u!4 &591202684
 Transform:
   m_ObjectHideFlags: 0
@@ -645,7 +644,7 @@ Transform:
   m_GameObject: {fileID: 591202682}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2, y: 0.1, z: 3}
+  m_LocalPosition: {x: -0.5, y: 0.2, z: 0.5}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -1215,6 +1214,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3093340553798845310, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
+      propertyPath: _chisel
+      value: 
+      objectReference: {fileID: 487324546}
     - target: {fileID: 3510805639411572367, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
       propertyPath: m_Name
       value: Hammer
@@ -1259,35 +1262,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4934369333771590337, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
-      propertyPath: m_IsTrigger
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3510805639411572367, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1370726367}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
 --- !u!1 &1370726366 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3510805639411572367, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
   m_PrefabInstance: {fileID: 1370726365}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1370726367
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1370726366}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e66d90feea09a67428d9e382f6d5962e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1389792904
 GameObject:
   m_ObjectHideFlags: 0
@@ -1421,10 +1405,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 972267009656026724, guid: d54442b3834095b4c89a983676ac6063, type: 3}
-      propertyPath: m_IsTrigger
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3677224915888634137, guid: d54442b3834095b4c89a983676ac6063, type: 3}
       propertyPath: m_Name
       value: Chisel
@@ -1469,8 +1449,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 8906013460915469246, guid: d54442b3834095b4c89a983676ac6063, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

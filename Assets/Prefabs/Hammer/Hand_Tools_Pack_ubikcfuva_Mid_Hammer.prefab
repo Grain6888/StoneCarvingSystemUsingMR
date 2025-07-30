@@ -801,6 +801,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e66d90feea09a67428d9e382f6d5962e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _chisel: {fileID: 0}
+  _controllerWithHammer: 2
 --- !u!4 &4319853145546081333 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1cef2fa4d5b05ff4ea3ad849bf6ced2b, type: 3}

@@ -30,12 +30,12 @@ namespace MRSculpture
         /// </summary>
         [SerializeField] private Material _voxelMaterial;
 
-        [SerializeField] private GameObject epicenter = null;
-        [SerializeField] private Transform mainBehaviourTransform;
-        [SerializeField] private GameObject chisel = null;
-        [SerializeField] private GameObject hammer = null;
-        private AccelerationDetector collisionAlgorithm;
-        [SerializeField] private int visibleDistance = 0;
+        [SerializeField] private GameObject _impactCenter;
+        [SerializeField] private Transform _mainBehaviourTransform;
+        [SerializeField] private GameObject _chisel;
+        [SerializeField] private GameObject _hammer;
+        private ImpactRangeGetter _impactRangeGetter;
+        private int _impactRange = 0;
 
 
         private void Awake()
@@ -60,25 +60,21 @@ namespace MRSculpture
                 _renderer.AddRenderBuffer(xzLayer, y);
             }
 
-            collisionAlgorithm = hammer.GetComponent<AccelerationDetector>();
+            _impactRangeGetter = _hammer.GetComponent<ImpactRangeGetter>();
         }
 
-        void Update()
+        private void Update()
         {
-            if (collisionAlgorithm != null)
-            {
-                visibleDistance = (int)(collisionAlgorithm.ImpactMagnitude * 5);
-                Debug.Log("UNCHI Visible Distance: " + visibleDistance);
-            }
+            _impactRange = (int)(_impactRangeGetter.ImpactMagnitude * 5);
 
             Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(_boundsSize.x, _boundsSize.y, _boundsSize.z));
             Bounds boundingBox = new();
             boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
 
             // 破壊中心のワールド座標を取得
-            Vector3 epicenterWorldPosition = epicenter.transform.position;
+            Vector3 epicenterWorldPosition = _impactCenter.transform.position;
             // 破壊中心のワールド座標を、MainBehaviourのローカル座標系に変換
-            Vector3 epicenterLocalPosition = mainBehaviourTransform.InverseTransformPoint(epicenterWorldPosition);
+            Vector3 epicenterLocalPosition = _mainBehaviourTransform.InverseTransformPoint(epicenterWorldPosition);
             // 破壊中心位置を基準に、最も近いボクセルグリッド座標（整数）を算出
             Vector3Int center = new(
                 Mathf.RoundToInt(epicenterLocalPosition.x),
@@ -87,17 +83,17 @@ namespace MRSculpture
             );
 
             // X方向の探索範囲（visibleDistance分だけ前後に拡張、範囲外はクランプ）
-            int minX = Mathf.Max(0, center.x - visibleDistance);
-            int maxX = Mathf.Min(_voxelDataChunk.xLength - 1, center.x + visibleDistance);
+            int minX = Mathf.Max(0, center.x - _impactRange);
+            int maxX = Mathf.Min(_voxelDataChunk.xLength - 1, center.x + _impactRange);
             // Y方向の探索範囲
-            int minY = Mathf.Max(0, center.y - visibleDistance);
-            int maxY = Mathf.Min(_voxelDataChunk.yLength - 1, center.y + visibleDistance);
+            int minY = Mathf.Max(0, center.y - _impactRange);
+            int maxY = Mathf.Min(_voxelDataChunk.yLength - 1, center.y + _impactRange);
             // Z方向の探索範囲
-            int minZ = Mathf.Max(0, center.z - visibleDistance);
-            int maxZ = Mathf.Min(_voxelDataChunk.zLength - 1, center.z + visibleDistance);
+            int minZ = Mathf.Max(0, center.z - _impactRange);
+            int maxZ = Mathf.Min(_voxelDataChunk.zLength - 1, center.z + _impactRange);
 
             // 距離判定用にvisibleDistanceの2乗を事前計算（パフォーマンス向上のため）
-            float sqrVisibleDistance = visibleDistance * visibleDistance;
+            float sqrVisibleDistance = _impactRange * _impactRange;
 
             // 各XZレイヤごとに処理
             for (int y = minY; y <= maxY; y++)
