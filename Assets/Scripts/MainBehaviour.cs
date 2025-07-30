@@ -30,10 +30,12 @@ namespace MRSculpture
         /// </summary>
         [SerializeField] private Material _voxelMaterial;
 
-        public GameObject leftPokeLocation = null;
-        public GameObject rightPokeLocation = null;
-        [SerializeField] private Transform mainBehaviourTransform;
-        [SerializeField] private int visibleDistance = 10;
+        [SerializeField] private GameObject _impactCenter;
+        [SerializeField] private Transform _mainBehaviourTransform;
+        [SerializeField] private GameObject _chisel;
+        [SerializeField] private GameObject _hammer;
+        private ImpactRangeGetter _impactRangeGetter;
+        private int _impactRange = 0;
 
 
         private void Awake()
@@ -57,37 +59,41 @@ namespace MRSculpture
                 }
                 _renderer.AddRenderBuffer(xzLayer, y);
             }
+
+            _impactRangeGetter = _hammer.GetComponent<ImpactRangeGetter>();
         }
 
-        void Update()
+        private void Update()
         {
+            _impactRange = (int)(_impactRangeGetter.ImpactMagnitude * 5);
+
             Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(_boundsSize.x, _boundsSize.y, _boundsSize.z));
             Bounds boundingBox = new();
             boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
 
-            // 左コントローラーのワールド座標を取得
-            Vector3 leftControllerWorldPosition = leftPokeLocation.transform.position;
-            // コントローラーのワールド座標を、MainBehaviourのローカル座標系に変換
-            Vector3 leftControllerLocalPosition = mainBehaviourTransform.InverseTransformPoint(leftControllerWorldPosition);
-            // コントローラー位置を基準に、最も近いボクセルグリッド座標（整数）を算出
+            // 破壊中心のワールド座標を取得
+            Vector3 epicenterWorldPosition = _impactCenter.transform.position;
+            // 破壊中心のワールド座標を、MainBehaviourのローカル座標系に変換
+            Vector3 epicenterLocalPosition = _mainBehaviourTransform.InverseTransformPoint(epicenterWorldPosition);
+            // 破壊中心位置を基準に、最も近いボクセルグリッド座標（整数）を算出
             Vector3Int center = new(
-                Mathf.RoundToInt(leftControllerLocalPosition.x),
-                Mathf.RoundToInt(leftControllerLocalPosition.y),
-                Mathf.RoundToInt(leftControllerLocalPosition.z)
+                Mathf.RoundToInt(epicenterLocalPosition.x),
+                Mathf.RoundToInt(epicenterLocalPosition.y),
+                Mathf.RoundToInt(epicenterLocalPosition.z)
             );
 
             // X方向の探索範囲（visibleDistance分だけ前後に拡張、範囲外はクランプ）
-            int minX = Mathf.Max(0, center.x - visibleDistance);
-            int maxX = Mathf.Min(_voxelDataChunk.xLength - 1, center.x + visibleDistance);
+            int minX = Mathf.Max(0, center.x - _impactRange);
+            int maxX = Mathf.Min(_voxelDataChunk.xLength - 1, center.x + _impactRange);
             // Y方向の探索範囲
-            int minY = Mathf.Max(0, center.y - visibleDistance);
-            int maxY = Mathf.Min(_voxelDataChunk.yLength - 1, center.y + visibleDistance);
+            int minY = Mathf.Max(0, center.y - _impactRange);
+            int maxY = Mathf.Min(_voxelDataChunk.yLength - 1, center.y + _impactRange);
             // Z方向の探索範囲
-            int minZ = Mathf.Max(0, center.z - visibleDistance);
-            int maxZ = Mathf.Min(_voxelDataChunk.zLength - 1, center.z + visibleDistance);
+            int minZ = Mathf.Max(0, center.z - _impactRange);
+            int maxZ = Mathf.Min(_voxelDataChunk.zLength - 1, center.z + _impactRange);
 
             // 距離判定用にvisibleDistanceの2乗を事前計算（パフォーマンス向上のため）
-            float sqrVisibleDistance = visibleDistance * visibleDistance;
+            float sqrVisibleDistance = _impactRange * _impactRange;
 
             // 各XZレイヤごとに処理
             for (int y = minY; y <= maxY; y++)
@@ -105,8 +111,8 @@ namespace MRSculpture
                         // セルのローカル空間での中心座標を計算（各軸+0.5でセル中心）
                         Vector3 cellLocalPos = new(x + 0.5f, y + 0.5f, z + 0.5f);
 
-                        // コントローラーとの距離がvisibleDistance以内か判定
-                        if ((cellLocalPos - leftControllerLocalPosition).sqrMagnitude > sqrVisibleDistance)
+                        // 破壊中心との距離がvisibleDistance以内か判定
+                        if ((cellLocalPos - epicenterLocalPosition).sqrMagnitude > sqrVisibleDistance)
                             continue; // 範囲外ならスキップ
 
                         // 対象セルにIsSelectedフラグを追加
@@ -131,64 +137,5 @@ namespace MRSculpture
             _renderer.Dispose();
             _voxelDataChunk.Dispose();
         }
-
-        //#if UNITY_EDITOR
-        //        private void OnDrawGizmos()
-        //        {
-        //            Vector3 leftControllerWorldPosition = leftControllerAnchor.transform.position;
-        //            Vector3 leftControllerLocalPosition = mainBehaviourTransform.InverseTransformPoint(leftControllerWorldPosition);
-        //            Vector3Int leftControllerGridPosition = new(
-        //                (int)(leftControllerLocalPosition.x),
-        //                (int)(leftControllerLocalPosition.y),
-        //                (int)(leftControllerLocalPosition.z)
-        //            );
-        //            Vector3 conLocalPos = new(leftControllerGridPosition.x + 0.5f, leftControllerGridPosition.y + 0.5f, leftControllerGridPosition.z + 0.5f);
-        //            Vector3 conWorldPos = transform.TransformPoint(conLocalPos);
-        //            UnityEditor.Handles.Label(conWorldPos, $"({conLocalPos.x:F3},{conLocalPos.y:F3},{conLocalPos.z:F3})");
-
-        //            if (_voxelDataChunk.Equals(default(DataChunk))) return;
-
-        //            Vector3 referencePos = Camera.current != null ? Camera.current.transform.position : Vector3.zero;
-        //            float visibleDistance = 3.0f;
-
-        //            Vector3 scale = transform.lossyScale;
-
-        //            for (int y = 0; y < _voxelDataChunk.yLength; y++)
-        //            {
-        //                DataChunk xzLayer = _voxelDataChunk.GetXZLayer(y);
-        //                for (int i = 0; i < xzLayer.Length; i++)
-        //                {
-        //                    if (!xzLayer.HasFlag(i, CellFlags.IsFilled))
-        //                    {
-        //                        continue;
-        //                    }
-
-        //                    xzLayer.GetPosition(i, out int x, out _, out int z);
-        //                    Vector3 localPos = new(x + 0.5f, y + 0.5f, z + 0.5f);
-        //                    Vector3 worldPos = transform.TransformPoint(localPos);
-
-        //                    if ((worldPos - referencePos).sqrMagnitude > visibleDistance * visibleDistance)
-        //                    {
-        //                        continue;
-        //                    }
-
-        //                    if (xzLayer.HasFlag(i, CellFlags.IsSelected))
-        //                    {
-        //                        Gizmos.color = Color.red;
-        //                        Gizmos.DrawCube(worldPos, scale);
-        //                    }
-        //                    else
-        //                    {
-        //                        Gizmos.color = Color.white;
-        //                        Gizmos.DrawWireCube(worldPos, scale);
-        //                    }
-
-        //                    Gizmos.color = Color.green;
-        //                    Gizmos.DrawWireCube(conWorldPos, scale);
-        //                    UnityEditor.Handles.Label(worldPos, $"({localPos.x},{localPos.y},{localPos.z})");
-        //                }
-        //            }
-        //        }
-        //#endif
     }
 }
