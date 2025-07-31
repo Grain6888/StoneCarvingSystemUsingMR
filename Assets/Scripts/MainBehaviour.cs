@@ -1,4 +1,5 @@
-﻿using Unity.Mathematics;
+﻿using System.IO;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace MRSculpture
@@ -40,8 +41,19 @@ namespace MRSculpture
 
         private void Awake()
         {
-            // DataChunkを生成し，3Dデータを保持
+            string fileName = "voxelDataChunk.dat";
+            string path = Path.Combine(Application.persistentDataPath, fileName);
+
             _voxelDataChunk = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
+            if (File.Exists(path))
+            {
+                DataChunk.LoadIsFilledTxt("isfilled.txt", ref _voxelDataChunk);
+                Debug.Log("MRSculpture DataChunk loaded from file.");
+            }
+            else
+            {
+                Debug.Log("MRSculpture DataChunk created new.");
+            }
 
             // ローカル → ワールド座標系の変換行列
             Matrix4x4 localToWorldMatrix = transform.localToWorldMatrix;
@@ -136,6 +148,11 @@ namespace MRSculpture
         {
             _renderer.Dispose();
             _voxelDataChunk.Dispose();
+        }
+
+        private void OnApplicationQuit()
+        {
+            _voxelDataChunk.SaveIsFilledTxt("isfilled.txt");
         }
     }
 }
