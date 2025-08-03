@@ -1,4 +1,5 @@
-﻿using Unity.Mathematics;
+﻿using Oculus.Haptics;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace MRSculpture
@@ -35,6 +36,7 @@ namespace MRSculpture
         [SerializeField] private GameObject _chisel;
         [SerializeField] private GameObject _hammer;
         private ImpactRangeGetter _impactRangeGetter;
+        public HapticSource hapticSource;
         private int _impactRange = 0;
 
 
@@ -115,8 +117,7 @@ namespace MRSculpture
                         if ((cellLocalPos - _impactCenterLocalPosition).sqrMagnitude > sqrVisibleDistance)
                             continue; // 範囲外ならスキップ
 
-                        // 対象セルにIsSelectedフラグを追加
-                        xzLayer.AddFlag(x, 0, z, CellFlags.IsSelected);
+                        hapticSource.Play(Controller.Left);
                         // 対象セルからIsFilledフラグを削除
                         xzLayer.RemoveFlag(x, 0, z, CellFlags.IsFilled);
                         layerBufferNeedsUpdate = true; // このレイヤーのバッファ更新が必要

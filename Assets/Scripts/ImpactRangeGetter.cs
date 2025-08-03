@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Oculus.Haptics;
+using UnityEngine;
 
 namespace MRSculpture
 {
@@ -11,6 +12,7 @@ namespace MRSculpture
         private float _impactMagnitude = 0.0f;
 
         public float ImpactMagnitude => _impactMagnitude;
+        public HapticSource hapticSource;
         private int _frameCount = 0;
 
         void Update()
@@ -47,6 +49,7 @@ namespace MRSculpture
                 _impactMagnitude = 0.0f;
                 return;
             }
+            hapticSource.Play(Controller.Right);
         }
 
         private void OnTriggerExit(Collider other)
