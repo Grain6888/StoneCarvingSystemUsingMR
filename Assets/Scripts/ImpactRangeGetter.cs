@@ -49,6 +49,7 @@ namespace MRSculpture
                 _impactMagnitude = 0.0f;
                 return;
             }
+            // ハプティクスを再生
             hapticSource.Play(Controller.Right);
         }
 

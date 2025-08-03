@@ -117,6 +117,7 @@ namespace MRSculpture
                         if ((cellLocalPos - _impactCenterLocalPosition).sqrMagnitude > sqrVisibleDistance)
                             continue; // 範囲外ならスキップ
 
+                        // ハプティクスを再生
                         hapticSource.Play(Controller.Left);
                         // 対象セルからIsFilledフラグを削除
                         xzLayer.RemoveFlag(x, 0, z, CellFlags.IsFilled);
