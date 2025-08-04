@@ -725,6 +725,9 @@ PrefabInstance:
       addedObject: {fileID: 415872148804322016}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3bc310f9157aacd47b34a44228792cf1, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 1298163962099382404}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3bc310f9157aacd47b34a44228792cf1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 972267009656026724}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3bc310f9157aacd47b34a44228792cf1, type: 3}
@@ -736,12 +739,33 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3bc310f9157aacd47b34a44228792cf1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7498369125255797015}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3bc310f9157aacd47b34a44228792cf1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7587861670579489282}
   m_SourcePrefab: {fileID: 100100000, guid: 3bc310f9157aacd47b34a44228792cf1, type: 3}
 --- !u!1 &3677224915888634137 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 3bc310f9157aacd47b34a44228792cf1, type: 3}
   m_PrefabInstance: {fileID: 4596285459214943304}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1298163962099382404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3677224915888634137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b023183069df224080314a560e6e1ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blockId: ad78e7c1-6a4d-422e-99f0-5b1a1ae07f6f
+  instanceId: ad9d87f0-f019-4485-9fd7-383bbef1252d
+  version: 1
+  installationRoutineCheckpoint:
+    _installationRoutineId: 
+    _installationVariants: []
 --- !u!136 &972267009656026724
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -877,6 +901,24 @@ MonoBehaviour:
         Min: 1
         Max: 1
   _resetScaleResponsivenessOnConstraintOvershoot: 0
+--- !u!114 &7587861670579489282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3677224915888634137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9dc93c7e1ae142448d4a122be86ea8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _clip: {fileID: 2460798210113038985, guid: 3b032ec40d4d2a6498e0bccabf071e99, type: 3}
+  _controller: 0
+  _loop: 0
+  _amplitude: 1
+  _frequencyShift: 0
+  _priority: 128
 --- !u!4 &4054348215497106339 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 3bc310f9157aacd47b34a44228792cf1, type: 3}

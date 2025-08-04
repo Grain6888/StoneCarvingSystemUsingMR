@@ -118,7 +118,7 @@ namespace MRSculpture
                             continue; // 範囲外ならスキップ
 
                         // ハプティクスを再生
-                        hapticSource.Play(Controller.Left);
+                        hapticSource.Play();
                         // 対象セルからIsFilledフラグを削除
                         xzLayer.RemoveFlag(x, 0, z, CellFlags.IsFilled);
                         layerBufferNeedsUpdate = true; // このレイヤーのバッファ更新が必要

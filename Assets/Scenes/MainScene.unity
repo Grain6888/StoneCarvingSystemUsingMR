@@ -596,11 +596,10 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3677224915888634137, guid: d54442b3834095b4c89a983676ac6063, type: 3}
   m_PrefabInstance: {fileID: 1794430709}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &487324554
+--- !u!114 &487324554 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 7587861670579489282, guid: d54442b3834095b4c89a983676ac6063, type: 3}
+  m_PrefabInstance: {fileID: 1794430709}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 487324546}
   m_Enabled: 1
@@ -608,30 +607,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9dc93c7e1ae142448d4a122be86ea8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _clip: {fileID: 2460798210113038985, guid: 3b032ec40d4d2a6498e0bccabf071e99, type: 3}
-  _controller: 0
-  _loop: 0
-  _amplitude: 1
-  _frequencyShift: 0
-  _priority: 128
---- !u!114 &487324555
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 487324546}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b023183069df224080314a560e6e1ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  blockId: ad78e7c1-6a4d-422e-99f0-5b1a1ae07f6f
-  instanceId: ad9d87f0-f019-4485-9fd7-383bbef1252d
-  version: 1
-  installationRoutineCheckpoint:
-    _installationRoutineId: 
-    _installationVariants: []
 --- !u!1 &591202682
 GameObject:
   m_ObjectHideFlags: 0
@@ -1251,14 +1226,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3093340553798845310, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
-      propertyPath: _chisel
-      value: 
-      objectReference: {fileID: 487324546}
-    - target: {fileID: 3093340553798845310, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
-      propertyPath: hapticSource
-      value: 
-      objectReference: {fileID: 1370726375}
     - target: {fileID: 3510805639411572367, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
       propertyPath: m_Name
       value: Hammer
@@ -1306,55 +1273,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3510805639411572367, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
-      insertIndex: 1
-      addedObject: {fileID: 1370726376}
-    - targetCorrespondingSourceObject: {fileID: 3510805639411572367, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1370726375}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
 --- !u!1 &1370726366 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3510805639411572367, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
   m_PrefabInstance: {fileID: 1370726365}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1370726375
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1370726366}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b9dc93c7e1ae142448d4a122be86ea8d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _clip: {fileID: 2460798210113038985, guid: 3b032ec40d4d2a6498e0bccabf071e99, type: 3}
-  _controller: 1
-  _loop: 0
-  _amplitude: 1
-  _frequencyShift: 0
-  _priority: 128
---- !u!114 &1370726376
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1370726366}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b023183069df224080314a560e6e1ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  blockId: ad78e7c1-6a4d-422e-99f0-5b1a1ae07f6f
-  instanceId: 92fa1bdc-59f3-42ce-b4d5-139ded9736bc
-  version: 1
-  installationRoutineCheckpoint:
-    _installationRoutineId: 
-    _installationVariants: []
 --- !u!1 &1389792904
 GameObject:
   m_ObjectHideFlags: 0
@@ -1535,13 +1460,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3677224915888634137, guid: d54442b3834095b4c89a983676ac6063, type: 3}
-      insertIndex: 1
-      addedObject: {fileID: 487324555}
-    - targetCorrespondingSourceObject: {fileID: 3677224915888634137, guid: d54442b3834095b4c89a983676ac6063, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 487324554}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d54442b3834095b4c89a983676ac6063, type: 3}
 --- !u!1 &1889504618
 GameObject:

@@ -5,8 +5,6 @@ namespace MRSculpture
 {
     public class ImpactRangeGetter : MonoBehaviour
     {
-        [SerializeField] private GameObject _chisel;
-
         [SerializeField] private OVRInput.Controller _controllerWithHammer;
 
         private float _impactMagnitude = 0.0f;
@@ -35,7 +33,7 @@ namespace MRSculpture
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.name != _chisel.name)
+            if (other.gameObject.name != "Chisel")
             {
                 _impactMagnitude = 0.0f;
                 return;
@@ -50,12 +48,12 @@ namespace MRSculpture
                 return;
             }
             // ハプティクスを再生
-            hapticSource.Play(Controller.Right);
+            hapticSource.Play();
         }
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.gameObject.name != _chisel.name)
+            if (other.gameObject.name != "Chisel")
             {
                 return;
             }
