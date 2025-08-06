@@ -6,6 +6,7 @@ namespace MRSculpture
     public class ImpactRangeGetter : MonoBehaviour
     {
         [SerializeField] private OVRInput.Controller _controllerWithHammer;
+        [SerializeField] private AudioSource _audioSource;
 
         private float _impactMagnitude = 0.0f;
 
@@ -49,6 +50,9 @@ namespace MRSculpture
             }
             // ハプティクスを再生
             hapticSource.Play();
+
+            // 衝撃音を再生
+            _audioSource.Play();
         }
 
         private void OnTriggerExit(Collider other)
