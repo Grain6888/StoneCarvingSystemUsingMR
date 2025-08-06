@@ -37,6 +37,7 @@ namespace MRSculpture
         [SerializeField] private GameObject _hammer;
         private ImpactRangeGetter _impactRangeGetter;
         public HapticSource hapticSource;
+        [SerializeField] private AudioSource _audioSource;
         private int _impactRange = 0;
 
 
@@ -119,6 +120,8 @@ namespace MRSculpture
 
                         // ハプティクスを再生
                         hapticSource.Play();
+                        // 破壊音を再生
+                        _audioSource.Play();
                         // 対象セルからIsFilledフラグを削除
                         xzLayer.RemoveFlag(x, 0, z, CellFlags.IsFilled);
                         layerBufferNeedsUpdate = true; // このレイヤーのバッファ更新が必要
