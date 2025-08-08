@@ -68,7 +68,7 @@ namespace MRSculpture
 
         private void Update()
         {
-            _impactRange = (int)(_impactRangeGetter.ImpactMagnitude * 5);
+            _impactRange = _impactRange > 3 ? 3 : (int)(_impactRangeGetter.ImpactMagnitude * 5);
 
             Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(_boundsSize.x, _boundsSize.y, _boundsSize.z));
             Bounds boundingBox = new();
