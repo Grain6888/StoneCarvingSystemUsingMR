@@ -1,4 +1,5 @@
 ﻿using System.IO;
+﻿using Oculus.Haptics;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -36,6 +37,8 @@ namespace MRSculpture
         [SerializeField] private GameObject _chisel;
         [SerializeField] private GameObject _hammer;
         private ImpactRangeGetter _impactRangeGetter;
+        public HapticSource hapticSource;
+        [SerializeField] private AudioSource _audioSource;
         private int _impactRange = 0;
         private bool _ready = false;
 
@@ -141,14 +144,14 @@ namespace MRSculpture
             boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
 
             // 破壊中心のワールド座標を取得
-            Vector3 epicenterWorldPosition = _impactCenter.transform.position;
+            Vector3 impactCenterWorldPosition = _impactCenter.transform.position;
             // 破壊中心のワールド座標を、MainBehaviourのローカル座標系に変換
-            Vector3 epicenterLocalPosition = _mainBehaviourTransform.InverseTransformPoint(epicenterWorldPosition);
+            Vector3 _impactCenterLocalPosition = _mainBehaviourTransform.InverseTransformPoint(impactCenterWorldPosition);
             // 破壊中心位置を基準に、最も近いボクセルグリッド座標（整数）を算出
             Vector3Int center = new(
-                Mathf.RoundToInt(epicenterLocalPosition.x),
-                Mathf.RoundToInt(epicenterLocalPosition.y),
-                Mathf.RoundToInt(epicenterLocalPosition.z)
+                Mathf.RoundToInt(_impactCenterLocalPosition.x),
+                Mathf.RoundToInt(_impactCenterLocalPosition.y),
+                Mathf.RoundToInt(_impactCenterLocalPosition.z)
             );
 
             // X方向の探索範囲（visibleDistance分だけ前後に拡張、範囲外はクランプ）
@@ -181,11 +184,13 @@ namespace MRSculpture
                         Vector3 cellLocalPos = new(x + 0.5f, y + 0.5f, z + 0.5f);
 
                         // 破壊中心との距離がvisibleDistance以内か判定
-                        if ((cellLocalPos - epicenterLocalPosition).sqrMagnitude > sqrVisibleDistance)
+                        if ((cellLocalPos - _impactCenterLocalPosition).sqrMagnitude > sqrVisibleDistance)
                             continue; // 範囲外ならスキップ
 
-                        // 対象セルにIsSelectedフラグを追加
-                        xzLayer.AddFlag(x, 0, z, CellFlags.IsSelected);
+                        // ハプティクスを再生
+                        hapticSource.Play();
+                        // 破壊音を再生
+                        _audioSource.Play();
                         // 対象セルからIsFilledフラグを削除
                         xzLayer.RemoveFlag(x, 0, z, CellFlags.IsFilled);
                         layerBufferNeedsUpdate = true; // このレイヤーのバッファ更新が必要

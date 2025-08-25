@@ -1,16 +1,17 @@
-﻿using UnityEngine;
+﻿using Oculus.Haptics;
+using UnityEngine;
 
 namespace MRSculpture
 {
     public class ImpactRangeGetter : MonoBehaviour
     {
-        [SerializeField] private GameObject _chisel;
-
         [SerializeField] private OVRInput.Controller _controllerWithHammer;
+        [SerializeField] private AudioSource _audioSource;
 
         private float _impactMagnitude = 0.0f;
 
         public float ImpactMagnitude => _impactMagnitude;
+        public HapticSource hapticSource;
         private int _frameCount = 0;
 
         void Update()
@@ -33,7 +34,7 @@ namespace MRSculpture
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.name != _chisel.name)
+            if (other.gameObject.name != "Chisel")
             {
                 _impactMagnitude = 0.0f;
                 return;
@@ -47,11 +48,16 @@ namespace MRSculpture
                 _impactMagnitude = 0.0f;
                 return;
             }
+            // ハプティクスを再生
+            hapticSource.Play();
+
+            // 衝撃音を再生
+            _audioSource.Play();
         }
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.gameObject.name != _chisel.name)
+            if (other.gameObject.name != "Chisel")
             {
                 return;
             }
