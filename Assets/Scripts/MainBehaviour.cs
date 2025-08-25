@@ -1,5 +1,5 @@
 ﻿using System.IO;
-﻿using Oculus.Haptics;
+using Oculus.Haptics;
 using Unity.Mathematics;
 using UnityEngine;
 
