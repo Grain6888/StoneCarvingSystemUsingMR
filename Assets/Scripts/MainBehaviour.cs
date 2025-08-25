@@ -37,23 +37,73 @@ namespace MRSculpture
         [SerializeField] private GameObject _hammer;
         private ImpactRangeGetter _impactRangeGetter;
         private int _impactRange = 0;
+        private bool _ready = false;
 
 
         private void Awake()
         {
-            string fileName = "voxelDataChunk.dat";
+            _impactRangeGetter = _hammer.GetComponent<ImpactRangeGetter>();
+        }
+
+        public void LoadFile()
+        {
+            _voxelDataChunk.Dispose();
+            _voxelDataChunk = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
+
+            // ローカル → ワールド座標系の変換行列
+            Matrix4x4 localToWorldMatrix = transform.localToWorldMatrix;
+
+            _renderer = new Renderer(_voxelMesh, _voxelMaterial, localToWorldMatrix);
+
+            string fileName = "isfilled.txt";
             string path = Path.Combine(Application.persistentDataPath, fileName);
 
-            _voxelDataChunk = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
             if (File.Exists(path))
             {
                 DataChunk.LoadIsFilledTxt("isfilled.txt", ref _voxelDataChunk);
+
+                for (int y = 0; y < _voxelDataChunk.yLength; y++)
+                {
+                    DataChunk xzLayer = _voxelDataChunk.GetXZLayer(y);
+                    _renderer.AddRenderBuffer(xzLayer, y);
+                }
+
                 Debug.Log("MRSculpture DataChunk loaded from file.");
             }
             else
             {
-                Debug.Log("MRSculpture DataChunk created new.");
+                Debug.Log("MRSculpture DataChunk load failed from file.");
+
+                // 全レイヤ分処理
+                for (int y = 0; y < _voxelDataChunk.yLength; y++)
+                {
+                    DataChunk xzLayer = _voxelDataChunk.GetXZLayer(y);
+
+                    for (int i = 0; i < xzLayer.Length; i++)
+                    {
+                        xzLayer.AddFlag(i, CellFlags.IsFilled);
+                    }
+                    _renderer.AddRenderBuffer(xzLayer, y);
+                }
+
+                Debug.Log("MRSculpture New DataChunk created.");
             }
+
+            _ready = true;
+        }
+
+        public void SaveFile()
+        {
+            string fileName = "isfilled.txt";
+            string path = Path.Combine(Application.persistentDataPath, fileName);
+            _voxelDataChunk.SaveIsFilledTxt("isfilled.txt");
+            Debug.Log("MRSculpture DataChunk saved to file: " + path);
+        }
+
+        public void NewFile()
+        {
+            _voxelDataChunk.Dispose();
+            _voxelDataChunk = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
 
             // ローカル → ワールド座標系の変換行列
             Matrix4x4 localToWorldMatrix = transform.localToWorldMatrix;
@@ -72,11 +122,18 @@ namespace MRSculpture
                 _renderer.AddRenderBuffer(xzLayer, y);
             }
 
-            _impactRangeGetter = _hammer.GetComponent<ImpactRangeGetter>();
+            Debug.Log("MRSculpture New DataChunk created.");
+
+            _ready = true;
         }
 
         private void Update()
         {
+            if (!_ready)
+            {
+                return;
+            }
+
             _impactRange = (int)(_impactRangeGetter.ImpactMagnitude * 5);
 
             Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(_boundsSize.x, _boundsSize.y, _boundsSize.z));

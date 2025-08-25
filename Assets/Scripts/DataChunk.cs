@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
@@ -211,7 +212,6 @@ namespace MRSculpture
             {
                 using (var sw = new StreamWriter(path, false))
                 {
-                    sw.WriteLine($"{xLength},{yLength},{zLength}");
                     for (int i = 0; i < _data.Length; i++)
                     {
                         int value = ((_data[i].status & (uint)CellFlags.IsFilled) != 0) ? 1 : 0;
@@ -237,24 +237,11 @@ namespace MRSculpture
             string path = Path.Combine(UnityEngine.Application.persistentDataPath, fileName);
             using (var sr = new StreamReader(path))
             {
-                // 1行目でサイズ情報を取得
-                string[] sizes = sr.ReadLine().Split(',');
-                int xLength = int.Parse(sizes[0]);
-                int yLength = int.Parse(sizes[1]);
-                int zLength = int.Parse(sizes[2]);
-                int length = xLength * yLength * zLength;
-
-                // サイズが一致しない場合は再生成
-                if (chunk.xLength != xLength || chunk.yLength != yLength || chunk.zLength != zLength || chunk.Length != length)
-                {
-                    if (chunk._data.IsCreated) chunk._data.Dispose();
-                    chunk = new DataChunk(xLength, yLength, zLength);
-                }
-
-                for (int i = 0; i < length; i++)
+                for (int i = 0; i < chunk.Length; i++)
                 {
                     string line = sr.ReadLine();
                     int value = int.Parse(line);
+                    UnityEngine.Debug.Log("value: " + value);
                     if (value == 1)
                     {
                         chunk.AddFlag(i, CellFlags.IsFilled);
