@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 
@@ -199,5 +201,57 @@ namespace MRSculpture
         {
             _data.Dispose();
         }
+
+        /// <summary>
+        /// DataChunkのIsFilled情報をテキストファイルに保存（1: true, 0: false）
+        /// </summary>
+        public void SaveIsFilledTxt(string fileName)
+        {
+            string path = Path.Combine(UnityEngine.Application.persistentDataPath, fileName);
+            try
+            {
+                using (var sw = new StreamWriter(path, false))
+                {
+                    for (int i = 0; i < _data.Length; i++)
+                    {
+                        int value = ((_data[i].status & (uint)CellFlags.IsFilled) != 0) ? 1 : 0;
+                        sw.WriteLine(value);
+                    }
+                    sw.Flush(); // 明示的にフラッシュ
+                }
+                UnityEngine.Debug.Log($"MRSculpture IsFilled info saved: {path}");
+            }
+            catch (Exception ex)
+            {
+                UnityEngine.Debug.LogError($"MRSculpture SaveIsFilledTxt failed: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// テキストファイルからIsFilled情報をロード（1: true, 0: false）
+        /// </summary>
+        /// <param name="fileName">ファイル名</param>
+        /// <param name="chunk">データを格納するDataChunk（refで渡す）</param>
+        public static void LoadIsFilledTxt(string fileName, ref DataChunk chunk)
+        {
+            string path = Path.Combine(UnityEngine.Application.persistentDataPath, fileName);
+            using (var sr = new StreamReader(path))
+            {
+                for (int i = 0; i < chunk.Length; i++)
+                {
+                    string line = sr.ReadLine();
+                    int value = int.Parse(line);
+                    UnityEngine.Debug.Log("value: " + value);
+                    if (value == 1)
+                    {
+                        chunk.AddFlag(i, CellFlags.IsFilled);
+                    }
+                }
+            }
+            UnityEngine.Debug.Log($"MRSculpture IsFilled info loaded: {path}");
+        }
+
+        // _dataへの読み取り専用プロパティ
+        public NativeArray<CellManager> DataArray => _data;
     }
 }
