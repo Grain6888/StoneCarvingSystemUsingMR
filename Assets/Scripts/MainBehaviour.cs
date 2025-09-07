@@ -48,7 +48,7 @@ namespace MRSculpture
             _impactRangeGetter = _hammer.GetComponent<ImpactRangeGetter>();
         }
 
-        public void LoadFile()
+        public async void LoadFile()
         {
             _voxelDataChunk.Dispose();
             _voxelDataChunk = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
@@ -63,7 +63,10 @@ namespace MRSculpture
 
             if (File.Exists(path))
             {
-                DataChunk.LoadIsFilledTxt("isfilled.txt", ref _voxelDataChunk);
+                await System.Threading.Tasks.Task.Run(() =>
+                {
+                    DataChunk.LoadIsFilledTxt("isfilled.txt", ref _voxelDataChunk);
+                });
 
                 for (int y = 0; y < _voxelDataChunk.yLength; y++)
                 {
@@ -95,11 +98,16 @@ namespace MRSculpture
             _ready = true;
         }
 
-        public void SaveFile()
+        public async void SaveFile()
         {
             string fileName = "isfilled.txt";
             string path = Path.Combine(Application.persistentDataPath, fileName);
-            _voxelDataChunk.SaveIsFilledTxt("isfilled.txt");
+
+            await System.Threading.Tasks.Task.Run(() =>
+            {
+                _voxelDataChunk.SaveIsFilledTxt("isfilled.txt");
+            });
+
             Debug.Log("MRSculpture DataChunk saved to file: " + path);
         }
 
