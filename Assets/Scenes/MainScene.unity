@@ -1046,9 +1046,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _boundsSize:
-    x: 50
-    y: 30
-    z: 50
+    x: 100
+    y: 80
+    z: 100
   _voxelMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   _voxelMaterial: {fileID: 2100000, guid: f07cb93e85d10a34798cac9e79536d58, type: 2}
   _impactCenter: {fileID: 202767827}
@@ -2348,7 +2348,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1280939282
 Transform:
   m_ObjectHideFlags: 0
