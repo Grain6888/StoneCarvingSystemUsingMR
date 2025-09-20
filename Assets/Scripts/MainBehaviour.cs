@@ -48,7 +48,7 @@ namespace MRSculpture
             _impactRangeGetter = _hammer.GetComponent<ImpactRangeGetter>();
         }
 
-        public void LoadFile()
+        public async void LoadFile()
         {
             _voxelDataChunk.Dispose();
             _voxelDataChunk = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
@@ -63,7 +63,10 @@ namespace MRSculpture
 
             if (File.Exists(path))
             {
-                DataChunk.LoadIsFilledTxt("isfilled.txt", ref _voxelDataChunk);
+                await System.Threading.Tasks.Task.Run(() =>
+                {
+                    DataChunk.LoadIsFilledTxt("isfilled.txt", ref _voxelDataChunk);
+                });
 
                 for (int y = 0; y < _voxelDataChunk.yLength; y++)
                 {
@@ -95,11 +98,16 @@ namespace MRSculpture
             _ready = true;
         }
 
-        public void SaveFile()
+        public async void SaveFile()
         {
             string fileName = "isfilled.txt";
             string path = Path.Combine(Application.persistentDataPath, fileName);
-            _voxelDataChunk.SaveIsFilledTxt("isfilled.txt");
+
+            await System.Threading.Tasks.Task.Run(() =>
+            {
+                _voxelDataChunk.SaveIsFilledTxt("isfilled.txt");
+            });
+
             Debug.Log("MRSculpture DataChunk saved to file: " + path);
         }
 
@@ -113,14 +121,54 @@ namespace MRSculpture
 
             _renderer = new Renderer(_voxelMesh, _voxelMaterial, localToWorldMatrix);
 
-            // 全レイヤ分処理
+            // 楕円体の中心座標（グリッド中央）
+            float centerX = (_voxelDataChunk.xLength - 1) / 2.0f;
+            float centerY = (_voxelDataChunk.yLength - 1) / 2.0f;
+            float centerZ = (_voxelDataChunk.zLength - 1) / 2.0f;
+
+            // 楕円体の各軸半径
+            float radiusX = _voxelDataChunk.xLength / 2.0f;
+            float radiusY = _voxelDataChunk.yLength / 2.0f;
+            float radiusZ = _voxelDataChunk.zLength / 2.0f;
+
+            // 内側楕円体の各軸半径（最低厚み5ブロック分小さく）
+            float innerRadiusX = Mathf.Max(radiusX - 5.0f, 0.0f);
+            float innerRadiusY = Mathf.Max(radiusY - 5.0f, 0.0f);
+            float innerRadiusZ = Mathf.Max(radiusZ - 5.0f, 0.0f);
+
             for (int y = 0; y < _voxelDataChunk.yLength; y++)
             {
                 DataChunk xzLayer = _voxelDataChunk.GetXZLayer(y);
 
-                for (int i = 0; i < xzLayer.Length; i++)
+                for (int x = 0; x < _voxelDataChunk.xLength; x++)
                 {
-                    xzLayer.AddFlag(i, CellFlags.IsFilled);
+                    for (int z = 0; z < _voxelDataChunk.zLength; z++)
+                    {
+                        // ボクセル中心座標
+                        float voxelX = x + 0.5f;
+                        float voxelY = y + 0.5f;
+                        float voxelZ = z + 0.5f;
+
+                        // 外側楕円体方程式判定
+                        float normX = (voxelX - centerX) / radiusX;
+                        float normY = (voxelY - centerY) / radiusY;
+                        float normZ = (voxelZ - centerZ) / radiusZ;
+                        float ellipsoid = normX * normX + normY * normY + normZ * normZ;
+
+                        // 内側楕円体方程式判定
+                        float innerNormX = innerRadiusX > 0.0f ? (voxelX - centerX) / innerRadiusX : 0.0f;
+                        float innerNormY = innerRadiusY > 0.0f ? (voxelY - centerY) / innerRadiusY : 0.0f;
+                        float innerNormZ = innerRadiusZ > 0.0f ? (voxelZ - centerZ) / innerRadiusZ : 0.0f;
+                        float innerEllipsoid = (innerRadiusX > 0.0f && innerRadiusY > 0.0f && innerRadiusZ > 0.0f)
+                            ? innerNormX * innerNormX + innerNormY * innerNormY + innerNormZ * innerNormZ
+                            : -1.0f; // 半径が0以下の場合は内側判定を無効化
+
+                        // 外側楕円体内かつ内側楕円体外のみ埋める
+                        if (ellipsoid <= 1.0f && innerEllipsoid > 1.0f)
+                        {
+                            xzLayer.AddFlag(x, 0, z, CellFlags.IsFilled);
+                        }
+                    }
                 }
                 _renderer.AddRenderBuffer(xzLayer, y);
             }
@@ -137,7 +185,7 @@ namespace MRSculpture
                 return;
             }
 
-            _impactRange = (int)(_impactRangeGetter.ImpactMagnitude * 5);
+            _impactRange = Mathf.Min(10, (int)(_impactRangeGetter.ImpactMagnitude * 5));
 
             Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(_boundsSize.x, _boundsSize.y, _boundsSize.z));
             Bounds boundingBox = new();
