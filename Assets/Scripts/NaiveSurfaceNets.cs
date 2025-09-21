@@ -27,17 +27,17 @@ public class VoxelMeshGenerator : MonoBehaviour
 
     void FillVoxel(float[] voxel, int size)
     {
-        var center = size / 2f;
+        float center = size / 2f;
         for (int x = 0; x < size; x++)
         {
             for (int y = 0; y < size; y++)
             {
                 for (int z = 0; z < size; z++)
                 {
-                    var dx = x - center;
-                    var dy = y - center;
-                    var dz = z - center;
-                    var dist = Mathf.Sqrt(dx * dx + dy * dy + dz * dz);
+                    float dx = x - center;
+                    float dy = y - center;
+                    float dz = z - center;
+                    float dist = Mathf.Sqrt(dx * dx + dy * dy + dz * dz);
                     voxel[x + y * size + z * size * size] = dist - center * 0.8f; // 球状SDF
                 }
             }
