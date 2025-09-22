@@ -25,20 +25,41 @@ public class VoxelMeshGenerator : MonoBehaviour
         triangles.Dispose();
     }
 
+    //void FillVoxel(float[] voxel, int size)
+    //{
+    //    float center = size / 2f;
+    //    for (int x = 0; x < size; x++)
+    //    {
+    //        for (int y = 0; y < size; y++)
+    //        {
+    //            for (int z = 0; z < size; z++)
+    //            {
+    //                float dx = x - center;
+    //                float dz = z - center;
+    //                float dy = y - center;
+    //                float dist = Mathf.Sqrt(dx * dx + dy * dy + dz * dz);
+    //                voxel[x + z * size + y * size * size] = dist - center * 0.9f; // 球状SDF
+    //            }
+    //        }
+    //    }
+    //}
+
     void FillVoxel(float[] voxel, int size)
     {
         float center = size / 2f;
+        float halfCube = center * 0.9f; // 球と同じく端に接しないように少し小さめ
         for (int x = 0; x < size; x++)
         {
             for (int y = 0; y < size; y++)
             {
                 for (int z = 0; z < size; z++)
                 {
-                    float dx = x - center;
-                    float dy = y - center;
-                    float dz = z - center;
-                    float dist = Mathf.Sqrt(dx * dx + dy * dy + dz * dz);
-                    voxel[x + y * size + z * size * size] = dist - center * 0.8f; // 球状SDF
+                    float dx = Mathf.Abs(x - center);
+                    float dy = Mathf.Abs(y - center);
+                    float dz = Mathf.Abs(z - center);
+                    // 立方体SDF: max(|dx|, |dy|, |dz|) - halfCube
+                    float dist = Mathf.Max(dx, Mathf.Max(dy, dz)) - halfCube;
+                    voxel[x + z * size + y * size * size] = dist;
                 }
             }
         }
