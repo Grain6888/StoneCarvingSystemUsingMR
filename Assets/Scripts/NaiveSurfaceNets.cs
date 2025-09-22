@@ -14,7 +14,10 @@ public class VoxelMeshGenerator : MonoBehaviour
 
         Execute(voxel, size, out NativeArray<Vector3> vertices, out NativeArray<int> triangles);
 
-        Mesh mesh = new();
+        Mesh mesh = new()
+        {
+            indexFormat = UnityEngine.Rendering.IndexFormat.UInt32
+        };
         mesh.SetVertices(vertices);
         mesh.SetIndices(triangles, MeshTopology.Triangles, 0);
         mesh.RecalculateNormals();
@@ -178,7 +181,9 @@ public class VoxelMeshGenerator : MonoBehaviour
         idxBuf.Dispose();
 
         vertices = vertexBuf.GetSubArray(0, vertexCount);
+        Debug.Log("vertexCount: " + vertexCount);
         triangles = triangleBuf.GetSubArray(0, triangleCount);
+        Debug.Log("triangleCount: " + triangleCount);
     }
 
     // v0, v1, v2, v3から構築される面を追加する
