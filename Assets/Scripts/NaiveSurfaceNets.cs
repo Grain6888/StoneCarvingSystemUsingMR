@@ -89,6 +89,10 @@ public class VoxelMeshGenerator : MonoBehaviour
                     {
                         voxel[x + z * size + y * size * size] = dist;
                     }
+                    else
+                    {
+                        voxel[x + z * size + y * size * size] = 1.0f;
+                    }
                 }
             }
         }
