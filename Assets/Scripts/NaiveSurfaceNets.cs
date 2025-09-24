@@ -19,13 +19,6 @@ public class VoxelMeshGenerator : MonoBehaviour
         {
             indexFormat = UnityEngine.Rendering.IndexFormat.UInt32
         };
-    }
-
-    private int frameCount = 0;
-    private void Update()
-    {
-        frameCount++;
-        if (frameCount % 30 != 0) return;
 
         FillVoxel(voxel, size);
         Execute(voxel, size, out vertices, out triangles);
@@ -36,6 +29,22 @@ public class VoxelMeshGenerator : MonoBehaviour
 
         meshFilter.mesh = mesh;
     }
+
+    //private int frameCount = 0;
+    //private void Update()
+    //{
+    //    frameCount++;
+    //    if (frameCount % 30 != 0) return;
+
+    //    FillVoxel(voxel, size);
+    //    Execute(voxel, size, out vertices, out triangles);
+
+    //    mesh.SetVertices(vertices);
+    //    mesh.SetIndices(triangles, MeshTopology.Triangles, 0);
+    //    mesh.RecalculateNormals();
+
+    //    meshFilter.mesh = mesh;
+    //}
 
     //void FillVoxel(float[] voxel, int size)
     //{
@@ -59,7 +68,10 @@ public class VoxelMeshGenerator : MonoBehaviour
     void FillVoxel(float[] voxel, int size)
     {
         float center = size / 2f;
-        float halfCube = center * 0.9f; // 球と同じく端に接しないように少し小さめ
+        float halfCube = center * 0.9f;
+
+        float radius = center * 0.8f;
+
         for (int x = 0; x < size; x++)
         {
             for (int y = 0; y < size; y++)
@@ -69,9 +81,14 @@ public class VoxelMeshGenerator : MonoBehaviour
                     float dx = Mathf.Abs(x - center);
                     float dy = Mathf.Abs(y - center);
                     float dz = Mathf.Abs(z - center);
+                    float sphereDist = Mathf.Sqrt(dx * dx + dy * dy + dz * dz);
                     // 立方体SDF: max(|dx|, |dy|, |dz|) - halfCube
                     float dist = Mathf.Max(dx, Mathf.Max(dy, dz)) - halfCube;
-                    voxel[x + z * size + y * size * size] = dist;
+
+                    if (sphereDist <= radius)
+                    {
+                        voxel[x + z * size + y * size * size] = dist;
+                    }
                 }
             }
         }
