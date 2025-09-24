@@ -6,26 +6,35 @@ public class VoxelMeshGenerator : MonoBehaviour
     [SerializeField] private int size = 32;
     private float[] voxel;
     [SerializeField] private MeshFilter meshFilter;
+    private Mesh mesh;
+    private NativeArray<Vector3> vertices;
+    private NativeArray<int> triangles;
 
-    void Start()
+    private void Awake()
     {
         voxel = new float[size * size * size];
         FillVoxel(voxel, size); // 任意のSDFデータを生成
 
-        Execute(voxel, size, out NativeArray<Vector3> vertices, out NativeArray<int> triangles);
-
-        Mesh mesh = new()
+        mesh = new Mesh
         {
             indexFormat = UnityEngine.Rendering.IndexFormat.UInt32
         };
+    }
+
+    private int frameCount = 0;
+    private void Update()
+    {
+        frameCount++;
+        if (frameCount % 30 != 0) return;
+
+        FillVoxel(voxel, size);
+        Execute(voxel, size, out vertices, out triangles);
+
         mesh.SetVertices(vertices);
         mesh.SetIndices(triangles, MeshTopology.Triangles, 0);
         mesh.RecalculateNormals();
 
         meshFilter.mesh = mesh;
-
-        vertices.Dispose();
-        triangles.Dispose();
     }
 
     //void FillVoxel(float[] voxel, int size)
@@ -269,4 +278,10 @@ public class VoxelMeshGenerator : MonoBehaviour
         new int[] { 2, 6 },
         new int[] { 3, 7 },
     };
+
+    private void OnDestroy()
+    {
+        vertices.Dispose();
+        triangles.Dispose();
+    }
 }
