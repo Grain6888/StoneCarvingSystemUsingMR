@@ -70,7 +70,7 @@ public class VoxelMeshGenerator : MonoBehaviour
         float center = size / 2f;
         float halfCube = center * 0.9f;
 
-        float radius = center * 0.8f;
+        float radius = center * 0.9f;
 
         for (int x = 0; x < size; x++)
         {
