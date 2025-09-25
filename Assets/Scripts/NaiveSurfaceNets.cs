@@ -78,6 +78,10 @@ public class VoxelMeshGenerator : MonoBehaviour
             {
                 for (int z = 0; z < size; z++)
                 {
+                    if (x > size * 0.45 && x < size * 0.55) continue;
+                    if (y > size * 0.45 && y < size * 0.55) continue;
+                    if (z > size * 0.45 && z < size * 0.55) continue;
+
                     float dx = Mathf.Abs(x - center);
                     float dy = Mathf.Abs(y - center);
                     float dz = Mathf.Abs(z - center);
