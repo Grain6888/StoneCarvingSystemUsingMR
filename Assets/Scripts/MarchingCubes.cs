@@ -43,6 +43,10 @@ public class MarchingCubes : MonoBehaviour
             {
                 for (int z = 0; z < size; z++)
                 {
+                    if (Mathf.Abs(x - y) < 7.0f) continue;
+                    if (Mathf.Abs(x - z) < 7.0f) continue;
+                    if (Mathf.Abs(y - z) < 7.0f) continue;
+
                     float dx = Mathf.Abs(x - center);
                     float dy = Mathf.Abs(y - center);
                     float dz = Mathf.Abs(z - center);
