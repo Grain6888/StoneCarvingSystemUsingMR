@@ -193,13 +193,13 @@ namespace MRSculpture
             bool outside = (kind & 1) != 0;
 
             // 面を構築する頂点を取り出す
+            // v6は対角線状の頂点なので面張りしない
             int v0 = indexBuffer[ToIndexNegative(x, y, z, 0, in size)];
             int v1 = indexBuffer[ToIndexNegative(x, y, z, 1, in size)];
             int v2 = indexBuffer[ToIndexNegative(x, y, z, 2, in size)];
             int v3 = indexBuffer[ToIndexNegative(x, y, z, 3, in size)];
             int v4 = indexBuffer[ToIndexNegative(x, y, z, 4, in size)];
             int v5 = indexBuffer[ToIndexNegative(x, y, z, 5, in size)];
-            //int v6 = indexBuffer[ToIndexNegative(x, y, z, 6, size)]; // 使われない
             int v7 = indexBuffer[ToIndexNegative(x, y, z, 7, in size)];
 
             // ビットマスクから2ビット目(1の位置の点の状態)を取り出す
@@ -302,16 +302,16 @@ namespace MRSculpture
         // 辺のつながり方
         static readonly int[][] edgeTable = new int[][]
         {
-        //    ●←----6----●
-        //   7↑         ↗↑
-        //  ↙ |        5 |
-        // ●----4----→●  |
-        // ↑ 11       ↑  10
-        // |  |       |  |
-        // |  ○←----2-|--●
-        // 8 3        9 ↗
-        // |↙         |1
-        // ●----0----→●
+        //     ●←----0----●
+        //    1|         ↗|
+        //   ↙ |        3 |
+        //  ●----2----→●  |
+        //  |  9       |  8
+        //  |  ↓       |  ↓
+        //  |  ○←----4-|--●
+        // 10 5       11 ↗
+        //  ↓↙         ↓7
+        //  ●----6----→●
         new int[] { 0, 1 }, // 0 
         new int[] { 1, 2 }, // 1 
         new int[] { 2, 3 }, // 2 
