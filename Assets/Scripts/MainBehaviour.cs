@@ -35,7 +35,6 @@ namespace MRSculpture
         [SerializeField] private GameObject _impactCenter;
         [SerializeField] private Transform _mainBehaviourTransform;
         [SerializeField] private GameObject _chisel;
-        [SerializeField] private GameObject _chiselGrabPoint;
         [SerializeField] private GameObject _hammer;
         private ImpactRangeGetter _impactRangeGetter;
         public HapticSource hapticSource;
@@ -44,6 +43,9 @@ namespace MRSculpture
         private bool _ready = false;
         private bool _isTriggered = false;
 
+        // フィールドとして宣言
+        private Vector3Int _center;
+        private Vector3 _impactCenterLocalPosition;
 
         private void Awake()
         {
@@ -183,9 +185,7 @@ namespace MRSculpture
         private void Update()
         {
             if (!_ready)
-            {
                 return;
-            }
 
             _impactRange = Mathf.Min(10, (int)(_impactRangeGetter.ImpactMagnitude * 5));
 
@@ -196,7 +196,40 @@ namespace MRSculpture
             // 破壊中心のワールド座標を取得
             Vector3 impactCenterWorldPosition = _impactCenter.transform.position;
             // 破壊中心のワールド座標を、MainBehaviourのローカル座標系に変換
-            Vector3 _impactCenterLocalPosition = _mainBehaviourTransform.InverseTransformPoint(impactCenterWorldPosition);
+            Vector3 currentImpactCenterLocalPosition = _mainBehaviourTransform.InverseTransformPoint(impactCenterWorldPosition);
+
+
+            // トリガーが押された瞬間だけcenterを上書き
+            if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch) && !_isTriggered)
+            {
+                _isTriggered = true;
+                _impactCenterLocalPosition = currentImpactCenterLocalPosition;
+                _center = new Vector3Int(
+                    Mathf.RoundToInt(_impactCenterLocalPosition.x),
+                    Mathf.RoundToInt(_impactCenterLocalPosition.y),
+                    Mathf.RoundToInt(_impactCenterLocalPosition.z)
+                );
+                OnPressedLeftPrimaryIndexTrigger(ref _center, ref _impactCenterLocalPosition);
+            }
+            // トリガーが離されたらリアルタイム追従に戻す
+            if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch) && _isTriggered)
+            {
+                _isTriggered = false;
+            }
+
+            // トリガーを押していない間はリアルタイムでcenterを更新
+            if (!_isTriggered)
+            {
+                _impactCenterLocalPosition = currentImpactCenterLocalPosition;
+                _center = new Vector3Int(
+                    Mathf.RoundToInt(_impactCenterLocalPosition.x),
+                    Mathf.RoundToInt(_impactCenterLocalPosition.y),
+                    Mathf.RoundToInt(_impactCenterLocalPosition.z)
+                );
+            }
+
+            // 以降、_centerと_impactCenterLocalPositionを使って処理
+
             // 破壊中心位置を基準に、最も近いボクセルグリッド座標（整数）を算出
             Vector3Int center = new(
                 Mathf.RoundToInt(_impactCenterLocalPosition.x),
@@ -205,7 +238,7 @@ namespace MRSculpture
             );
             if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch) && !_isTriggered)
             {
-                OnPressedLeftPrimaryIndexTrigger(ref center, _impactCenterLocalPosition);
+                OnPressedLeftPrimaryIndexTrigger(ref center, ref _impactCenterLocalPosition);
             }
 
             if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch) && _isTriggered)
@@ -268,7 +301,7 @@ namespace MRSculpture
             _renderer.RenderMeshes(new Bounds(boundingBoxSize * 0.5f, boundingBoxSize));
         }
 
-        private void OnPressedLeftPrimaryIndexTrigger(ref Vector3Int center, Vector3 centerLocalPosition)
+        private void OnPressedLeftPrimaryIndexTrigger(ref Vector3Int center, ref Vector3 centerLocalPosition)
         {
             _isTriggered = true;
             // y層のXZレイヤを取得
@@ -294,21 +327,23 @@ namespace MRSculpture
                 }
             }
             center = nearest;
+            //centerLocalPosition = new Vector3(0.0f, 0.0f, 0.0f);
 
-            // nearestの中心座標（ローカル→ワールド変換）
-            Vector3 nearestCenterLocal = new Vector3(nearest.x + 0.5f, nearest.y + 0.5f, nearest.z + 0.5f);
-            Vector3 nearestCenterWorld = transform.TransformPoint(nearestCenterLocal);
 
-            // centerLocalPositionもワールド座標に変換
-            Vector3 centerWorld = transform.TransformPoint(centerLocalPosition);
+            //// nearestの中心座標（ローカル→ワールド変換）
+            //Vector3 nearestCenterLocal = new Vector3(nearest.x + 0.5f, nearest.y + 0.5f, nearest.z + 0.5f);
+            //Vector3 nearestCenterWorld = transform.TransformPoint(nearestCenterLocal);
 
-            // centerWorldからnearestCenterWorldへの方向ベクトル
-            Vector3 dir = (nearestCenterWorld - centerWorld).normalized;
+            //// centerLocalPositionもワールド座標に変換
+            //Vector3 centerWorld = transform.TransformPoint(centerLocalPosition);
 
-            // centerWorldから0.05mだけnearestCenterWorld方向に進めた位置
-            Vector3 grabPointWorldPos = centerWorld + dir * 0.0f;
+            //// centerWorldからnearestCenterWorldへの方向ベクトル
+            //Vector3 dir = (nearestCenterWorld - centerWorld).normalized;
 
-            _chiselGrabPoint.transform.position = grabPointWorldPos;
+            //// centerWorldから0.05mだけnearestCenterWorld方向に進めた位置
+            //Vector3 impactCenterWorldPos = centerWorld + dir * 0.05f;
+
+            //_impactCenter.transform.position = impactCenterWorldPos;
         }
 
         private void OnDestroy()
