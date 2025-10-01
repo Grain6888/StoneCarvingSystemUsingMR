@@ -111,11 +111,7 @@ namespace MRSculpture
             {
                 for (int z = 0; z < size.z - 1; z++)
                 {
-                    if (!MakeVertex(in voxel, in size, x, y, z, out int kind, out Vector3 vertex)) continue;
-
-                    vertexBuffer[vertexCount] = vertex;
-                    indexBuffer[ToIndexPositive(x, y, z, 0, in size)] = vertexCount;
-                    vertexCount++;
+                    if (!MakeVertex(in voxel, in size, x, y, z, ref indexBuffer, ref vertexBuffer, ref vertexCount, out int kind)) continue;
 
                     MakeSurface(x, y, z, in size, kind, in indexBuffer, ref triangleBuffer, ref triangleCount);
                 }
@@ -127,8 +123,10 @@ namespace MRSculpture
             in NativeArray<float> voxel,
             in int3 size,
             int x, int y, int z,
-            out int kind,
-            out Vector3 vertex)
+            ref NativeArray<int> indexBuffer,
+            ref NativeArray<Vector3> vertexBuffer,
+            ref int vertexCount,
+            out int kind)
         {
             kind = 0b0000000;
             // ビットマスクで8つの点の状態を記憶
@@ -141,12 +139,11 @@ namespace MRSculpture
             // 8つの点がすべて外側(00000000)またはすべて内側(11111111)の場合はスキップ
             if (kind == 0b00000000 || kind == 0b11111111)
             {
-                vertex = Vector3.zero;
                 return false;
             }
 
             // 頂点位置の計算
-            vertex = Vector3.zero;
+            Vector3 vertex = Vector3.zero;
             int crossCount = 0;
             // 現在焦点を当てている立方体上の辺をすべて列挙
             for (int i = 0; i < 12; i++)
@@ -174,6 +171,11 @@ namespace MRSculpture
             }
 
             vertex /= crossCount;
+
+            vertexBuffer[vertexCount] = vertex;
+            indexBuffer[ToIndexPositive(x, y, z, 0, in size)] = vertexCount;
+            vertexCount++;
+
             return true;
         }
 
