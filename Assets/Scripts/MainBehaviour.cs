@@ -35,12 +35,14 @@ namespace MRSculpture
         [SerializeField] private GameObject _impactCenter;
         [SerializeField] private Transform _mainBehaviourTransform;
         [SerializeField] private GameObject _chisel;
+        [SerializeField] private GameObject _chiselGrabPoint;
         [SerializeField] private GameObject _hammer;
         private ImpactRangeGetter _impactRangeGetter;
         public HapticSource hapticSource;
         [SerializeField] private AudioSource _audioSource;
         private int _impactRange = 0;
         private bool _ready = false;
+        private bool _isTriggered = false;
 
 
         private void Awake()
@@ -201,57 +203,112 @@ namespace MRSculpture
                 Mathf.RoundToInt(_impactCenterLocalPosition.y),
                 Mathf.RoundToInt(_impactCenterLocalPosition.z)
             );
-
-            // X方向の探索範囲（visibleDistance分だけ前後に拡張、範囲外はクランプ）
-            int minX = Mathf.Max(0, center.x - _impactRange);
-            int maxX = Mathf.Min(_voxelDataChunk.xLength - 1, center.x + _impactRange);
-            // Y方向の探索範囲
-            int minY = Mathf.Max(0, center.y - _impactRange);
-            int maxY = Mathf.Min(_voxelDataChunk.yLength - 1, center.y + _impactRange);
-            // Z方向の探索範囲
-            int minZ = Mathf.Max(0, center.z - _impactRange);
-            int maxZ = Mathf.Min(_voxelDataChunk.zLength - 1, center.z + _impactRange);
-
-            // 距離判定用にvisibleDistanceの2乗を事前計算（パフォーマンス向上のため）
-            float sqrVisibleDistance = _impactRange * _impactRange;
-
-            // 各XZレイヤごとに処理
-            for (int y = minY; y <= maxY; y++)
+            if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch) && !_isTriggered)
             {
-                // Y層のXZ平面のDataChunkを取得
-                DataChunk xzLayer = _voxelDataChunk.GetXZLayer(y);
-                bool layerBufferNeedsUpdate = false; // レンダーバッファ更新が必要かどうか
+                OnPressedLeftPrimaryIndexTrigger(ref center, _impactCenterLocalPosition);
+            }
 
-                // X方向の範囲をループ
-                for (int x = minX; x <= maxX; x++)
+            if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch) && _isTriggered)
+            {
+                _isTriggered = false;
+            }
+
+            if (_isTriggered)
+            {
+                // X方向の探索範囲（visibleDistance分だけ前後に拡張、範囲外はクランプ）
+                int minX = Mathf.Max(0, center.x - _impactRange);
+                int maxX = Mathf.Min(_voxelDataChunk.xLength - 1, center.x + _impactRange);
+                // Y方向の探索範囲
+                int minY = Mathf.Max(0, center.y - _impactRange);
+                int maxY = Mathf.Min(_voxelDataChunk.yLength - 1, center.y + _impactRange);
+                // Z方向の探索範囲
+                int minZ = Mathf.Max(0, center.z - _impactRange);
+                int maxZ = Mathf.Min(_voxelDataChunk.zLength - 1, center.z + _impactRange);
+
+                // 距離判定用にvisibleDistanceの2乗を事前計算（パフォーマンス向上のため）
+                float sqrVisibleDistance = _impactRange * _impactRange;
+
+                // 各XZレイヤごとに処理
+                for (int y = minY; y <= maxY; y++)
                 {
-                    // Z方向の範囲をループ
-                    for (int z = minZ; z <= maxZ; z++)
+                    // Y層のXZ平面のDataChunkを取得
+                    DataChunk xzLayer = _voxelDataChunk.GetXZLayer(y);
+                    bool layerBufferNeedsUpdate = false; // レンダーバッファ更新が必要かどうか
+
+                    // X方向の範囲をループ
+                    for (int x = minX; x <= maxX; x++)
                     {
-                        // セルのローカル空間での中心座標を計算（各軸+0.5でセル中心）
-                        Vector3 cellLocalPos = new(x + 0.5f, y + 0.5f, z + 0.5f);
+                        // Z方向の範囲をループ
+                        for (int z = minZ; z <= maxZ; z++)
+                        {
+                            // セルのローカル空間での中心座標を計算（各軸+0.5でセル中心）
+                            Vector3 cellLocalPos = new(x + 0.5f, y + 0.5f, z + 0.5f);
 
-                        // 破壊中心との距離がvisibleDistance以内か判定
-                        if ((cellLocalPos - _impactCenterLocalPosition).sqrMagnitude > sqrVisibleDistance)
-                            continue; // 範囲外ならスキップ
+                            // 破壊中心との距離がvisibleDistance以内か判定
+                            if ((cellLocalPos - center).sqrMagnitude > sqrVisibleDistance)
+                                continue; // 範囲外ならスキップ
 
-                        // ハプティクスを再生
-                        hapticSource.Play();
-                        // 破壊音を再生
-                        _audioSource.Play();
-                        // 対象セルからIsFilledフラグを削除
-                        xzLayer.RemoveFlag(x, 0, z, CellFlags.IsFilled);
-                        layerBufferNeedsUpdate = true; // このレイヤーのバッファ更新が必要
+                            // ハプティクスを再生
+                            hapticSource.Play();
+                            // 破壊音を再生
+                            _audioSource.Play();
+                            // 対象セルからIsFilledフラグを削除
+                            xzLayer.RemoveFlag(x, 0, z, CellFlags.IsFilled);
+                            layerBufferNeedsUpdate = true; // このレイヤーのバッファ更新が必要
+                        }
                     }
-                }
-                // 現在のレイヤに含まれる何らかのセルが更新された場合のみレンダーバッファを更新
-                if (layerBufferNeedsUpdate)
-                {
-                    _renderer.UpdateRenderBuffer(xzLayer, y);
+                    // 現在のレイヤに含まれる何らかのセルが更新された場合のみレンダーバッファを更新
+                    if (layerBufferNeedsUpdate)
+                    {
+                        _renderer.UpdateRenderBuffer(xzLayer, y);
+                    }
                 }
             }
 
             _renderer.RenderMeshes(new Bounds(boundingBoxSize * 0.5f, boundingBoxSize));
+        }
+
+        private void OnPressedLeftPrimaryIndexTrigger(ref Vector3Int center, Vector3 centerLocalPosition)
+        {
+            _isTriggered = true;
+            // y層のXZレイヤを取得
+            int y = Mathf.Clamp(center.y, 0, _voxelDataChunk.yLength - 1);
+            DataChunk xzLayer = _voxelDataChunk.GetXZLayer(y);
+
+            Vector3Int nearest = center;
+            float minDistSqr = float.MaxValue;
+            for (int x = 0; x < _voxelDataChunk.xLength; x++)
+            {
+                for (int z = 0; z < _voxelDataChunk.zLength; z++)
+                {
+                    if (xzLayer.HasFlag(x, 0, z, CellFlags.IsFilled))
+                    {
+                        Vector3 voxelPos = new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);
+                        float distSqr = (voxelPos - centerLocalPosition).sqrMagnitude;
+                        if (distSqr < minDistSqr)
+                        {
+                            minDistSqr = distSqr;
+                            nearest = new Vector3Int(x, y, z);
+                        }
+                    }
+                }
+            }
+            center = nearest;
+
+            // nearestの中心座標（ローカル→ワールド変換）
+            Vector3 nearestCenterLocal = new Vector3(nearest.x + 0.5f, nearest.y + 0.5f, nearest.z + 0.5f);
+            Vector3 nearestCenterWorld = transform.TransformPoint(nearestCenterLocal);
+
+            // centerLocalPositionもワールド座標に変換
+            Vector3 centerWorld = transform.TransformPoint(centerLocalPosition);
+
+            // centerWorldからnearestCenterWorldへの方向ベクトル
+            Vector3 dir = (nearestCenterWorld - centerWorld).normalized;
+
+            // centerWorldから0.05mだけnearestCenterWorld方向に進めた位置
+            Vector3 grabPointWorldPos = centerWorld + dir * 0.0f;
+
+            _chiselGrabPoint.transform.position = grabPointWorldPos;
         }
 
         private void OnDestroy()
