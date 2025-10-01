@@ -21,16 +21,18 @@ public class VoxelMeshGenerator : MonoBehaviour
             indexFormat = UnityEngine.Rendering.IndexFormat.UInt32
         };
 
-        // 頂点・三角形バッファを最大サイズで確保
-        var maxVerts = _boundsSize.x * _boundsSize.y * _boundsSize.z;
-        var maxTris = maxVerts * 18;
+        // 頂点バッファサイズ
+        int maxVertexBufferSize = _boundsSize.x * _boundsSize.y * _boundsSize.z;
+        // 三角面バッファサイズ
+        int maxTriangleBufferSize = _boundsSize.x * _boundsSize.y * _boundsSize.z * 18;
+
         // 頂点位置->頂点番号を記憶する配列
-        NativeArray<int> indexBuffer = new(maxVerts, Allocator.Temp);
+        NativeArray<int> indexBuffer = new(maxVertexBufferSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
         // 頂点配列
-        NativeArray<Vector3> vertexBuffer = new(maxVerts, Allocator.Temp);
+        NativeArray<Vector3> vertexBuffer = new(maxVertexBufferSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
         // 三角面の配列
         // サイズを余分に確保し，最後に不要な部分を切り落とす
-        NativeArray<int> triangleBuffer = new(maxTris, Allocator.Temp);
+        NativeArray<int> triangleBuffer = new(maxTriangleBufferSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
         // 頂点の総数
         int vertexCount = 0;
         // 三角面の総数
@@ -103,14 +105,11 @@ public class VoxelMeshGenerator : MonoBehaviour
             {
                 for (int z = 0; z < size.z; z++)
                 {
-                    if (Mathf.Abs(x - y) < 7.0f)
+                    if (Mathf.Abs(x - y) < 7.0f || Mathf.Abs((size.x - x) - y) < 7.0f)
                     {
                         voxel[x + z * size.x + y * size.x * size.z] = 1.0f;
                         continue;
                     }
-                    //if (Mathf.Abs((size.x - x) - y) < 7.0f) continue;
-                    //if (Mathf.Abs(x - z) < 7.0f) continue;
-                    //if (Mathf.Abs(y - z) < 7.0f) continue;
 
                     float dx = (x - centerX) / rx;
                     float dy = (y - centerY) / ry;
