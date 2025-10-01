@@ -12,10 +12,7 @@ public class VoxelMeshGenerator : MonoBehaviour
 
     private void Start()
     {
-        int sx = _boundsSize.x;
-        int sy = _boundsSize.y;
-        int sz = _boundsSize.z;
-        voxel = new NativeArray<float>(sx * sy * sz, Allocator.Persistent);
+        voxel = new NativeArray<float>(_boundsSize.x * _boundsSize.y * _boundsSize.z, Allocator.Persistent);
         FillVoxel(voxel, _boundsSize);
 
         mesh = new Mesh

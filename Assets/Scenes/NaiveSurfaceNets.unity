@@ -1075,7 +1075,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9f6280ca1aef414c86c25fd1b391323, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _boundsSize: {x: 128, y: 128, z: 64}
+  _boundsSize: {x: 128, y: 128, z: 128}
   meshFilter: {fileID: 794636587}
 --- !u!4 &794636586
 Transform:
