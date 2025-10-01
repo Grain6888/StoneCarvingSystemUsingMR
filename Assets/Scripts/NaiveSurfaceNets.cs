@@ -1,6 +1,8 @@
 ﻿using Unity.Collections;
 using UnityEngine;
 using Unity.Mathematics;
+using Unity.Jobs;
+using MRSculpture.Job;
 
 namespace MRSculpture
 {
@@ -29,12 +31,11 @@ namespace MRSculpture
             int maxTriangleBufferSize = _boundsSize.x * _boundsSize.y * _boundsSize.z * 18;
 
             // 頂点位置->頂点番号を記憶する配列
-            NativeArray<int> indexBuffer = new(maxVertexBufferSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
+            NativeArray<int> indexBuffer = new(maxVertexBufferSize, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
             // 頂点配列
-            NativeArray<Vector3> vertexBuffer = new(maxVertexBufferSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
+            NativeArray<Vector3> vertexBuffer = new(maxVertexBufferSize, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
             // 三角面の配列
-            // サイズを余分に確保し，最後に不要な部分を切り落とす
-            NativeArray<int> triangleBuffer = new(maxTriangleBufferSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
+            NativeArray<int> triangleBuffer = new(maxTriangleBufferSize, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
             // 頂点の総数
             int vertexCount = 0;
             // 三角面の総数
@@ -73,8 +74,8 @@ namespace MRSculpture
                     {
                         if (Mathf.Abs(x - y) < 7.0f || Mathf.Abs((size.x - x) - y) < 7.0f)
                         {
-                            voxel[x + z * size.x + y * size.x * size.z] = 1.0f;
-                            continue;
+                            //voxel[x + z * size.x + y * size.x * size.z] = 1.0f;
+                            //continue;
                         }
 
                         float dx = (x - centerX) / rx;
@@ -111,9 +112,24 @@ namespace MRSculpture
             {
                 for (int z = 0; z < size.z - 1; z++)
                 {
-                    if (!MakeVertex(in voxel, in size, x, y, z, ref indexBuffer, ref vertexBuffer, ref vertexCount, out int kind)) continue;
+                    //if (!MakeVertex(in voxel, in size, x, y, z, ref indexBuffer, ref vertexBuffer, ref vertexCount, out int kind)) continue;
 
-                    MakeSurface(x, y, z, in size, kind, in indexBuffer, ref triangleBuffer, ref triangleCount);
+                    //MakeSurface(x, y, z, in size, kind, in indexBuffer, ref triangleBuffer, ref triangleCount);
+
+                    JobHandle handle = new NaiveSurfaceNetJob()
+                    {
+                        voxel = voxel,
+                        size = size,
+                        indexBuffer = indexBuffer,
+                        vertexBuffer = vertexBuffer,
+                        triangleBuffer = triangleBuffer,
+                        yLayer = y,
+                        maxVertexBufferSize = indexBuffer.Length,
+                        maxTriangleBufferSize = triangleBuffer.Length,
+                        vertexCount = vertexCount,
+                        triangleCount = triangleCount
+                    }.Schedule();
+                    handle.Complete();
                 }
             }
         }
