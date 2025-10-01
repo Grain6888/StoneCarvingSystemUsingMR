@@ -1,5 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Drawing;
 using Unity.Collections;
+using UnityEngine;
 
 public class VoxelMeshGenerator : MonoBehaviour
 {
@@ -20,8 +21,29 @@ public class VoxelMeshGenerator : MonoBehaviour
             indexFormat = UnityEngine.Rendering.IndexFormat.UInt32
         };
 
-        FillVoxel(voxel, _boundsSize);
-        Execute(voxel, _boundsSize, out vertices, out triangles);
+        // 頂点・三角形バッファを最大サイズで確保
+        var maxVerts = _boundsSize.x * _boundsSize.y * _boundsSize.z;
+        var maxTris = maxVerts * 18;
+        // 頂点位置->頂点番号を記憶する配列
+        NativeArray<int> indexBuffer = new(maxVerts, Allocator.Temp);
+        // 頂点配列
+        NativeArray<Vector3> vertexBuffer = new(maxVerts, Allocator.Temp);
+        // 三角面の配列
+        // サイズを余分に確保し，最後に不要な部分を切り落とす
+        NativeArray<int> triangleBuffer = new(maxTris, Allocator.Temp);
+        // 頂点の総数
+        int vertexCount = 0;
+        // 三角面の総数
+        int triangleCount = 0;
+
+        // y軸ごとにExecuteLayerを呼び出し
+        for (int y = 0; y < _boundsSize.y - 1; y++)
+        {
+            ExecuteLayer(voxel, _boundsSize, y, indexBuffer, vertexBuffer, triangleBuffer, ref vertexCount, ref triangleCount);
+        }
+
+        vertices = vertexBuffer.GetSubArray(0, vertexCount);
+        triangles = triangleBuffer.GetSubArray(0, triangleCount);
 
         mesh.SetVertices(vertices);
         mesh.SetIndices(triangles, MeshTopology.Triangles, 0);
@@ -110,127 +132,105 @@ public class VoxelMeshGenerator : MonoBehaviour
         }
     }
 
-    public void Execute(NativeArray<float> voxel, Vector3Int size, out NativeArray<Vector3> vertices, out NativeArray<int> triangles)
+    public void ExecuteLayer(NativeArray<float> voxel, Vector3Int size, int y, NativeArray<int> indexBuffer, NativeArray<Vector3> vertexBuffer, NativeArray<int> triangleBuffer, ref int vertexCount, ref int triangleCount)
     {
-        // 頂点位置->頂点番号を記憶する配列
-        NativeArray<int> indexBuffer = new(size.x * size.y * size.z, Allocator.Temp);
-        // 頂点配列
-        NativeArray<Vector3> vertexBuffer = new(size.x * size.y * size.z, Allocator.Temp);
-        // 三角面の配列
-        // サイズを余分に確保し，最後に不要な部分を切り落とす
-        NativeArray<int> triangleBuffer = new(size.x * size.y * size.z * 18, Allocator.Temp);
-        // 頂点の総数
-        int vertexCount = 0;
-        // 三角面の総数
-        int triangleCount = 0;
-
         for (int x = 0; x < size.x - 1; x++)
         {
-            for (int y = 0; y < size.y - 1; y++)
+            for (int z = 0; z < size.z - 1; z++)
             {
-                for (int z = 0; z < size.z - 1; z++)
+                // ビットマスクで8つの点の状態を記憶
+                // iの位置の点が内側ならばi + 1番目のビットを立てる
+                // 頂点の位置と番号の対応は次のように決める
+                //          7----6
+                //         /|   /|
+                //        4----5 |
+                //        | 3--|-2
+                //        |/   |/
+                // (x,y,z)0----1
+                int kind = 0b0000000;
+                for (int i = 0; i < 8; i++)
                 {
-                    // ビットマスクで8つの点の状態を記憶
-                    // iの位置の点が内側ならばi + 1番目のビットを立てる
-                    // 頂点の位置と番号の対応は次のように決める
-                    //          7----6
-                    //         /|   /|
-                    //        4----5 |
-                    //        | 3--|-2
-                    //        |/   |/
-                    // (x,y,z)0----1
-                    int kind = 0b0000000;
-                    for (int i = 0; i < 8; i++)
-                    {
-                        if (0 > voxel[ToIndexPositive(x, y, z, i, size)]) kind |= 1 << i;
-                    }
+                    if (0 > voxel[ToIndexPositive(x, y, z, i, size)]) kind |= 1 << i;
+                }
 
-                    // 8つの点がすべて外側(00000000)またはすべて内側(11111111)の場合はスキップ
-                    if (kind == 0b00000000 || kind == 0b11111111) continue;
+                // 8つの点がすべて外側(00000000)またはすべて内側(11111111)の場合はスキップ
+                if (kind == 0b00000000 || kind == 0b11111111) continue;
 
-                    // 頂点の位置を算出
-                    Vector3 vertex = Vector3.zero;
-                    int crossCount = 0;
+                // 頂点の位置を算出
+                Vector3 vertex = Vector3.zero;
+                int crossCount = 0;
 
-                    // 現在焦点を当てている立方体上の辺をすべて列挙
-                    for (int i = 0; i < 12; i++)
-                    {
-                        int startVertex = edgeTable[i][0];
-                        int endVertex = edgeTable[i][1];
+                // 現在焦点を当てている立方体上の辺をすべて列挙
+                for (int i = 0; i < 12; i++)
+                {
+                    int startVertex = edgeTable[i][0];
+                    int endVertex = edgeTable[i][1];
 
-                        // 両端が外側(0)もしくは内側(1)の場合はスキップ
-                        // ビットマスクからstartVertex + 1とendVertex + 1ビット目(startVertexとendVertexの位置の点の状態)を取り出す
-                        //        | 1            | 1
-                        // -------|---  ==  -----|---
-                        // start 0| 0       end 0| 0
-                        //       1| 1           1| 1
-                        if ((kind >> startVertex & 1) == (kind >> endVertex & 1)) continue;
+                    // 両端が外側(0)もしくは内側(1)の場合はスキップ
+                    // ビットマスクからstartVertex + 1とendVertex + 1ビット目(startVertexとendVertexの位置の点の状態)を取り出す
+                    //        | 1            | 1
+                    // -------|---  ==  -----|---
+                    // start 0| 0       end 0| 0
+                    //       1| 1           1| 1
+                    if ((kind >> startVertex & 1) == (kind >> endVertex & 1)) continue;
 
-                        // 両端の点のボクセルデータ上の値を取り出す
-                        float startValue = voxel[ToIndexPositive(x, y, z, startVertex, size)];
-                        float endValue = voxel[ToIndexPositive(x, y, z, endVertex, size)];
+                    // 両端の点のボクセルデータ上の値を取り出す
+                    float startValue = voxel[ToIndexPositive(x, y, z, startVertex, size)];
+                    float endValue = voxel[ToIndexPositive(x, y, z, endVertex, size)];
 
-                        // 線形補間によって値が0となる辺上の位置を算出して加算
-                        Vector3 startVector = ToVector(x, y, z, startVertex);
-                        Vector3 endVector = ToVector(x, y, z, endVertex);
-                        vertex += Vector3.Lerp(startVector, endVector, (0 - startValue) / (endValue - startValue));
-                        crossCount++;
-                    }
+                    // 線形補間によって値が0となる辺上の位置を算出して加算
+                    Vector3 startVector = ToVector(x, y, z, startVertex);
+                    Vector3 endVector = ToVector(x, y, z, endVertex);
+                    vertex += Vector3.Lerp(startVector, endVector, (0 - startValue) / (endValue - startValue));
+                    crossCount++;
+                }
 
-                    vertex /= crossCount;
+                vertex /= crossCount;
 
-                    vertexBuffer[vertexCount] = vertex;
-                    indexBuffer[ToIndexPositive(x, y, z, 0, size)] = vertexCount;
-                    vertexCount++;
+                vertexBuffer[vertexCount] = vertex;
+                indexBuffer[ToIndexPositive(x, y, z, 0, size)] = vertexCount;
+                vertexCount++;
 
-                    // 面の追加は0 < x, y, z < size - 1で行う
-                    if (x == 0 || y == 0 || z == 0) continue;
+                // 面の追加は0 < x, y, z < size - 1で行う
+                if (x == 0 || y == 0 || z == 0) continue;
 
-                    // ビットマスクから1ビット目(0の位置の点の状態)を取り出す
-                    bool outside = (kind & 1) != 0;
+                // ビットマスクから1ビット目(0の位置の点の状態)を取り出す
+                bool outside = (kind & 1) != 0;
 
-                    // 面を構築する頂点を取り出す
-                    // 頂点の位置と番号の対応は次のように決める   
-                    //    1----0(x, y, z)
-                    //   /|   /|
-                    //  2----3 |
-                    //  | 5--|-4
-                    //  |/   |/
-                    //  6----7
-                    int v0 = indexBuffer[ToIndexNegative(x, y, z, 0, size)];
-                    int v1 = indexBuffer[ToIndexNegative(x, y, z, 1, size)];
-                    int v2 = indexBuffer[ToIndexNegative(x, y, z, 2, size)];
-                    int v3 = indexBuffer[ToIndexNegative(x, y, z, 3, size)];
-                    int v4 = indexBuffer[ToIndexNegative(x, y, z, 4, size)];
-                    int v5 = indexBuffer[ToIndexNegative(x, y, z, 5, size)];
-                    //int v6 = idxBuf[ToIdxNeg(x, y, z, 6, size)]; // 使われない
-                    int v7 = indexBuffer[ToIndexNegative(x, y, z, 7, size)];
+                // 面を構築する頂点を取り出す
+                // 頂点の位置と番号の対応は次のように決める   
+                //    1----0(x, y, z)
+                //   /|   /|
+                //  2----3 |
+                //  | 5--|-4
+                //  |/   |/
+                //  6----7
+                int v0 = indexBuffer[ToIndexNegative(x, y, z, 0, size)];
+                int v1 = indexBuffer[ToIndexNegative(x, y, z, 1, size)];
+                int v2 = indexBuffer[ToIndexNegative(x, y, z, 2, size)];
+                int v3 = indexBuffer[ToIndexNegative(x, y, z, 3, size)];
+                int v4 = indexBuffer[ToIndexNegative(x, y, z, 4, size)];
+                int v5 = indexBuffer[ToIndexNegative(x, y, z, 5, size)];
+                //int v6 = idxBuf[ToIdxNeg(x, y, z, 6, size)]; // 使われない
+                int v7 = indexBuffer[ToIndexNegative(x, y, z, 7, size)];
 
-                    // ビットマスクから2ビット目(1の位置の点の状態)を取り出す。異なる側同士の点からなる辺ならば交わるような面を追加
-                    if ((kind >> 1 & 1) != 0 != outside)
-                    {
-                        triangleCount = MakeFace(triangleBuffer, triangleCount, v0, v3, v7, v4, outside);
-                    }
-                    // ビットマスクから4ビット目(3の位置の点の状態)を取り出す
-                    if ((kind >> 3 & 1) != 0 != outside)
-                    {
-                        triangleCount = MakeFace(triangleBuffer, triangleCount, v0, v4, v5, v1, outside);
-                    }
-                    // ビットマスクから5ビット目(4の位置の点の状態)を取り出す
-                    if ((kind >> 4 & 1) != 0 != outside)
-                    {
-                        triangleCount = MakeFace(triangleBuffer, triangleCount, v0, v1, v2, v3, outside);
-                    }
+                // ビットマスクから2ビット目(1の位置の点の状態)を取り出す。異なる側同士の点からなる辺ならば交わるような面を追加
+                if ((kind >> 1 & 1) != 0 != outside)
+                {
+                    triangleCount = MakeFace(triangleBuffer, triangleCount, v0, v3, v7, v4, outside);
+                }
+                // ビットマスクから4ビット目(3の位置の点の状態)を取り出す
+                if ((kind >> 3 & 1) != 0 != outside)
+                {
+                    triangleCount = MakeFace(triangleBuffer, triangleCount, v0, v4, v5, v1, outside);
+                }
+                // ビットマスクから5ビット目(4の位置の点の状態)を取り出す
+                if ((kind >> 4 & 1) != 0 != outside)
+                {
+                    triangleCount = MakeFace(triangleBuffer, triangleCount, v0, v1, v2, v3, outside);
                 }
             }
         }
-
-        indexBuffer.Dispose();
-
-        vertices = vertexBuffer.GetSubArray(0, vertexCount);
-        Debug.Log("vertexCount: " + vertexCount);
-        triangles = triangleBuffer.GetSubArray(0, triangleCount);
-        Debug.Log("triangleCount: " + triangleCount);
     }
 
     private void MakeVertex()
