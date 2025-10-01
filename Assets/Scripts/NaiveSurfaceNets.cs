@@ -3,25 +3,28 @@ using Unity.Collections;
 
 public class VoxelMeshGenerator : MonoBehaviour
 {
-    [SerializeField] private int size = 32;
-    private float[] voxel;
+    [SerializeField] private Vector3Int _boundsSize = new Vector3Int(100, 100, 100);
+    private NativeArray<float> voxel;
     [SerializeField] private MeshFilter meshFilter;
     private Mesh mesh;
     private NativeArray<Vector3> vertices;
     private NativeArray<int> triangles;
 
-    private void Awake()
+    private void Start()
     {
-        voxel = new float[size * size * size];
-        FillVoxel(voxel, size); // 任意のSDFデータを生成
+        int sx = _boundsSize.x;
+        int sy = _boundsSize.y;
+        int sz = _boundsSize.z;
+        voxel = new NativeArray<float>(sx * sy * sz, Allocator.Persistent);
+        FillVoxel(voxel, _boundsSize);
 
         mesh = new Mesh
         {
             indexFormat = UnityEngine.Rendering.IndexFormat.UInt32
         };
 
-        FillVoxel(voxel, size);
-        Execute(voxel, size, out vertices, out triangles);
+        FillVoxel(voxel, _boundsSize);
+        Execute(voxel, _boundsSize, out vertices, out triangles);
 
         mesh.SetVertices(vertices);
         mesh.SetIndices(triangles, MeshTopology.Triangles, 0);
@@ -65,62 +68,70 @@ public class VoxelMeshGenerator : MonoBehaviour
     //    }
     //}
 
-    void FillVoxel(float[] voxel, int size)
+    void FillVoxel(NativeArray<float> voxel, Vector3Int size)
     {
-        float center = size / 2f;
-        float halfCube = center * 0.9f;
+        float centerX = size.x / 2f;
+        float centerY = size.y / 2f;
+        float centerZ = size.z / 2f;
+        float rx = centerX * 0.9f;
+        float ry = centerY * 0.9f;
+        float rz = centerZ * 0.9f;
+        float halfCube = Mathf.Min(centerX, Mathf.Min(centerY, centerZ)) * 0.9f;
 
-        float radius = center * 0.9f;
-
-        for (int x = 0; x < size; x++)
+        for (int x = 0; x < size.x; x++)
         {
-            for (int y = 0; y < size; y++)
+            for (int y = 0; y < size.y; y++)
             {
-                for (int z = 0; z < size; z++)
+                for (int z = 0; z < size.z; z++)
                 {
-                    //if (Mathf.Abs(x - y) < 7.0f) continue;
+                    if (Mathf.Abs(x - y) < 7.0f)
+                    {
+                        voxel[x + z * size.x + y * size.x * size.z] = 1.0f;
+                        continue;
+                    }
+                    //if (Mathf.Abs((size.x - x) - y) < 7.0f) continue;
                     //if (Mathf.Abs(x - z) < 7.0f) continue;
                     //if (Mathf.Abs(y - z) < 7.0f) continue;
 
-                    float dx = Mathf.Abs(x - center);
-                    float dy = Mathf.Abs(y - center);
-                    float dz = Mathf.Abs(z - center);
-                    float sphereDist = Mathf.Sqrt(dx * dx + dy * dy + dz * dz);
+                    float dx = (x - centerX) / rx;
+                    float dy = (y - centerY) / ry;
+                    float dz = (z - centerZ) / rz;
                     // 立方体SDF: max(|dx|, |dy|, |dz|) - halfCube
                     float dist = Mathf.Max(dx, Mathf.Max(dy, dz)) - halfCube;
+                    float ellipsoidSDF = Mathf.Sqrt(dx * dx + dy * dy + dz * dz) - 1.0f;
 
-                    if (sphereDist <= radius)
+                    if (ellipsoidSDF <= 0.0f)
                     {
-                        voxel[x + z * size + y * size * size] = dist;
+                        voxel[x + z * size.x + y * size.x * size.z] = dist;
                     }
                     else
                     {
-                        voxel[x + z * size + y * size * size] = 1.0f;
+                        voxel[x + z * size.x + y * size.x * size.z] = 1.0f;
                     }
                 }
             }
         }
     }
 
-    public void Execute(float[] voxel, int size, out NativeArray<Vector3> vertices, out NativeArray<int> triangles)
+    public void Execute(NativeArray<float> voxel, Vector3Int size, out NativeArray<Vector3> vertices, out NativeArray<int> triangles)
     {
         // 頂点位置->頂点番号を記憶する配列
-        NativeArray<int> indexBuffer = new(size * size * size, Allocator.Temp);
+        NativeArray<int> indexBuffer = new(size.x * size.y * size.z, Allocator.Temp);
         // 頂点配列
-        NativeArray<Vector3> vertexBuffer = new(size * size * size, Allocator.Temp);
+        NativeArray<Vector3> vertexBuffer = new(size.x * size.y * size.z, Allocator.Temp);
         // 三角面の配列
         // サイズを余分に確保し，最後に不要な部分を切り落とす
-        NativeArray<int> triangleBuffer = new(size * size * size * 18, Allocator.Temp);
+        NativeArray<int> triangleBuffer = new(size.x * size.y * size.z * 18, Allocator.Temp);
         // 頂点の総数
         int vertexCount = 0;
         // 三角面の総数
         int triangleCount = 0;
 
-        for (int x = 0; x < size - 1; x++)
+        for (int x = 0; x < size.x - 1; x++)
         {
-            for (int y = 0; y < size - 1; y++)
+            for (int y = 0; y < size.y - 1; y++)
             {
-                for (int z = 0; z < size - 1; z++)
+                for (int z = 0; z < size.z - 1; z++)
                 {
                     // ビットマスクで8つの点の状態を記憶
                     // iの位置の点が内側ならばi + 1番目のビットを立てる
@@ -225,6 +236,11 @@ public class VoxelMeshGenerator : MonoBehaviour
         Debug.Log("triangleCount: " + triangleCount);
     }
 
+    private void MakeVertex()
+    {
+
+    }
+
     // v0, v1, v2, v3から構築される面を追加する
     static int MakeFace(NativeArray<int> triangleBuf, int triangleCount, int v0, int v1, int v2, int v3, bool outside)
     {
@@ -251,22 +267,22 @@ public class VoxelMeshGenerator : MonoBehaviour
 
     // 整数座標から配列に入るときの順序を取得
     // +X+Y+Z方向に広がる立方体上のi番目の頂点として順序を取得
-    static int ToIndexPositive(int x, int y, int z, int i, int size)
+    static int ToIndexPositive(int x, int y, int z, int i, Vector3Int size)
     {
         x += neighborTable[i][0];
         y += neighborTable[i][1];
         z += neighborTable[i][2];
-        return x + y * size + z * size * size;
+        return x + (z * size.x) + (y * size.x * size.z);
     }
 
     // 整数座標から配列に入るときの順序を取得
     // -X-Y-Z方向に広がる立方体上のi番目の頂点として順序を取得
-    static int ToIndexNegative(int x, int y, int z, int i, int size)
+    static int ToIndexNegative(int x, int y, int z, int i, Vector3Int size)
     {
         x -= neighborTable[i][0];
         y -= neighborTable[i][1];
         z -= neighborTable[i][2];
-        return x + y * size + z * size * size;
+        return x + (z * size.x) + (y * size.x * size.z);
     }
 
     // 整数座標から実数座標を取得
@@ -333,5 +349,6 @@ public class VoxelMeshGenerator : MonoBehaviour
     {
         vertices.Dispose();
         triangles.Dispose();
+        voxel.Dispose();
     }
 }
