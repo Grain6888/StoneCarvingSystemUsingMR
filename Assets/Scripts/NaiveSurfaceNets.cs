@@ -1,383 +1,246 @@
-﻿using Unity.Collections;
-using UnityEngine;
-using Unity.Mathematics;
-//using Unity.Jobs;
-//using MRSculpture.Job;
+﻿using UnityEngine;
 
-namespace MRSculpture
+public class NaiveSurfaceNets : MonoBehaviour
 {
-    public class VoxelMeshGenerator : MonoBehaviour
+    [SerializeField] private ComputeShader _computeShader = null;
+    [SerializeField] private Material _material = null;
+    [SerializeField] private int _voxelSize = 32;
+
+    private GraphicsBuffer _sdfVoxelBuffer;
+    private GraphicsBuffer _vertexIdBuffer;
+    private GraphicsBuffer _vertexBuffer;
+    private GraphicsBuffer _indexBuffer;
+    private GraphicsBuffer _neighborBuffer;
+    private GraphicsBuffer _edgeBuffer;
+    private GraphicsBuffer _indirectArgBuffer;
+    private GraphicsBuffer _normalBuffer;
+    private Bounds _bounds;
+    private int _klVertices, _klIndices, _klIndirectArgs;
+    private Vector3Int _tgVertices, _tgIndices;
+
+    // SDFデータを保持
+    private float[] _sdfVoxels;
+
+    // デバッグ用
+    private Vector3[] _debugVertices;
+    private int[] _debugIndices;
+
+    private static readonly int _spSdfVoxelSize = Shader.PropertyToID("SdfVoxelSize");
+    private static readonly int _spSdfVoxels = Shader.PropertyToID("SdfVoxels");
+    private static readonly int _spVertexIds = Shader.PropertyToID("VertexIds");
+    private static readonly int _spVertices = Shader.PropertyToID("Vertices");
+    private static readonly int _spIndices = Shader.PropertyToID("Indices");
+    private static readonly int _spNeighbors = Shader.PropertyToID("Neighbors");
+    private static readonly int _spEdges = Shader.PropertyToID("Edges");
+    private static readonly int _spIndirectArgs = Shader.PropertyToID("IndirectArgs");
+
+    private void Start()
     {
-        [SerializeField] private int3 _boundsSize = new(100, 100, 100);
-        private NativeArray<float> voxel;
-        [SerializeField] private MeshFilter meshFilter;
-        private Mesh mesh;
-        private NativeArray<Vector3> vertices;
-        private int vertexCount;
-        private NativeArray<int> triangles;
-        private int triangleCount;
-        private int maxVertexBufferSize;
-        private NativeArray<int> indexBuffer;
-        private NativeArray<Vector3> vertexBuffer;
-        private int maxTriangleBufferSize;
-        private NativeArray<int> triangleBuffer;
+        // SDFデータ生成
+        _sdfVoxels = FillVoxel(_voxelSize);
 
-        private void Start()
+        // バッファ初期化
+        int size = _voxelSize;
+        _sdfVoxelBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, size * size * size, sizeof(float));
+        _sdfVoxelBuffer.SetData(_sdfVoxels);
+        _vertexIdBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, size * size * size, sizeof(int));
+        _vertexBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured | GraphicsBuffer.Target.Counter, size * size * size, sizeof(float) * 3);
+        _vertexBuffer.SetCounterValue(0);
+        _indexBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured | GraphicsBuffer.Target.Counter, size * size * size * 18, sizeof(int));
+        _indexBuffer.SetCounterValue(0);
+        _indirectArgBuffer = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, 4, sizeof(uint));
+        _indirectArgBuffer.SetData(new uint[4] { 0, 1, 0, 0 });
+
+        // Neighbors
+        var neighbors = new Vector3Int[]
         {
-            voxel = new NativeArray<float>(_boundsSize.x * _boundsSize.y * _boundsSize.z, Allocator.Persistent);
-            FillVoxel(ref voxel, in _boundsSize);
+            new Vector3Int( 0, 0, 0 ),
+            new Vector3Int( 1, 0, 0 ),
+            new Vector3Int( 1, 0, 1 ),
+            new Vector3Int( 0, 0, 1 ),
+            new Vector3Int( 0, 1, 0 ),
+            new Vector3Int( 1, 1, 0 ),
+            new Vector3Int( 1, 1, 1 ),
+            new Vector3Int( 0, 1, 1 ),
+        };
+        _neighborBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, neighbors.Length, sizeof(int) * 3);
+        _neighborBuffer.SetData(neighbors);
 
-            mesh = new Mesh
-            {
-                indexFormat = UnityEngine.Rendering.IndexFormat.UInt32
-            };
-
-            // 頂点バッファサイズ
-            maxVertexBufferSize = _boundsSize.x * _boundsSize.y * _boundsSize.z;
-            // 三角面バッファサイズ
-            maxTriangleBufferSize = _boundsSize.x * _boundsSize.y * _boundsSize.z * 18;
-
-            // 頂点位置->頂点番号を記憶する配列
-            indexBuffer = new(maxVertexBufferSize, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-            // 頂点配列
-            vertexBuffer = new(maxVertexBufferSize, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-            // 三角面の配列
-            triangleBuffer = new(maxTriangleBufferSize, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-            // 頂点の総数
-            vertexCount = 0;
-            // 三角面の総数
-            triangleCount = 0;
-
-            for (int y = 0; y < _boundsSize.y - 1; y++)
-            {
-                ExecuteLayer(in voxel, in _boundsSize, y, ref indexBuffer, ref vertexBuffer, ref triangleBuffer, ref vertexCount, ref triangleCount);
-            }
-
-            vertices = vertexBuffer.GetSubArray(0, vertexCount);
-            triangles = triangleBuffer.GetSubArray(0, triangleCount);
-
-            mesh.SetVertices(vertices);
-            mesh.SetIndices(triangles, MeshTopology.Triangles, 0);
-            mesh.RecalculateNormals();
-
-            meshFilter.mesh = mesh;
-        }
-
-        private void FillVoxel(ref NativeArray<float> voxel, in int3 size)
+        // Edges
+        var edges = new Vector2Int[]
         {
-            float centerX = size.x / 2f;
-            float centerY = size.y / 2f;
-            float centerZ = size.z / 2f;
-            float rx = centerX * 0.9f;
-            float ry = centerY * 0.9f;
-            float rz = centerZ * 0.9f;
-            float halfCube = Mathf.Min(centerX, Mathf.Min(centerY, centerZ)) * 0.9f;
+            new Vector2Int( 0, 1 ),
+            new Vector2Int( 1, 2 ),
+            new Vector2Int( 2, 3 ),
+            new Vector2Int( 3, 0 ),
+            new Vector2Int( 4, 5 ),
+            new Vector2Int( 5, 6 ),
+            new Vector2Int( 6, 7 ),
+            new Vector2Int( 7, 4 ),
+            new Vector2Int( 0, 4 ),
+            new Vector2Int( 1, 5 ),
+            new Vector2Int( 2, 6 ),
+            new Vector2Int( 3, 7 ),
+        };
+        _edgeBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, edges.Length, sizeof(int) * 2);
+        _edgeBuffer.SetData(edges);
 
-            for (int x = 0; x < size.x; x++)
+        float bsize = size;
+        _bounds = new Bounds(new Vector3(bsize * 0.5f, bsize * 0.5f, bsize * 0.5f), new Vector3(bsize, bsize, bsize));
+        _material.SetBuffer(_spVertices, _vertexBuffer);
+        _material.SetBuffer(_spIndices, _indexBuffer);
+
+        uint numThreadX, numThreadY, numThreadZ;
+        _computeShader.SetInt(_spSdfVoxelSize, size);
+
+        // Vertices
+        _klVertices = _computeShader.FindKernel("GenerateVertices");
+        _computeShader.SetBuffer(_klVertices, _spSdfVoxels, _sdfVoxelBuffer);
+        _computeShader.SetBuffer(_klVertices, _spVertexIds, _vertexIdBuffer);
+        _computeShader.SetBuffer(_klVertices, _spVertices, _vertexBuffer);
+        _computeShader.SetBuffer(_klVertices, _spEdges, _edgeBuffer);
+        _computeShader.SetBuffer(_klVertices, _spNeighbors, _neighborBuffer);
+
+        _computeShader.GetKernelThreadGroupSizes(_klVertices, out numThreadX, out numThreadY, out numThreadZ);
+        _tgVertices.x = ((size - 1) + (int)(numThreadX - 1)) / (int)numThreadX;
+        _tgVertices.y = ((size - 1) + (int)(numThreadY - 1)) / (int)numThreadY;
+        _tgVertices.z = ((size - 1) + (int)(numThreadZ - 1)) / (int)numThreadZ;
+
+        // Indices
+        _klIndices = _computeShader.FindKernel("GenerateIndices");
+        _computeShader.SetBuffer(_klIndices, _spSdfVoxels, _sdfVoxelBuffer);
+        _computeShader.SetBuffer(_klIndices, _spVertexIds, _vertexIdBuffer);
+        _computeShader.SetBuffer(_klIndices, _spVertices, _vertexBuffer);
+        _computeShader.SetBuffer(_klIndices, _spIndices, _indexBuffer);
+        _computeShader.SetBuffer(_klIndices, _spNeighbors, _neighborBuffer);
+
+        _computeShader.GetKernelThreadGroupSizes(_klIndices, out numThreadX, out numThreadY, out numThreadZ);
+        _tgIndices.x = ((size - 2) + (int)(numThreadX - 1)) / (int)numThreadX;
+        _tgIndices.y = ((size - 2) + (int)(numThreadY - 1)) / (int)numThreadY;
+        _tgIndices.z = ((size - 2) + (int)(numThreadZ - 1)) / (int)numThreadZ;
+
+        // IndirectArgs
+        _klIndirectArgs = _computeShader.FindKernel("UpdateIndirectArgs");
+        _computeShader.SetBuffer(_klIndirectArgs, _spIndices, _indexBuffer);
+        _computeShader.SetBuffer(_klIndirectArgs, _spIndirectArgs, _indirectArgBuffer);
+
+        // 法線バッファ生成
+        _normalBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, _indexBuffer.count, sizeof(int));
+        // ComputeShaderにセット
+        _computeShader.SetBuffer(_klVertices, "Normals", _normalBuffer);
+        _computeShader.SetInt("normalStride", sizeof(int) * 3);
+    }
+
+    private void OnDestroy()
+    {
+        _sdfVoxelBuffer?.Dispose();
+        _vertexIdBuffer?.Dispose();
+        _vertexBuffer?.Dispose();
+        _indexBuffer?.Dispose();
+        _neighborBuffer?.Dispose();
+        _edgeBuffer?.Dispose();
+        _indirectArgBuffer?.Dispose();
+        _normalBuffer?.Dispose();
+    }
+
+    private void LateUpdate()
+    {
+        // Dispatch
+        _vertexBuffer.SetCounterValue(0);
+        _indexBuffer.SetCounterValue(0);
+        _computeShader.Dispatch(_klVertices, _tgVertices.x, _tgVertices.y, _tgVertices.z);
+        _computeShader.Dispatch(_klIndices, _tgIndices.x, _tgIndices.y, _tgIndices.z);
+        _computeShader.Dispatch(_klIndirectArgs, 1, 1, 1);
+        GL.Flush();
+
+        // 頂点・インデックスバッファの内容を取得
+        int vertexCount = _vertexBuffer.count;
+        int indexCount = _indexBuffer.count;
+
+        if (_debugVertices == null || _debugVertices.Length != vertexCount)
+            _debugVertices = new Vector3[vertexCount];
+        if (_debugIndices == null || _debugIndices.Length != indexCount)
+            _debugIndices = new int[indexCount];
+
+        _vertexBuffer.GetData(_debugVertices);
+        _indexBuffer.GetData(_debugIndices);
+
+        if (_indexBuffer != null)
+            Graphics.DrawProceduralIndirect(_material, _bounds, MeshTopology.Triangles, _indirectArgBuffer);
+    }
+
+    // FillVoxel: SDF配列を生成するメソッド（例）
+    private float[] FillVoxel(int size)
+    {
+        var voxels = new float[size * size * size];
+        float centerX = size / 2f;
+        float centerY = size / 2f;
+        float centerZ = size / 2f;
+        float rx = centerX * 0.9f;
+        float ry = centerY * 0.9f;
+        float rz = centerZ * 0.9f;
+        float halfCube = Mathf.Min(centerX, Mathf.Min(centerY, centerZ)) * 0.9f;
+
+        for (int x = 0; x < size; x++)
+        {
+            for (int y = 0; y < size; y++)
             {
-                for (int y = 0; y < size.y; y++)
+                for (int z = 0; z < size; z++)
                 {
-                    for (int z = 0; z < size.z; z++)
+                    if (Mathf.Abs(x - y) < 7.0f || Mathf.Abs((size - x) - y) < 7.0f)
                     {
-                        if (Mathf.Abs(x - y) < 7.0f || Mathf.Abs((size.x - x) - y) < 7.0f)
-                        {
-                            //voxel[x + z * size.x + y * size.x * size.z] = 1.0f;
-                            //continue;
-                        }
+                        //voxel[x + z * size.x + y * size.x * size.z] = 1.0f;
+                        //continue;
+                    }
 
-                        float dx = (x - centerX) / rx;
-                        float dy = (y - centerY) / ry;
-                        float dz = (z - centerZ) / rz;
-                        // 立方体SDF: max(|dx|, |dy|, |dz|) - halfCube
-                        float dist = Mathf.Max(dx, Mathf.Max(dy, dz)) - halfCube;
-                        float ellipsoidSDF = Mathf.Sqrt(dx * dx + dy * dy + dz * dz) - 1.0f;
+                    float dx = (x - centerX) / rx;
+                    float dy = (y - centerY) / ry;
+                    float dz = (z - centerZ) / rz;
+                    // 立方体SDF: max(|dx|, |dy|, |dz|) - halfCube
+                    float dist = Mathf.Max(dx, Mathf.Max(dy, dz)) - halfCube;
+                    float ellipsoidSDF = Mathf.Sqrt(dx * dx + dy * dy + dz * dz) - 1.0f;
 
-                        if (ellipsoidSDF <= 0.0f)
-                        {
-                            voxel[x + z * size.x + y * size.x * size.z] = dist;
-                        }
-                        else
-                        {
-                            voxel[x + z * size.x + y * size.x * size.z] = 1.0f;
-                        }
+                    if (ellipsoidSDF <= 0.0f)
+                    {
+                        voxels[x + z * size + y * size * size] = dist;
+                    }
+                    else
+                    {
+                        voxels[x + z * size + y * size * size] = 1.0f;
                     }
                 }
             }
         }
 
-        private int frameCount = 0;
-        private void Update()
-        {
-            frameCount++;
-            if (frameCount % 300 != 0) return;
-
-            frameCount = 0;
-            vertexCount = 0;
-            triangleCount = 0;
-
-            for (int y = 0; y < _boundsSize.y - 1; y++)
-            {
-                ExecuteLayer(in voxel, in _boundsSize, y, ref indexBuffer, ref vertexBuffer, ref triangleBuffer, ref vertexCount, ref triangleCount);
-            }
-
-            mesh.SetVertices(vertices);
-            mesh.SetIndices(triangles, MeshTopology.Triangles, 0);
-            mesh.RecalculateNormals();
-
-            meshFilter.mesh = mesh;
-        }
-
-        public void ExecuteLayer(
-            in NativeArray<float> voxel,
-            in int3 size,
-            int y,
-            ref NativeArray<int> indexBuffer,
-            ref NativeArray<Vector3> vertexBuffer,
-            ref NativeArray<int> triangleBuffer,
-            ref int vertexCount,
-            ref int triangleCount)
-        {
-            for (int x = 0; x < size.x - 1; x++)
-            {
-                for (int z = 0; z < size.z - 1; z++)
-                {
-                    if (!MakeVertex(in voxel, in size, x, y, z, ref indexBuffer, ref vertexBuffer, ref vertexCount, out int kind)) continue;
-
-                    MakeSurface(x, y, z, in size, kind, in indexBuffer, ref triangleBuffer, ref triangleCount);
-
-                    //JobHandle handle = new NaiveSurfaceNetJob()
-                    //{
-                    //    voxel = voxel,
-                    //    size = size,
-                    //    indexBuffer = indexBuffer,
-                    //    vertexBuffer = vertexBuffer,
-                    //    triangleBuffer = triangleBuffer,
-                    //    yLayer = y,
-                    //    maxVertexBufferSize = indexBuffer.Length,
-                    //    maxTriangleBufferSize = triangleBuffer.Length,
-                    //    vertexCount = vertexCount,
-                    //    triangleCount = triangleCount
-                    //}.Schedule();
-                    //handle.Complete();
-                }
-            }
-        }
-
-        // 立方体セルのビットマスク(kind)と頂点位置(vertex)を計算する関数
-        private static bool MakeVertex(
-            in NativeArray<float> voxel,
-            in int3 size,
-            int x, int y, int z,
-            ref NativeArray<int> indexBuffer,
-            ref NativeArray<Vector3> vertexBuffer,
-            ref int vertexCount,
-            out int kind)
-        {
-            kind = 0b0000000;
-            // ビットマスクで8つの点の状態を記憶
-            // iの位置の点が内側ならばi + 1番目のビットを立てる
-            for (int i = 0; i < 8; i++)
-            {
-                if (0 > voxel[ToIndexPositive(x, y, z, i, in size)]) kind |= 1 << i;
-            }
-
-            // 8つの点がすべて外側(00000000)またはすべて内側(11111111)の場合はスキップ
-            if (kind == 0b00000000 || kind == 0b11111111)
-            {
-                return false;
-            }
-
-            // 頂点位置の計算
-            Vector3 vertex = Vector3.zero;
-            int crossCount = 0;
-            // 現在焦点を当てている立方体上の辺をすべて列挙
-            for (int i = 0; i < 12; i++)
-            {
-                int startVertex = edgeTable[i][0];
-                int endVertex = edgeTable[i][1];
-
-                // 両端が外側(0)もしくは内側(1)の場合はスキップ
-                // ビットマスクからstartVertex + 1とendVertex + 1ビット目(startVertexとendVertexの位置の点の状態)を取り出す
-                //        | 1            | 1
-                // -------|---  ==  -----|---
-                // start 0| 0       end 0| 0
-                //       1| 1           1| 1
-                if ((kind >> startVertex & 1) == (kind >> endVertex & 1)) continue;
-
-                // 両端の点のボクセルデータ上の値を取り出す
-                float startValue = voxel[ToIndexPositive(x, y, z, startVertex, in size)];
-                float endValue = voxel[ToIndexPositive(x, y, z, endVertex, in size)];
-
-                // 線形補間によって値が0となる辺上の位置を算出して加算
-                Vector3 startVector = ToVector(x, y, z, startVertex);
-                Vector3 endVector = ToVector(x, y, z, endVertex);
-                vertex += Vector3.Lerp(startVector, endVector, (0 - startValue) / (endValue - startValue));
-                crossCount++;
-            }
-
-            vertex /= crossCount;
-
-            vertexBuffer[vertexCount] = vertex;
-            indexBuffer[ToIndexPositive(x, y, z, 0, in size)] = vertexCount;
-            vertexCount++;
-
-            return true;
-        }
-
-        // 面の追加処理を関数として分離
-        private static void MakeSurface(
-            int x, int y, int z,
-            in int3 size,
-            int kind,
-            in NativeArray<int> indexBuffer,
-            ref NativeArray<int> triangleBuffer,
-            ref int triangleCount)
-        {
-            // 面の追加は0 < x, y, z < size - 1で行う
-            if (x == 0 || y == 0 || z == 0) return;
-
-            // ビットマスクから1ビット目(0の位置の点の状態)を取り出す
-            bool outside = (kind & 1) != 0;
-
-            // 面を構築する頂点を取り出す
-            // v6は対角線状の頂点なので面張りしない
-            int v0 = indexBuffer[ToIndexNegative(x, y, z, 0, in size)];
-            int v1 = indexBuffer[ToIndexNegative(x, y, z, 1, in size)];
-            int v2 = indexBuffer[ToIndexNegative(x, y, z, 2, in size)];
-            int v3 = indexBuffer[ToIndexNegative(x, y, z, 3, in size)];
-            int v4 = indexBuffer[ToIndexNegative(x, y, z, 4, in size)];
-            int v5 = indexBuffer[ToIndexNegative(x, y, z, 5, in size)];
-            int v7 = indexBuffer[ToIndexNegative(x, y, z, 7, in size)];
-
-            // ビットマスクから2ビット目(1の位置の点の状態)を取り出す
-            if ((kind >> 1 & 1) != 0 != outside)
-            {
-                triangleCount = MakeFace(ref triangleBuffer, triangleCount, v0, v3, v7, v4, outside);
-            }
-            // ビットマスクから4ビット目(3の位置の点の状態)を取り出す
-            if ((kind >> 3 & 1) != 0 != outside)
-            {
-                triangleCount = MakeFace(ref triangleBuffer, triangleCount, v0, v4, v5, v1, outside);
-            }
-            // ビットマスクから5ビット目(4の位置の点の状態)を取り出す
-            if ((kind >> 4 & 1) != 0 != outside)
-            {
-                triangleCount = MakeFace(ref triangleBuffer, triangleCount, v0, v1, v2, v3, outside);
-            }
-        }
-
-        // v0, v1, v2, v3から構築される面を追加する
-        static int MakeFace(
-            ref NativeArray<int> triangleBuf,
-            int triangleCount,
-            int v0, int v1, int v2, int v3, bool outside)
-        {
-            if (outside)
-            {
-                triangleBuf[triangleCount++] = v0;
-                triangleBuf[triangleCount++] = v3;
-                triangleBuf[triangleCount++] = v2;
-                triangleBuf[triangleCount++] = v2;
-                triangleBuf[triangleCount++] = v1;
-                triangleBuf[triangleCount++] = v0;
-            }
-            else
-            {
-                triangleBuf[triangleCount++] = v0;
-                triangleBuf[triangleCount++] = v1;
-                triangleBuf[triangleCount++] = v2;
-                triangleBuf[triangleCount++] = v2;
-                triangleBuf[triangleCount++] = v3;
-                triangleBuf[triangleCount++] = v0;
-            }
-            return triangleCount;
-        }
-
-        // 整数座標から配列に入るときの順序を取得
-        // +X+Y+Z方向に広がる立方体上のi番目の頂点として順序を取得
-        static int ToIndexPositive(int x, int y, int z, int i, in int3 size)
-        {
-            x += neighborTable[i][0];
-            y += neighborTable[i][1];
-            z += neighborTable[i][2];
-            return x + (z * size.x) + (y * size.x * size.z);
-        }
-
-        // 整数座標から配列に入るときの順序を取得
-        // -X-Y-Z方向に広がる立方体上のi番目の頂点として順序を取得
-        static int ToIndexNegative(int x, int y, int z, int i, in int3 size)
-        {
-            x -= neighborTable[i][0];
-            y -= neighborTable[i][1];
-            z -= neighborTable[i][2];
-            return x + (z * size.x) + (y * size.x * size.z);
-        }
-
-        // 整数座標から実数座標を取得
-        // +X+Y+Z方向に広がる立方体上のi番目の頂点として実数座標を取得
-        static Vector3 ToVector(int i, int j, int k, int neighbor)
-        {
-            i += neighborTable[neighbor][0];
-            j += neighborTable[neighbor][1];
-            k += neighborTable[neighbor][2];
-            return new Vector3(i, j, k);
-        }
-
-        // 立方体上の頂点の番号の決め方
-        static readonly int[][] neighborTable = new int[][]
-        {
-        //    7----------6
-        //   /|         /|
-        //  / |        / |
-        // 4----------5  |
-        // |  |       |  |
-        // |  |       |  |
-        // |  3-------|--2
-        // | /        | /
-        // |/         |/
-        // 0----------1
-        new int[] { 0, 0, 0 }, // 0 原点
-        new int[] { 1, 0, 0 }, // 1 +X方向
-        new int[] { 1, 0, 1 }, // 2 +X+Z方向
-        new int[] { 0, 0, 1 }, // 3 +Z方向
-        new int[] { 0, 1, 0 }, // 4 +Y方向
-        new int[] { 1, 1, 0 }, // 5 +X+Y方向
-        new int[] { 1, 1, 1 }, // 6 +X+Y+Z方向
-        new int[] { 0, 1, 1 }, // 7 +Y+Z方向
-        };
-
-        // 辺のつながり方
-        static readonly int[][] edgeTable = new int[][]
-        {
-        //     ●←----0----●
-        //    1|         ↗|
-        //   ↙ |        3 |
-        //  ●----2----→●  |
-        //  |  9       |  8
-        //  |  ↓       |  ↓
-        //  |  ○←----4-|--●
-        // 10 5       11 ↗
-        //  ↓↙         ↓7
-        //  ●----6----→●
-        new int[] { 0, 1 }, // 0 
-        new int[] { 1, 2 }, // 1 
-        new int[] { 2, 3 }, // 2 
-        new int[] { 3, 0 }, // 3 
-        new int[] { 4, 5 }, // 4 
-        new int[] { 5, 6 }, // 5 
-        new int[] { 6, 7 }, // 6 
-        new int[] { 7, 4 }, // 7 
-        new int[] { 0, 4 }, // 8 
-        new int[] { 1, 5 }, // 9 
-        new int[] { 2, 6 }, // 10
-        new int[] { 3, 7 }, // 11
-        };
-
-        private void OnDestroy()
-        {
-            vertices.Dispose();
-            triangles.Dispose();
-            voxel.Dispose();
-        }
+        return voxels;
     }
+
+    //private void OnDrawGizmos()
+    //{
+    //    Gizmos.color = Color.blue;
+    //    Gizmos.DrawWireCube(_bounds.center, _bounds.size);
+
+    //    // 頂点デバッグ描画
+    //    if (_debugVertices != null)
+    //    {
+    //        Gizmos.color = Color.red;
+    //        foreach (var v in _debugVertices)
+    //            Gizmos.DrawSphere(v, 0.1f);
+    //    }
+
+    //    // 三角形デバッグ描画
+    //    if (_debugVertices != null && _debugIndices != null)
+    //    {
+    //        Gizmos.color = Color.green;
+    //        for (int i = 0; i + 2 < _indexBuffer.count; i += 3)
+    //        {
+    //            Vector3 v0 = _debugVertices[_debugIndices[i]];
+    //            Vector3 v1 = _debugVertices[_debugIndices[i + 1]];
+    //            Vector3 v2 = _debugVertices[_debugIndices[i + 2]];
+    //            Gizmos.DrawLine(v0, v1);
+    //            Gizmos.DrawLine(v1, v2);
+    //            Gizmos.DrawLine(v2, v0);
+    //        }
+    //    }
+    //}
 }

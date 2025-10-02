@@ -1,0 +1,212 @@
+﻿uint SdfVoxelSize;
+StructuredBuffer<float> SdfVoxels;
+StructuredBuffer<uint2> Edges; // 辺のつながり方
+StructuredBuffer<uint3> Neighbors; // 立方体上の頂点の番号の決め方
+
+RWStructuredBuffer<uint> VertexIds;
+RWStructuredBuffer<float3> Vertices;
+RWStructuredBuffer<uint> Indices;
+RWStructuredBuffer<uint> IndirectArgs;
+
+// v0, v1, v2, v3から構築される面を追加する
+void MakeFace(uint v0, uint v1, uint v2, uint v3, bool outside)
+{
+    uint indexOffset = Indices.IncrementCounter() * 6;
+
+    if (outside)
+    {
+        Indices[indexOffset] = v0;
+        Indices[indexOffset + 1] = v3;
+        Indices[indexOffset + 2] = v2;
+        Indices[indexOffset + 3] = v2;
+        Indices[indexOffset + 4] = v1;
+        Indices[indexOffset + 5] = v0;
+    }
+    else
+    {
+        Indices[indexOffset] = v0;
+        Indices[indexOffset + 1] = v1;
+        Indices[indexOffset + 2] = v2;
+        Indices[indexOffset + 3] = v2;
+        Indices[indexOffset + 4] = v3;
+        Indices[indexOffset + 5] = v0;
+    }
+}
+
+// 整数座標から配列に入るときの順序を取得
+// +X+Y+Z方向に広がる立方体上のi番目の頂点として順序を取得
+uint ToIdx(uint x, uint y, uint z, uint i, uint size)
+{
+    x += Neighbors[i].x;
+    y += Neighbors[i].y;
+    z += Neighbors[i].z;
+    return x + y * size + z * size * size;
+}
+
+// 整数座標から配列に入るときの順序を取得
+// -X-Y-Z方向に広がる立方体上のi番目の頂点として順序を取得
+uint ToIdxNeg(uint x, uint y, uint z, uint i, uint size)
+{
+    x -= Neighbors[i].x;
+    y -= Neighbors[i].y;
+    z -= Neighbors[i].z;
+    return x + y * size + z * size * size;
+}
+
+// 整数座標から実数座標を取得
+// +X+Y+Z方向に広がる立方体上のi番目の頂点として実数座標を取得
+float3 ToVec(uint i, uint j, uint k, uint neighbor)
+{
+    i += Neighbors[neighbor].x;
+    j += Neighbors[neighbor].y;
+    k += Neighbors[neighbor].z;
+    return float3(i, j, k);
+}
+
+uint GetKind(uint x, uint y, uint z)
+{
+    // ビットマスクで8つの点の状態を記憶
+    // iの位置の点が内側ならばi + 1番目のビットを立てる
+    // 頂点の位置と番号の対応は次のように決める        
+    //          7----6
+    //         /|   /|
+    //        4----5 |
+    //        | 3--|-2
+    //        |/   |/
+    // (x,y,z)0----1
+    uint kind = 0;
+    if (0 > SdfVoxels[ToIdx(x, y, z, 0, SdfVoxelSize)])
+        kind |= 1 << 0;
+    if (0 > SdfVoxels[ToIdx(x, y, z, 1, SdfVoxelSize)])
+        kind |= 1 << 1;
+    if (0 > SdfVoxels[ToIdx(x, y, z, 2, SdfVoxelSize)])
+        kind |= 1 << 2;
+    if (0 > SdfVoxels[ToIdx(x, y, z, 3, SdfVoxelSize)])
+        kind |= 1 << 3;
+    if (0 > SdfVoxels[ToIdx(x, y, z, 4, SdfVoxelSize)])
+        kind |= 1 << 4;
+    if (0 > SdfVoxels[ToIdx(x, y, z, 5, SdfVoxelSize)])
+        kind |= 1 << 5;
+    if (0 > SdfVoxels[ToIdx(x, y, z, 6, SdfVoxelSize)])
+        kind |= 1 << 6;
+    if (0 > SdfVoxels[ToIdx(x, y, z, 7, SdfVoxelSize)])
+        kind |= 1 << 7;
+    return kind;
+}
+
+void GenerateVertex(uint x, uint y, uint z)
+{
+    uint kind = GetKind(x, y, z);
+    // 8つの点がすべて内側またはすべて外側の場合はスキップ
+    if (kind == 0 || kind == 255)
+        return;
+
+    // 頂点の位置を算出
+    float3 vertex;
+    uint crossCount = 0;
+
+    // 現在焦点を当てている立方体上の辺をすべて列挙
+    for (uint i = 0; i < 12; i++)
+    {
+        uint2 p = Edges[i];
+        uint p0 = p.x;
+        uint p1 = p.y;
+            
+        // 異なる側同士の点でつながってない場合はスキップ
+        // ビットマスクからp0 + 1とp1 + 1ビット目(p0とp1の位置の点の状態)を取り出す
+        if ((kind >> p0 & 1) == (kind >> p1 & 1))
+            continue;
+
+        // 両端の点のボクセルデータ上の値を取り出す
+        float val0 = SdfVoxels[ToIdx(x, y, z, p0, SdfVoxelSize)];
+        float val1 = SdfVoxels[ToIdx(x, y, z, p1, SdfVoxelSize)];
+
+        // 線形補間によって値が0となる辺上の位置を算出して加算
+        vertex += lerp(ToVec(x, y, z, p0), ToVec(x, y, z, p1), (0 - val0) / (val1 - val0));
+        crossCount++;
+    }
+    vertex /= crossCount;
+
+    uint vertexOffset = Vertices.IncrementCounter();
+    Vertices[vertexOffset] = vertex;
+    VertexIds[ToIdx(x, y, z, 0, SdfVoxelSize)] = vertexOffset;
+}
+
+void GenerateIndex(uint x, uint y, uint z)
+{
+    // 面の追加は0 < x, y, z < size - 1で行う
+    //if (x == 0 || y == 0 || z == 0)
+    //  return;
+
+    uint kind = GetKind(x, y, z);
+    // 8つの点がすべて内側またはすべて外側の場合はスキップ
+    if (kind == 0 || kind == 255)
+        return;
+
+    // ビットマスクから1ビット目(0の位置の点の状態)を取り出す
+    bool outside = (kind & 1) != 0;
+
+    // 面を構築する頂点を取り出す
+    // 頂点の位置と番号の対応は次のように決める   
+    //    1----0(x, y, z)
+    //   /|   /|
+    //  2----3 |
+    //  | 5--|-4
+    //  |/   |/
+    //  6----7
+    uint v0 = VertexIds[ToIdxNeg(x, y, z, 0, SdfVoxelSize)];
+    uint v1 = VertexIds[ToIdxNeg(x, y, z, 1, SdfVoxelSize)];
+    uint v2 = VertexIds[ToIdxNeg(x, y, z, 2, SdfVoxelSize)];
+    uint v3 = VertexIds[ToIdxNeg(x, y, z, 3, SdfVoxelSize)];
+    uint v4 = VertexIds[ToIdxNeg(x, y, z, 4, SdfVoxelSize)];
+    uint v5 = VertexIds[ToIdxNeg(x, y, z, 5, SdfVoxelSize)];
+    // var v6 = VertexIds[ToIdxNeg(x, y, z, 6, SdfVoxelSize)]; // 使われない
+    uint v7 = VertexIds[ToIdxNeg(x, y, z, 7, SdfVoxelSize)];
+
+    // ビットマスクから2ビット目(1の位置の点の状態)を取り出す。異なる側同士の点からなる辺ならば交わるような面を追加
+    bool isBit;
+    isBit = (kind >> 1 & 1) != 0;
+    if (isBit != outside)
+        MakeFace(v0, v3, v7, v4, outside);
+    // ビットマスクから4ビット目(3の位置の点の状態)を取り出す
+    isBit = (kind >> 3 & 1) != 0;
+    if (isBit != outside)
+        MakeFace(v0, v4, v5, v1, outside);
+    // ビットマスクから5ビット目(4の位置の点の状態)を取り出す
+    isBit = (kind >> 4 & 1) != 0;
+    if (isBit != outside)
+        MakeFace(v0, v1, v2, v3, outside);
+}
+
+#pragma kernel GenerateVertices
+[numthreads(32, 32, 1)]
+void GenerateVertices(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= SdfVoxelSize - 1 || id.y >= SdfVoxelSize - 1 || id.z >= SdfVoxelSize - 1)
+        return;
+
+    uint x = id.x;
+    uint y = id.y;
+    uint z = id.z;
+    GenerateVertex(x, y, z);
+}
+
+#pragma kernel GenerateIndices
+[numthreads(32, 32, 1)]
+void GenerateIndices(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= SdfVoxelSize - 2 || id.y >= SdfVoxelSize - 2 || id.z >= SdfVoxelSize - 2)
+        return;
+
+    uint x = id.x + 1;
+    uint y = id.y + 1;
+    uint z = id.z + 1;
+    GenerateIndex(x, y, z);
+}
+
+#pragma kernel UpdateIndirectArgs
+[numthreads(1, 1, 1)]
+void UpdateIndirectArgs(uint3 id : SV_DispatchThreadID)
+{
+    IndirectArgs[0] = Indices.IncrementCounter() * 6;
+}
