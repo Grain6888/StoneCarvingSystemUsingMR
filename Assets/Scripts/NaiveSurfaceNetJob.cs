@@ -46,6 +46,8 @@ namespace MRSculpture.Job
                     MakeSurface(x, yLayer, z, in size, kind, in indexBuffer, ref triangleBuffer, ref triangleCount);
                 }
             }
+            Debug.Log("vertexCount: " + vertexCount);
+            Debug.Log("triangleCount: " + triangleCount);
         }
 
         private static bool MakeVertex(

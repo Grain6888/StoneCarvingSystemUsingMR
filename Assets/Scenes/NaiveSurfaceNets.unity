@@ -1076,9 +1076,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _boundsSize:
-    x: 16
-    y: 16
-    z: 16
+    x: 128
+    y: 128
+    z: 128
   meshFilter: {fileID: 794636587}
 --- !u!4 &794636586
 Transform:

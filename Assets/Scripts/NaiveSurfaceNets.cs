@@ -1,8 +1,8 @@
 ﻿using Unity.Collections;
 using UnityEngine;
 using Unity.Mathematics;
-using Unity.Jobs;
-using MRSculpture.Job;
+//using Unity.Jobs;
+//using MRSculpture.Job;
 
 namespace MRSculpture
 {
@@ -13,7 +13,14 @@ namespace MRSculpture
         [SerializeField] private MeshFilter meshFilter;
         private Mesh mesh;
         private NativeArray<Vector3> vertices;
+        private int vertexCount;
         private NativeArray<int> triangles;
+        private int triangleCount;
+        private int maxVertexBufferSize;
+        private NativeArray<int> indexBuffer;
+        private NativeArray<Vector3> vertexBuffer;
+        private int maxTriangleBufferSize;
+        private NativeArray<int> triangleBuffer;
 
         private void Start()
         {
@@ -26,20 +33,20 @@ namespace MRSculpture
             };
 
             // 頂点バッファサイズ
-            int maxVertexBufferSize = _boundsSize.x * _boundsSize.y * _boundsSize.z;
+            maxVertexBufferSize = _boundsSize.x * _boundsSize.y * _boundsSize.z;
             // 三角面バッファサイズ
-            int maxTriangleBufferSize = _boundsSize.x * _boundsSize.y * _boundsSize.z * 18;
+            maxTriangleBufferSize = _boundsSize.x * _boundsSize.y * _boundsSize.z * 18;
 
             // 頂点位置->頂点番号を記憶する配列
-            NativeArray<int> indexBuffer = new(maxVertexBufferSize, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
+            indexBuffer = new(maxVertexBufferSize, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
             // 頂点配列
-            NativeArray<Vector3> vertexBuffer = new(maxVertexBufferSize, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
+            vertexBuffer = new(maxVertexBufferSize, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
             // 三角面の配列
-            NativeArray<int> triangleBuffer = new(maxTriangleBufferSize, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
+            triangleBuffer = new(maxTriangleBufferSize, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
             // 頂点の総数
-            int vertexCount = 0;
+            vertexCount = 0;
             // 三角面の総数
-            int triangleCount = 0;
+            triangleCount = 0;
 
             for (int y = 0; y < _boundsSize.y - 1; y++)
             {
@@ -56,7 +63,7 @@ namespace MRSculpture
             meshFilter.mesh = mesh;
         }
 
-        void FillVoxel(ref NativeArray<float> voxel, in int3 size)
+        private void FillVoxel(ref NativeArray<float> voxel, in int3 size)
         {
             float centerX = size.x / 2f;
             float centerY = size.y / 2f;
@@ -98,6 +105,28 @@ namespace MRSculpture
             }
         }
 
+        private int frameCount = 0;
+        private void Update()
+        {
+            frameCount++;
+            if (frameCount % 300 != 0) return;
+
+            frameCount = 0;
+            vertexCount = 0;
+            triangleCount = 0;
+
+            for (int y = 0; y < _boundsSize.y - 1; y++)
+            {
+                ExecuteLayer(in voxel, in _boundsSize, y, ref indexBuffer, ref vertexBuffer, ref triangleBuffer, ref vertexCount, ref triangleCount);
+            }
+
+            mesh.SetVertices(vertices);
+            mesh.SetIndices(triangles, MeshTopology.Triangles, 0);
+            mesh.RecalculateNormals();
+
+            meshFilter.mesh = mesh;
+        }
+
         public void ExecuteLayer(
             in NativeArray<float> voxel,
             in int3 size,
@@ -112,24 +141,24 @@ namespace MRSculpture
             {
                 for (int z = 0; z < size.z - 1; z++)
                 {
-                    //if (!MakeVertex(in voxel, in size, x, y, z, ref indexBuffer, ref vertexBuffer, ref vertexCount, out int kind)) continue;
+                    if (!MakeVertex(in voxel, in size, x, y, z, ref indexBuffer, ref vertexBuffer, ref vertexCount, out int kind)) continue;
 
-                    //MakeSurface(x, y, z, in size, kind, in indexBuffer, ref triangleBuffer, ref triangleCount);
+                    MakeSurface(x, y, z, in size, kind, in indexBuffer, ref triangleBuffer, ref triangleCount);
 
-                    JobHandle handle = new NaiveSurfaceNetJob()
-                    {
-                        voxel = voxel,
-                        size = size,
-                        indexBuffer = indexBuffer,
-                        vertexBuffer = vertexBuffer,
-                        triangleBuffer = triangleBuffer,
-                        yLayer = y,
-                        maxVertexBufferSize = indexBuffer.Length,
-                        maxTriangleBufferSize = triangleBuffer.Length,
-                        vertexCount = vertexCount,
-                        triangleCount = triangleCount
-                    }.Schedule();
-                    handle.Complete();
+                    //JobHandle handle = new NaiveSurfaceNetJob()
+                    //{
+                    //    voxel = voxel,
+                    //    size = size,
+                    //    indexBuffer = indexBuffer,
+                    //    vertexBuffer = vertexBuffer,
+                    //    triangleBuffer = triangleBuffer,
+                    //    yLayer = y,
+                    //    maxVertexBufferSize = indexBuffer.Length,
+                    //    maxTriangleBufferSize = triangleBuffer.Length,
+                    //    vertexCount = vertexCount,
+                    //    triangleCount = triangleCount
+                    //}.Schedule();
+                    //handle.Complete();
                 }
             }
         }
