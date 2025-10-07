@@ -991,7 +991,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _computeShader: {fileID: 7200000, guid: a142664a2830aa74080fbadbe2ad247d, type: 3}
   _material: {fileID: 2100000, guid: 50f8f2521cc6f5e47b41507688e6156f, type: 2}
-  _voxelSize: 64
+  _voxelSize: 16
 --- !u!4 &794636586
 Transform:
   m_ObjectHideFlags: 0

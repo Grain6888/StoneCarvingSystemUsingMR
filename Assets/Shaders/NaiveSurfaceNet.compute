@@ -213,33 +213,35 @@ void UpdateIndirectArgs(uint3 id : SV_DispatchThreadID)
     IndirectArgs[0] = Indices.IncrementCounter() * 6;
 }
 
-void InterlockedAddNormal(uint idx, float3 n)
-{
-    int3 inormal = (int3) (n * 32768.0);
-    int ignore;
-    Normals.InterlockedAdd(idx * normalStride + 0, inormal.x, ignore);
-    Normals.InterlockedAdd(idx * normalStride + 4, inormal.y, ignore);
-    Normals.InterlockedAdd(idx * normalStride + 8, inormal.z, ignore);
-}
-
 #pragma kernel GenerateNormals
 [numthreads(1024, 1, 1)]
 void GenerateNormals(uint3 id : SV_DispatchThreadID)
 {
-    uint triCount = IndirectArgs[0] / 3;
-    if (id.x >= triCount)
+    if (id.x >= IndirectArgs[0] / 3)
         return;
 
-    uint triIdx = id.x * 3;
-    uint i0 = Indices[triIdx + 0];
-    uint i1 = Indices[triIdx + 1];
-    uint i2 = Indices[triIdx + 2];
-    float3 v0 = Vertices[i0];
-    float3 v1 = Vertices[i1];
-    float3 v2 = Vertices[i2];
-    float3 normal = normalize(cross(v1 - v0, v2 - v0));
+    uint vindex = id.x * 3;
+    float3 vec0 = Vertices[Indices[vindex + 1]] - Vertices[Indices[vindex]];
+    float3 vec1 = Vertices[Indices[vindex + 2]] - Vertices[Indices[vindex]];
+    float3 normal = normalize(cross(vec0, vec1));
+    float QUANTIIZE_FACTOR = 32768.0;
+    int3 inormal = (int3) (normal * QUANTIIZE_FACTOR);
 
-    InterlockedAddNormal(i0, normal);
-    InterlockedAddNormal(i1, normal);
-    InterlockedAddNormal(i2, normal);
+    uint idx0 = Indices[vindex + 0];
+    uint idx1 = Indices[vindex + 1];
+    uint idx2 = Indices[vindex + 2];
+
+    // 各成分ごとにInterlockedAdd
+    int tmp;
+    Normals.InterlockedAdd(idx0 * normalStride + 0, inormal.x, tmp);
+    Normals.InterlockedAdd(idx0 * normalStride + 4, inormal.y, tmp);
+    Normals.InterlockedAdd(idx0 * normalStride + 8, inormal.z, tmp);
+
+    Normals.InterlockedAdd(idx1 * normalStride + 0, inormal.x, tmp);
+    Normals.InterlockedAdd(idx1 * normalStride + 4, inormal.y, tmp);
+    Normals.InterlockedAdd(idx1 * normalStride + 8, inormal.z, tmp);
+
+    Normals.InterlockedAdd(idx2 * normalStride + 0, inormal.x, tmp);
+    Normals.InterlockedAdd(idx2 * normalStride + 4, inormal.y, tmp);
+    Normals.InterlockedAdd(idx2 * normalStride + 8, inormal.z, tmp);
 }
