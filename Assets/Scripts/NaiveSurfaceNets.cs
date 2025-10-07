@@ -212,26 +212,24 @@ public class NaiveSurfaceNets : MonoBehaviour
         //for (int i = 0; i < vertexCount; i++)
         //    _debugNormals[i] = _debugNormals[i].normalized;
 
-        //int[] normalInts = new int[vertexCount * 3];
-        //_normalBuffer.GetData(normalInts);
-        //for (int i = 0; i < vertexCount; i++)
-        //{
-        //    Vector3 n = new(
-        //        normalInts[i * 3 + 0],
-        //        normalInts[i * 3 + 1],
-        //        normalInts[i * 3 + 2]
-        //    );
-        //    n /= 32768.0f;
-        //    _debugNormals[i] = n.normalized;
-        //}
+        int[] normalInts = new int[vertexCount * 3];
+        _normalBuffer.GetData(normalInts);
+        for (int i = 0; i < vertexCount; i++)
+        {
+            Vector3 n = new(
+                normalInts[i * 3 + 0],
+                normalInts[i * 3 + 1],
+                normalInts[i * 3 + 2]
+            );
+            n /= 32768.0f;
+            _debugNormals[i] = n.normalized;
+        }
 
-        //// Meshにセット
-        //_mesh.Clear();
-        //_mesh.vertices = _debugVertices;
-        //_mesh.triangles = _debugIndices;
-        //_mesh.normals = _debugNormals;
-        if (_indexBuffer != null)
-            Graphics.DrawProceduralIndirect(_material, _bounds, MeshTopology.Triangles, _indirectArgBuffer);
+        // Meshにセット
+        _mesh.Clear();
+        _mesh.vertices = _debugVertices;
+        _mesh.triangles = _debugIndices;
+        _mesh.normals = _debugNormals;
     }
 
     private float[] FillVoxel(int size)
