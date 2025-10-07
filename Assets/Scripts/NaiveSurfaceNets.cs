@@ -4,6 +4,7 @@ public class NaiveSurfaceNets : MonoBehaviour
 {
     [SerializeField] private ComputeShader _computeShader = null;
     [SerializeField] private Material _material = null;
+    private Mesh _mesh = null;
     [SerializeField] private int _voxelSize = 32;
 
     private GraphicsBuffer _sdfVoxelBuffer;
@@ -15,7 +16,7 @@ public class NaiveSurfaceNets : MonoBehaviour
     private GraphicsBuffer _indirectArgBuffer;
     private GraphicsBuffer _normalBuffer;
     private Bounds _bounds;
-    private int _klVertices, _klIndices, _klIndirectArgs;
+    private int _klVertices, _klIndices, _klIndirectArgs, _klNormals;
     private Vector3Int _tgVertices, _tgIndices;
 
     // SDFデータを保持
@@ -24,6 +25,7 @@ public class NaiveSurfaceNets : MonoBehaviour
     // デバッグ用
     private Vector3[] _debugVertices;
     private int[] _debugIndices;
+    private Vector3[] _debugNormals;
 
     private static readonly int _spSdfVoxelSize = Shader.PropertyToID("SdfVoxelSize");
     private static readonly int _spSdfVoxels = Shader.PropertyToID("SdfVoxels");
@@ -50,9 +52,10 @@ public class NaiveSurfaceNets : MonoBehaviour
         _indexBuffer.SetCounterValue(0);
         _indirectArgBuffer = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, 4, sizeof(uint));
         _indirectArgBuffer.SetData(new uint[4] { 0, 1, 0, 0 });
+        _normalBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, size * size * size * 3, sizeof(int));
 
         // Neighbors
-        var neighbors = new Vector3Int[]
+        Vector3Int[] neighbors = new Vector3Int[]
         {
             new Vector3Int( 0, 0, 0 ),
             new Vector3Int( 1, 0, 0 ),
@@ -67,7 +70,7 @@ public class NaiveSurfaceNets : MonoBehaviour
         _neighborBuffer.SetData(neighbors);
 
         // Edges
-        var edges = new Vector2Int[]
+        Vector2Int[] edges = new Vector2Int[]
         {
             new Vector2Int( 0, 1 ),
             new Vector2Int( 1, 2 ),
@@ -124,11 +127,26 @@ public class NaiveSurfaceNets : MonoBehaviour
         _computeShader.SetBuffer(_klIndirectArgs, _spIndices, _indexBuffer);
         _computeShader.SetBuffer(_klIndirectArgs, _spIndirectArgs, _indirectArgBuffer);
 
-        // 法線バッファ生成
-        _normalBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, _indexBuffer.count, sizeof(int));
-        // ComputeShaderにセット
-        _computeShader.SetBuffer(_klVertices, "Normals", _normalBuffer);
+        // Normals
+        _klNormals = _computeShader.FindKernel("GenerateNormals");
+        _computeShader.SetBuffer(_klNormals, "Vertices", _vertexBuffer);
+        _computeShader.SetBuffer(_klNormals, "Indices", _indexBuffer);
+        _computeShader.SetBuffer(_klNormals, "Normals", _normalBuffer);
+        _computeShader.SetBuffer(_klNormals, "IndirectArgs", _indirectArgBuffer);
         _computeShader.SetInt("normalStride", sizeof(int) * 3);
+
+        // MeshFilter/MeshRendererを追加
+        var meshFilter = gameObject.GetComponent<MeshFilter>();
+        if (meshFilter == null) meshFilter = gameObject.AddComponent<MeshFilter>();
+        var meshRenderer = gameObject.GetComponent<MeshRenderer>();
+        if (meshRenderer == null) meshRenderer = gameObject.AddComponent<MeshRenderer>();
+        meshRenderer.material = _material;
+
+        _mesh = new Mesh
+        {
+            indexFormat = UnityEngine.Rendering.IndexFormat.UInt32
+        };
+        meshFilter.mesh = _mesh;
     }
 
     private void OnDestroy()
@@ -151,25 +169,71 @@ public class NaiveSurfaceNets : MonoBehaviour
         _computeShader.Dispatch(_klVertices, _tgVertices.x, _tgVertices.y, _tgVertices.z);
         _computeShader.Dispatch(_klIndices, _tgIndices.x, _tgIndices.y, _tgIndices.z);
         _computeShader.Dispatch(_klIndirectArgs, 1, 1, 1);
+
+        int indexCount = _indexBuffer.count;
+        int triangleCount = indexCount / 3;
+        int threadGroupSize = 1024;
+        int dispatchCount = (triangleCount + threadGroupSize - 1) / threadGroupSize;
+        _computeShader.Dispatch(_klNormals, dispatchCount, 1, 1);
         GL.Flush();
 
-        // 頂点・インデックスバッファの内容を取得
+        // バッファからデータ取得
         int vertexCount = _vertexBuffer.count;
-        int indexCount = _indexBuffer.count;
-
         if (_debugVertices == null || _debugVertices.Length != vertexCount)
             _debugVertices = new Vector3[vertexCount];
         if (_debugIndices == null || _debugIndices.Length != indexCount)
             _debugIndices = new int[indexCount];
+        if (_debugNormals == null || _debugNormals.Length != vertexCount)
+            _debugNormals = new Vector3[vertexCount];
 
         _vertexBuffer.GetData(_debugVertices);
         _indexBuffer.GetData(_debugIndices);
 
+        //// --- 法線計算 ---
+        //// 各頂点の法線を初期化
+        //for (int i = 0; i < vertexCount; i++)
+        //    _debugNormals[i] = Vector3.zero;
+
+        //// 各三角形ごとに法線を加算
+        //for (int i = 0; i + 2 < indexCount; i += 3)
+        //{
+        //    int i0 = _debugIndices[i];
+        //    int i1 = _debugIndices[i + 1];
+        //    int i2 = _debugIndices[i + 2];
+        //    Vector3 v0 = _debugVertices[i0];
+        //    Vector3 v1 = _debugVertices[i1];
+        //    Vector3 v2 = _debugVertices[i2];
+        //    Vector3 normal = Vector3.Cross(v1 - v0, v2 - v0).normalized;
+        //    _debugNormals[i0] += normal;
+        //    _debugNormals[i1] += normal;
+        //    _debugNormals[i2] += normal;
+        //}
+        //// 各頂点の法線を正規化
+        //for (int i = 0; i < vertexCount; i++)
+        //    _debugNormals[i] = _debugNormals[i].normalized;
+
+        //int[] normalInts = new int[vertexCount * 3];
+        //_normalBuffer.GetData(normalInts);
+        //for (int i = 0; i < vertexCount; i++)
+        //{
+        //    Vector3 n = new(
+        //        normalInts[i * 3 + 0],
+        //        normalInts[i * 3 + 1],
+        //        normalInts[i * 3 + 2]
+        //    );
+        //    n /= 32768.0f;
+        //    _debugNormals[i] = n.normalized;
+        //}
+
+        //// Meshにセット
+        //_mesh.Clear();
+        //_mesh.vertices = _debugVertices;
+        //_mesh.triangles = _debugIndices;
+        //_mesh.normals = _debugNormals;
         if (_indexBuffer != null)
             Graphics.DrawProceduralIndirect(_material, _bounds, MeshTopology.Triangles, _indirectArgBuffer);
     }
 
-    // FillVoxel: SDF配列を生成するメソッド（例）
     private float[] FillVoxel(int size)
     {
         var voxels = new float[size * size * size];
@@ -187,10 +251,10 @@ public class NaiveSurfaceNets : MonoBehaviour
             {
                 for (int z = 0; z < size; z++)
                 {
-                    if (Mathf.Abs(x - y) < 7.0f || Mathf.Abs((size - x) - y) < 7.0f)
+                    if (Mathf.Abs(x - y) < 3.0f || Mathf.Abs((size - x) - y) < 3.0f)
                     {
-                        //voxel[x + z * size.x + y * size.x * size.z] = 1.0f;
-                        //continue;
+                        voxels[x + z * size + y * size * size] = 1.0f;
+                        continue;
                     }
 
                     float dx = (x - centerX) / rx;
@@ -215,32 +279,50 @@ public class NaiveSurfaceNets : MonoBehaviour
         return voxels;
     }
 
-    //private void OnDrawGizmos()
-    //{
-    //    Gizmos.color = Color.blue;
-    //    Gizmos.DrawWireCube(_bounds.center, _bounds.size);
+    private void OnDrawGizmos()
+    {
+        //Gizmos.color = Color.blue;
+        //Gizmos.DrawWireCube(_bounds.center, _bounds.size);
 
-    //    // 頂点デバッグ描画
-    //    if (_debugVertices != null)
-    //    {
-    //        Gizmos.color = Color.red;
-    //        foreach (var v in _debugVertices)
-    //            Gizmos.DrawSphere(v, 0.1f);
-    //    }
+        //// 頂点デバッグ描画
+        //if (_debugVertices != null)
+        //{
+        //    Gizmos.color = Color.red;
+        //    foreach (var v in _debugVertices)
+        //    {
+        //        Vector3 worldPos = transform.TransformPoint(v);
+        //        Gizmos.DrawSphere(worldPos, 0.01f);
+        //    }
+        //}
 
-    //    // 三角形デバッグ描画
-    //    if (_debugVertices != null && _debugIndices != null)
-    //    {
-    //        Gizmos.color = Color.green;
-    //        for (int i = 0; i + 2 < _indexBuffer.count; i += 3)
-    //        {
-    //            Vector3 v0 = _debugVertices[_debugIndices[i]];
-    //            Vector3 v1 = _debugVertices[_debugIndices[i + 1]];
-    //            Vector3 v2 = _debugVertices[_debugIndices[i + 2]];
-    //            Gizmos.DrawLine(v0, v1);
-    //            Gizmos.DrawLine(v1, v2);
-    //            Gizmos.DrawLine(v2, v0);
-    //        }
-    //    }
-    //}
+        //// 三角形デバッグ描画
+        //if (_debugVertices != null && _debugIndices != null)
+        //{
+        //    Gizmos.color = Color.green;
+        //    for (int i = 0; i + 2 < _indexBuffer.count; i += 3)
+        //    {
+        //        Vector3 v0 = _debugVertices[_debugIndices[i]];
+        //        Vector3 v0w = transform.TransformPoint(v0);
+        //        Vector3 v1 = _debugVertices[_debugIndices[i + 1]];
+        //        Vector3 v1w = transform.TransformPoint(v1);
+        //        Vector3 v2 = _debugVertices[_debugIndices[i + 2]];
+        //        Vector3 v2w = transform.TransformPoint(v2);
+        //        Gizmos.DrawLine(v0w, v1w);
+        //        Gizmos.DrawLine(v1w, v2w);
+        //        Gizmos.DrawLine(v2w, v0w);
+        //    }
+        //}
+
+        if (_debugVertices != null && _debugNormals != null)
+        {
+            Gizmos.color = Color.cyan;
+            float normalLength = 0.5f;
+            for (int i = 0; i < _debugVertices.Length; i++)
+            {
+                Vector3 worldPos = transform.TransformPoint(_debugVertices[i]);
+                Vector3 to = worldPos + _debugNormals[i] * normalLength;
+                Gizmos.DrawLine(worldPos, to);
+            }
+        }
+    }
 }

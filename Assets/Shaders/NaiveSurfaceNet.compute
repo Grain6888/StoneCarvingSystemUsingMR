@@ -7,6 +7,8 @@ RWStructuredBuffer<uint> VertexIds;
 RWStructuredBuffer<float3> Vertices;
 RWStructuredBuffer<uint> Indices;
 RWStructuredBuffer<uint> IndirectArgs;
+RWByteAddressBuffer Normals;
+uint normalStride;
 
 // v0, v1, v2, v3から構築される面を追加する
 void MakeFace(uint v0, uint v1, uint v2, uint v3, bool outside)
@@ -40,7 +42,7 @@ uint ToIdx(uint x, uint y, uint z, uint i, uint size)
     x += Neighbors[i].x;
     y += Neighbors[i].y;
     z += Neighbors[i].z;
-    return x + y * size + z * size * size;
+    return x + z * size + y * size * size;
 }
 
 // 整数座標から配列に入るときの順序を取得
@@ -50,7 +52,7 @@ uint ToIdxNeg(uint x, uint y, uint z, uint i, uint size)
     x -= Neighbors[i].x;
     y -= Neighbors[i].y;
     z -= Neighbors[i].z;
-    return x + y * size + z * size * size;
+    return x + z * size + y * size * size;
 }
 
 // 整数座標から実数座標を取得
@@ -209,4 +211,35 @@ void GenerateIndices(uint3 id : SV_DispatchThreadID)
 void UpdateIndirectArgs(uint3 id : SV_DispatchThreadID)
 {
     IndirectArgs[0] = Indices.IncrementCounter() * 6;
+}
+
+void InterlockedAddNormal(uint idx, float3 n)
+{
+    int3 inormal = (int3) (n * 32768.0);
+    int ignore;
+    Normals.InterlockedAdd(idx * normalStride + 0, inormal.x, ignore);
+    Normals.InterlockedAdd(idx * normalStride + 4, inormal.y, ignore);
+    Normals.InterlockedAdd(idx * normalStride + 8, inormal.z, ignore);
+}
+
+#pragma kernel GenerateNormals
+[numthreads(1024, 1, 1)]
+void GenerateNormals(uint3 id : SV_DispatchThreadID)
+{
+    uint triCount = IndirectArgs[0] / 3;
+    if (id.x >= triCount)
+        return;
+
+    uint triIdx = id.x * 3;
+    uint i0 = Indices[triIdx + 0];
+    uint i1 = Indices[triIdx + 1];
+    uint i2 = Indices[triIdx + 2];
+    float3 v0 = Vertices[i0];
+    float3 v1 = Vertices[i1];
+    float3 v2 = Vertices[i2];
+    float3 normal = normalize(cross(v1 - v0, v2 - v0));
+
+    InterlockedAddNormal(i0, normal);
+    InterlockedAddNormal(i1, normal);
+    InterlockedAddNormal(i2, normal);
 }
