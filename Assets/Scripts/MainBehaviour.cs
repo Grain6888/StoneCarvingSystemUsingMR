@@ -37,8 +37,7 @@ namespace MRSculpture
         [SerializeField] private GameObject _chisel;
         [SerializeField] private GameObject _hammer;
         private ImpactRangeGetter _impactRangeGetter;
-        public HapticSource hapticSource;
-        [SerializeField] private AudioSource _audioSource;
+        private ChiselController _chiselController;
         private int _impactRange = 0;
         private bool _ready = false;
         private bool _isTriggered = false;
@@ -50,6 +49,7 @@ namespace MRSculpture
         private void Awake()
         {
             _impactRangeGetter = _hammer.GetComponent<ImpactRangeGetter>();
+            _chiselController = _chisel.GetComponent<ChiselController>();
         }
 
         public async void LoadFile()
@@ -246,56 +246,9 @@ namespace MRSculpture
                 _isTriggered = false;
             }
 
-            if (_isTriggered)
+            if (_isTriggered && _impactRange > 0)
             {
-                // X方向の探索範囲（visibleDistance分だけ前後に拡張、範囲外はクランプ）
-                int minX = Mathf.Max(0, center.x - _impactRange);
-                int maxX = Mathf.Min(_voxelDataChunk.xLength - 1, center.x + _impactRange);
-                // Y方向の探索範囲
-                int minY = Mathf.Max(0, center.y - _impactRange);
-                int maxY = Mathf.Min(_voxelDataChunk.yLength - 1, center.y + _impactRange);
-                // Z方向の探索範囲
-                int minZ = Mathf.Max(0, center.z - _impactRange);
-                int maxZ = Mathf.Min(_voxelDataChunk.zLength - 1, center.z + _impactRange);
-
-                // 距離判定用にvisibleDistanceの2乗を事前計算（パフォーマンス向上のため）
-                float sqrVisibleDistance = _impactRange * _impactRange;
-
-                // 各XZレイヤごとに処理
-                for (int y = minY; y <= maxY; y++)
-                {
-                    // Y層のXZ平面のDataChunkを取得
-                    DataChunk xzLayer = _voxelDataChunk.GetXZLayer(y);
-                    bool layerBufferNeedsUpdate = false; // レンダーバッファ更新が必要かどうか
-
-                    // X方向の範囲をループ
-                    for (int x = minX; x <= maxX; x++)
-                    {
-                        // Z方向の範囲をループ
-                        for (int z = minZ; z <= maxZ; z++)
-                        {
-                            // セルのローカル空間での中心座標を計算（各軸+0.5でセル中心）
-                            Vector3 cellLocalPos = new(x + 0.5f, y + 0.5f, z + 0.5f);
-
-                            // 破壊中心との距離がvisibleDistance以内か判定
-                            if ((cellLocalPos - center).sqrMagnitude > sqrVisibleDistance)
-                                continue; // 範囲外ならスキップ
-
-                            // ハプティクスを再生
-                            hapticSource.Play();
-                            // 破壊音を再生
-                            _audioSource.Play();
-                            // 対象セルからIsFilledフラグを削除
-                            xzLayer.RemoveFlag(x, 0, z, CellFlags.IsFilled);
-                            layerBufferNeedsUpdate = true; // このレイヤーのバッファ更新が必要
-                        }
-                    }
-                    // 現在のレイヤに含まれる何らかのセルが更新された場合のみレンダーバッファを更新
-                    if (layerBufferNeedsUpdate)
-                    {
-                        _renderer.UpdateRenderBuffer(xzLayer, y);
-                    }
-                }
+                _chiselController.Carve(ref _voxelDataChunk, in center, in _impactRange, ref _renderer);
             }
 
             _renderer.RenderMeshes(new Bounds(boundingBoxSize * 0.5f, boundingBoxSize));
