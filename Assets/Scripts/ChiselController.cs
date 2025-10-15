@@ -79,7 +79,6 @@ namespace MRSculpture
 
             if (_hapticSource != null)
             {
-
                 _hapticSource.amplitude = amplitude;
                 _hapticSource.Play(Controller.Left);
             }
