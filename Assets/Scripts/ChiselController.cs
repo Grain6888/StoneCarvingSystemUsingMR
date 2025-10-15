@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using Oculus.Haptics;
-using Meta.XR.ImmersiveDebugger.Gizmo;
 
 namespace MRSculpture
 {
@@ -9,8 +8,17 @@ namespace MRSculpture
         public HapticSource _hapticSource;
         public AudioSource _audioSource;
 
+        private int _impactRange;
+
+        private void Awake()
+        {
+            _hapticSource = GetComponent<HapticSource>();
+            _audioSource = GetComponent<AudioSource>();
+        }
+
         public void Carve(ref DataChunk voxelDataChunk, in Vector3Int center, in int impactRange, ref Renderer renderer)
         {
+            _impactRange = impactRange;
             // X方向の探索範囲（visibleDistance分だけ前後に拡張、範囲外はクランプ）
             int minX = Mathf.Max(0, center.x - impactRange);
             int maxX = Mathf.Min(voxelDataChunk.xLength - 1, center.x + impactRange);
@@ -61,26 +69,25 @@ namespace MRSculpture
 
             if (removedCount > 0)
             {
-                float amplitude = Mathf.Clamp01((float)impactRange / 10.0f);
+                PlayFeedback();
+            }
+        }
 
-                if (_hapticSource != null)
-                {
-                    float hapticAmplitude = Mathf.Lerp(0.0f, 5.0f, amplitude);
-                    //float originalAmplitude = _hapticSource.amplitude;
-                    _hapticSource.amplitude = hapticAmplitude;
-                    _hapticSource.Play();
-                    Debug.Log($"MRSculpture : Haptic Amplitude: {_hapticSource.amplitude}");
-                    //_hapticSource.amplitude = originalAmplitude;
-                }
+        private void PlayFeedback()
+        {
+            float amplitude = Mathf.Clamp01(_impactRange / 10f);
 
-                if (_audioSource != null)
-                {
-                    //float originalVolume = _audioSource.volume;
-                    _audioSource.volume = amplitude;
-                    _audioSource.Play();
-                    Debug.Log($"MRSculpture : Audio Volume: {_audioSource.volume}");
-                    //_audioSource.volume = originalVolume;
-                }
+            if (_hapticSource != null)
+            {
+
+                _hapticSource.amplitude = amplitude;
+                _hapticSource.Play(Controller.Left);
+            }
+
+            if (_audioSource != null)
+            {
+                _audioSource.volume = amplitude;
+                _audioSource.Play();
             }
         }
     }

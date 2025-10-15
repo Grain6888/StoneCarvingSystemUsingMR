@@ -36,7 +36,7 @@ namespace MRSculpture
         [SerializeField] private Transform _mainBehaviourTransform;
         [SerializeField] private GameObject _chisel;
         [SerializeField] private GameObject _hammer;
-        private ImpactRangeGetter _impactRangeGetter;
+        private HammerController _hammerController;
         private ChiselController _chiselController;
         private int _impactRange = 0;
         private bool _ready = false;
@@ -48,7 +48,7 @@ namespace MRSculpture
 
         private void Awake()
         {
-            _impactRangeGetter = _hammer.GetComponent<ImpactRangeGetter>();
+            _hammerController = _hammer.GetComponent<HammerController>();
             _chiselController = _chisel.GetComponent<ChiselController>();
         }
 
@@ -187,7 +187,7 @@ namespace MRSculpture
             if (!_ready)
                 return;
 
-            _impactRange = Mathf.Min(10, (int)(_impactRangeGetter.ImpactMagnitude * 5));
+            _impactRange = Mathf.Min(10, (int)(_hammerController.ImpactMagnitude * 5));
 
             Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(_boundsSize.x, _boundsSize.y, _boundsSize.z));
             Bounds boundingBox = new();
@@ -280,23 +280,6 @@ namespace MRSculpture
                 }
             }
             center = nearest;
-            //centerLocalPosition = new Vector3(0.0f, 0.0f, 0.0f);
-
-
-            //// nearestの中心座標（ローカル→ワールド変換）
-            //Vector3 nearestCenterLocal = new Vector3(nearest.x + 0.5f, nearest.y + 0.5f, nearest.z + 0.5f);
-            //Vector3 nearestCenterWorld = transform.TransformPoint(nearestCenterLocal);
-
-            //// centerLocalPositionもワールド座標に変換
-            //Vector3 centerWorld = transform.TransformPoint(centerLocalPosition);
-
-            //// centerWorldからnearestCenterWorldへの方向ベクトル
-            //Vector3 dir = (nearestCenterWorld - centerWorld).normalized;
-
-            //// centerWorldから0.05mだけnearestCenterWorld方向に進めた位置
-            //Vector3 impactCenterWorldPos = centerWorld + dir * 0.05f;
-
-            //_impactCenter.transform.position = impactCenterWorldPos;
         }
 
         private void OnDestroy()
