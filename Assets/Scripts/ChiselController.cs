@@ -11,14 +11,47 @@ namespace MRSculpture
 
         private int _impactRange;
         [SerializeField] private GameObject _center;
+        private Transform _centerPosition;
         [SerializeField] private GameObject _target;
+        [SerializeField] private GameObject _dummy;
+        private GameObject _dummyInstance;
 
-        private Transform _targetTransform => _target.transform;
+        private Transform _targetTransform;
+
+        private bool _isPressingTrigger = false;
+
+        private void Awake()
+        {
+            _targetTransform = _target.transform;
+        }
+
+        public void Update()
+        {
+            if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger))
+            {
+                DownTriggerButton();
+            }
+            if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger))
+            {
+                UpTriggerButton();
+            }
+        }
 
         public void Carve(ref DataChunk voxelDataChunk, in int impactRange, ref Renderer renderer)
         {
-            Vector3 impactCenterWorldPosition = _center.transform.position;
+            // ワールド座標を取得
+            Vector3 impactCenterWorldPosition;
+            if (_isPressingTrigger)
+            {
+                impactCenterWorldPosition = _centerPosition.position;
+            }
+            else
+            {
+                impactCenterWorldPosition = _center.transform.position;
+            }
+            // ワールド座標 → ターゲットのローカル座標へ変換
             Vector3 currentImpactCenterLocalPosition = _targetTransform.InverseTransformPoint(impactCenterWorldPosition);
+            // ローカル座標をボクセル単位に合わせる
             Vector3Int center = Vector3Int.RoundToInt(currentImpactCenterLocalPosition);
 
             _impactRange = impactRange;
@@ -74,6 +107,31 @@ namespace MRSculpture
             {
                 PlayFeedback();
             }
+        }
+
+        private void DownTriggerButton()
+        {
+            _isPressingTrigger = true;
+            MeshRenderer mesh = GetComponent<MeshRenderer>();
+            if (mesh != null)
+            {
+                mesh.enabled = false;
+            }
+
+            _dummyInstance = Instantiate(_dummy, gameObject.transform.position, gameObject.transform.rotation);
+            _centerPosition = _dummyInstance.transform.Find("ImpactCenter");
+        }
+
+        private void UpTriggerButton()
+        {
+            _isPressingTrigger = false;
+            MeshRenderer mesh = GetComponent<MeshRenderer>();
+            if (mesh != null)
+            {
+                mesh.enabled = true;
+            }
+
+            Destroy(_dummyInstance);
         }
 
         private void PlayFeedback()

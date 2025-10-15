@@ -32,7 +32,6 @@ namespace MRSculpture
         /// </summary>
         [SerializeField] private Material _voxelMaterial;
 
-        //[SerializeField] private GameObject _impactCenter;
         [SerializeField] private Transform _mainBehaviourTransform;
         [SerializeField] private GameObject _chisel;
         [SerializeField] private GameObject _hammer;
@@ -40,7 +39,6 @@ namespace MRSculpture
         private ChiselController _chiselController;
         private int _impactRange = 0;
         private bool _ready = false;
-        //private bool _isTriggered = false;
 
         private void Awake()
         {
@@ -189,94 +187,13 @@ namespace MRSculpture
             Bounds boundingBox = new();
             boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
 
-            //// 破壊中心のワールド座標を取得
-            //Vector3 impactCenterWorldPosition = _impactCenter.transform.position;
-            //// 破壊中心のワールド座標を、MainBehaviourのローカル座標系に変換
-            //Vector3 currentImpactCenterLocalPosition = _mainBehaviourTransform.InverseTransformPoint(impactCenterWorldPosition);
-
-
-            //// トリガーが押された瞬間だけcenterを上書き
-            //if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch) && !_isTriggered)
-            //{
-            //    _isTriggered = true;
-            //    _impactCenterLocalPosition = currentImpactCenterLocalPosition;
-            //    _center = new Vector3Int(
-            //        Mathf.RoundToInt(_impactCenterLocalPosition.x),
-            //        Mathf.RoundToInt(_impactCenterLocalPosition.y),
-            //        Mathf.RoundToInt(_impactCenterLocalPosition.z)
-            //    );
-            //    OnPressedLeftPrimaryIndexTrigger(ref _center, ref _impactCenterLocalPosition);
-            //}
-            //// トリガーが離されたらリアルタイム追従に戻す
-            //if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch) && _isTriggered)
-            //{
-            //    _isTriggered = false;
-            //}
-
-            //// トリガーを押していない間はリアルタイムでcenterを更新
-            //if (!_isTriggered)
-            //{
-            //    _impactCenterLocalPosition = currentImpactCenterLocalPosition;
-            //    _center = new Vector3Int(
-            //        Mathf.RoundToInt(_impactCenterLocalPosition.x),
-            //        Mathf.RoundToInt(_impactCenterLocalPosition.y),
-            //        Mathf.RoundToInt(_impactCenterLocalPosition.z)
-            //    );
-            //}
-
-            //// 以降、_centerと_impactCenterLocalPositionを使って処理
-
-            //// 破壊中心位置を基準に、最も近いボクセルグリッド座標（整数）を算出
-            //Vector3Int center = new(
-            //    Mathf.RoundToInt(_impactCenterLocalPosition.x),
-            //    Mathf.RoundToInt(_impactCenterLocalPosition.y),
-            //    Mathf.RoundToInt(_impactCenterLocalPosition.z)
-            //);
-            //if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch) && !_isTriggered)
-            //{
-            //    OnPressedLeftPrimaryIndexTrigger(ref center, ref _impactCenterLocalPosition);
-            //}
-
-            //if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch) && _isTriggered)
-            //{
-            //    _isTriggered = false;
-            //}
-
-            if (/*_isTriggered && */_impactRange > 0)
+            if (_impactRange > 0)
             {
                 _chiselController.Carve(ref _voxelDataChunk, in _impactRange, ref _renderer);
             }
 
             _renderer.RenderMeshes(new Bounds(boundingBoxSize * 0.5f, boundingBoxSize));
         }
-
-        //private void OnPressedLeftPrimaryIndexTrigger(ref Vector3Int center, ref Vector3 centerLocalPosition)
-        //{
-        //    _isTriggered = true;
-        //    // y層のXZレイヤを取得
-        //    int y = Mathf.Clamp(center.y, 0, _voxelDataChunk.yLength - 1);
-        //    DataChunk xzLayer = _voxelDataChunk.GetXZLayer(y);
-
-        //    Vector3Int nearest = center;
-        //    float minDistSqr = float.MaxValue;
-        //    for (int x = 0; x < _voxelDataChunk.xLength; x++)
-        //    {
-        //        for (int z = 0; z < _voxelDataChunk.zLength; z++)
-        //        {
-        //            if (xzLayer.HasFlag(x, 0, z, CellFlags.IsFilled))
-        //            {
-        //                Vector3 voxelPos = new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);
-        //                float distSqr = (voxelPos - centerLocalPosition).sqrMagnitude;
-        //                if (distSqr < minDistSqr)
-        //                {
-        //                    minDistSqr = distSqr;
-        //                    nearest = new Vector3Int(x, y, z);
-        //                }
-        //            }
-        //        }
-        //    }
-        //    center = nearest;
-        //}
 
         private void OnDestroy()
         {

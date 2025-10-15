@@ -2510,14 +2510,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5999973364367719608, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6130661345023898538, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2849,14 +2841,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2217645520558117671, guid: d54442b3834095b4c89a983676ac6063, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2940470492284145695, guid: d54442b3834095b4c89a983676ac6063, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3677224915888634137, guid: d54442b3834095b4c89a983676ac6063, type: 3}
       propertyPath: m_Name
       value: Chisel
