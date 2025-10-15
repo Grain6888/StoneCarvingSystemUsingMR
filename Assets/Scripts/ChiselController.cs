@@ -5,19 +5,22 @@ namespace MRSculpture
 {
     public class ChiselController : MonoBehaviour
     {
-        public HapticSource _hapticSource;
-        public AudioSource _audioSource;
+        [SerializeField] private HapticSource _hapticSource;
+        [SerializeField] private AudioSource _audioSource1;
+        [SerializeField] private AudioSource _audioSource2;
 
         private int _impactRange;
+        [SerializeField] private GameObject _center;
+        [SerializeField] private GameObject _target;
 
-        private void Awake()
-        {
-            _hapticSource = GetComponent<HapticSource>();
-            _audioSource = GetComponent<AudioSource>();
-        }
+        private Transform _targetTransform => _target.transform;
 
-        public void Carve(ref DataChunk voxelDataChunk, in Vector3Int center, in int impactRange, ref Renderer renderer)
+        public void Carve(ref DataChunk voxelDataChunk, in int impactRange, ref Renderer renderer)
         {
+            Vector3 impactCenterWorldPosition = _center.transform.position;
+            Vector3 currentImpactCenterLocalPosition = _targetTransform.InverseTransformPoint(impactCenterWorldPosition);
+            Vector3Int center = Vector3Int.RoundToInt(currentImpactCenterLocalPosition);
+
             _impactRange = impactRange;
             // X方向の探索範囲（visibleDistance分だけ前後に拡張、範囲外はクランプ）
             int minX = Mathf.Max(0, center.x - impactRange);
@@ -83,10 +86,12 @@ namespace MRSculpture
                 _hapticSource.Play(Controller.Left);
             }
 
-            if (_audioSource != null)
+            if (_audioSource1 != null)
             {
-                _audioSource.volume = amplitude;
-                _audioSource.Play();
+                _audioSource1.volume = amplitude;
+                _audioSource1.Play();
+                _audioSource2.volume = amplitude * 0.5f;
+                _audioSource2.Play();
             }
         }
     }
