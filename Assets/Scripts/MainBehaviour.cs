@@ -44,26 +44,25 @@ namespace MRSculpture
         {
             _hammerController = _hammer.GetComponent<HammerController>();
             _chiselController = _chisel.GetComponent<ChiselController>();
-        }
 
-        public async void LoadFile()
-        {
-            _voxelDataChunk.Dispose();
             _voxelDataChunk = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
 
             // ローカル → ワールド座標系の変換行列
             Matrix4x4 localToWorldMatrix = transform.localToWorldMatrix;
 
             _renderer = new Renderer(_voxelMesh, _voxelMaterial, localToWorldMatrix);
+        }
 
-            string fileName = "isfilled.txt";
+        public async void LoadFile()
+        {
+            string fileName = "model.dat";
             string path = Path.Combine(Application.persistentDataPath, fileName);
 
             if (File.Exists(path))
             {
                 await System.Threading.Tasks.Task.Run(() =>
                 {
-                    DataChunk.LoadIsFilledTxt("isfilled.txt", ref _voxelDataChunk);
+                    DataChunk.LoadDat(fileName, ref _voxelDataChunk);
                 });
 
                 for (int y = 0; y < _voxelDataChunk.yLength; y++)
@@ -77,20 +76,7 @@ namespace MRSculpture
             else
             {
                 Debug.Log("MRSculpture DataChunk load failed from file.");
-
-                // 全レイヤ分処理
-                for (int y = 0; y < _voxelDataChunk.yLength; y++)
-                {
-                    DataChunk xzLayer = _voxelDataChunk.GetXZLayer(y);
-
-                    for (int i = 0; i < xzLayer.Length; i++)
-                    {
-                        xzLayer.AddFlag(i, CellFlags.IsFilled);
-                    }
-                    _renderer.AddRenderBuffer(xzLayer, y);
-                }
-
-                Debug.Log("MRSculpture New DataChunk created.");
+                NewFile();
             }
 
             _ready = true;
@@ -98,27 +84,16 @@ namespace MRSculpture
 
         public async void SaveFile()
         {
-            string fileName = "isfilled.txt";
-            string path = Path.Combine(Application.persistentDataPath, fileName);
+            string fileName = "model.dat";
 
             await System.Threading.Tasks.Task.Run(() =>
             {
-                _voxelDataChunk.SaveIsFilledTxt("isfilled.txt");
+                _voxelDataChunk.SaveDat(fileName);
             });
-
-            Debug.Log("MRSculpture DataChunk saved to file: " + path);
         }
 
         public void NewFile()
         {
-            _voxelDataChunk.Dispose();
-            _voxelDataChunk = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
-
-            // ローカル → ワールド座標系の変換行列
-            Matrix4x4 localToWorldMatrix = transform.localToWorldMatrix;
-
-            _renderer = new Renderer(_voxelMesh, _voxelMaterial, localToWorldMatrix);
-
             // 楕円体の中心座標（グリッド中央）
             float centerX = (_voxelDataChunk.xLength - 1) / 2.0f;
             float centerY = (_voxelDataChunk.yLength - 1) / 2.0f;
@@ -178,8 +153,7 @@ namespace MRSculpture
 
         private void Update()
         {
-            if (!_ready)
-                return;
+            if (!_ready) return;
 
             _impactRange = Mathf.Min(10, (int)(_hammerController.ImpactMagnitude * 5));
 
