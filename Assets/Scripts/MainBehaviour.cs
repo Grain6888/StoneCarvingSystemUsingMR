@@ -200,10 +200,5 @@ namespace MRSculpture
             _renderer.Dispose();
             _voxelDataChunk.Dispose();
         }
-
-        private void OnApplicationQuit()
-        {
-            _voxelDataChunk.SaveIsFilledTxt("isfilled.txt");
-        }
     }
 }
