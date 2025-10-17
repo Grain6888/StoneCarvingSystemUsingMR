@@ -12,7 +12,6 @@ namespace MRSculpture
 
         public float ImpactMagnitude => _impactMagnitude;
         [SerializeField] private HapticSource _hapticSource;
-        private int _frameCount = 0;
 
         void Update()
         {
@@ -21,15 +20,7 @@ namespace MRSculpture
                 return;
             }
 
-            if (_frameCount < 5)
-            {
-                _frameCount++;
-            }
-            else
-            {
-                _impactMagnitude = 0.0f;
-                _frameCount = 0;
-            }
+            if (_impactMagnitude > 0.0f) _impactMagnitude = 0.0f;
         }
 
         private void OnTriggerEnter(Collider other)
@@ -59,7 +50,7 @@ namespace MRSculpture
             if (_hapticSource != null)
             {
                 _hapticSource.amplitude = amplitude;
-                _hapticSource.Play(Controller.Right);
+                _hapticSource.Play();
             }
 
             if (_audioSource != null)

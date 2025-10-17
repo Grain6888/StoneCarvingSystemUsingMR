@@ -6,8 +6,7 @@ namespace MRSculpture
     public class ChiselController : MonoBehaviour
     {
         [SerializeField] private HapticSource _hapticSource;
-        [SerializeField] private AudioSource _audioSource1;
-        [SerializeField] private AudioSource _audioSource2;
+        [SerializeField] private AudioSource _audioSource;
 
         private int _impactRange;
         [SerializeField] private GameObject _center;
@@ -119,6 +118,7 @@ namespace MRSculpture
             }
 
             _dummyInstance = Instantiate(_dummy, gameObject.transform.position, gameObject.transform.rotation);
+            _dummyInstance.name = "Chisel";
             _centerPosition = _dummyInstance.transform.Find("ImpactCenter");
         }
 
@@ -141,15 +141,13 @@ namespace MRSculpture
             if (_hapticSource != null)
             {
                 _hapticSource.amplitude = amplitude;
-                _hapticSource.Play(Controller.Left);
+                _hapticSource.Play();
             }
 
-            if (_audioSource1 != null)
+            if (_audioSource != null)
             {
-                _audioSource1.volume = amplitude;
-                _audioSource1.Play();
-                _audioSource2.volume = amplitude * 0.5f;
-                _audioSource2.Play();
+                _audioSource.volume = amplitude;
+                _audioSource.Play();
             }
         }
     }
