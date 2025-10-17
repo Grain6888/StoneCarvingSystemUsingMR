@@ -113,35 +113,9 @@ namespace MRSculpture
             {
                 DataChunk xzLayer = _voxelDataChunk.GetXZLayer(y);
 
-                for (int x = 0; x < _voxelDataChunk.xLength; x++)
+                for (int i = 0; i < xzLayer.Length; i++)
                 {
-                    for (int z = 0; z < _voxelDataChunk.zLength; z++)
-                    {
-                        // ボクセル中心座標
-                        float voxelX = x + 0.5f;
-                        float voxelY = y + 0.5f;
-                        float voxelZ = z + 0.5f;
-
-                        // 外側楕円体方程式判定
-                        float normX = (voxelX - centerX) / radiusX;
-                        float normY = (voxelY - centerY) / radiusY;
-                        float normZ = (voxelZ - centerZ) / radiusZ;
-                        float ellipsoid = normX * normX + normY * normY + normZ * normZ;
-
-                        // 内側楕円体方程式判定
-                        float innerNormX = innerRadiusX > 0.0f ? (voxelX - centerX) / innerRadiusX : 0.0f;
-                        float innerNormY = innerRadiusY > 0.0f ? (voxelY - centerY) / innerRadiusY : 0.0f;
-                        float innerNormZ = innerRadiusZ > 0.0f ? (voxelZ - centerZ) / innerRadiusZ : 0.0f;
-                        float innerEllipsoid = (innerRadiusX > 0.0f && innerRadiusY > 0.0f && innerRadiusZ > 0.0f)
-                            ? innerNormX * innerNormX + innerNormY * innerNormY + innerNormZ * innerNormZ
-                            : -1.0f; // 半径が0以下の場合は内側判定を無効化
-
-                        // 外側楕円体内かつ内側楕円体外のみ埋める
-                        if (ellipsoid <= 1.0f && innerEllipsoid > 1.0f)
-                        {
-                            xzLayer.AddFlag(x, 0, z, CellFlags.IsFilled);
-                        }
-                    }
+                    xzLayer.AddFlag(i, CellFlags.IsFilled);
                 }
                 _renderer.AddRenderBuffer(xzLayer, y);
             }
