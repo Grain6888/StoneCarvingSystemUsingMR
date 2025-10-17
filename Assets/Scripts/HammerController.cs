@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace MRSculpture
 {
-    public class ImpactRangeGetter : MonoBehaviour
+    public class HammerController : MonoBehaviour
     {
         [SerializeField] private OVRInput.Controller _controllerWithHammer;
         [SerializeField] private AudioSource _audioSource;
@@ -11,8 +11,7 @@ namespace MRSculpture
         private float _impactMagnitude = 0.0f;
 
         public float ImpactMagnitude => _impactMagnitude;
-        public HapticSource hapticSource;
-        private int _frameCount = 0;
+        [SerializeField] private HapticSource _hapticSource;
 
         void Update()
         {
@@ -21,15 +20,7 @@ namespace MRSculpture
                 return;
             }
 
-            if (_frameCount < 5)
-            {
-                _frameCount++;
-            }
-            else
-            {
-                _impactMagnitude = 0.0f;
-                _frameCount = 0;
-            }
+            if (_impactMagnitude > 0.0f) _impactMagnitude = 0.0f;
         }
 
         private void OnTriggerEnter(Collider other)
@@ -48,11 +39,25 @@ namespace MRSculpture
                 _impactMagnitude = 0.0f;
                 return;
             }
-            // ハプティクスを再生
-            hapticSource.Play();
 
-            // 衝撃音を再生
-            _audioSource.Play();
+            PlayFeedback();
+        }
+
+        private void PlayFeedback()
+        {
+            float amplitude = Mathf.Clamp01(_impactMagnitude * 0.5f);
+
+            if (_hapticSource != null)
+            {
+                _hapticSource.amplitude = amplitude;
+                _hapticSource.Play();
+            }
+
+            if (_audioSource != null)
+            {
+                _audioSource.volume = amplitude;
+                _audioSource.Play();
+            }
         }
 
         private void OnTriggerExit(Collider other)

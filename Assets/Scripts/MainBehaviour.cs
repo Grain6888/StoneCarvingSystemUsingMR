@@ -32,40 +32,37 @@ namespace MRSculpture
         /// </summary>
         [SerializeField] private Material _voxelMaterial;
 
-        [SerializeField] private GameObject _impactCenter;
         [SerializeField] private Transform _mainBehaviourTransform;
         [SerializeField] private GameObject _chisel;
         [SerializeField] private GameObject _hammer;
-        private ImpactRangeGetter _impactRangeGetter;
-        public HapticSource hapticSource;
-        [SerializeField] private AudioSource _audioSource;
+        private HammerController _hammerController;
+        private ChiselController _chiselController;
         private int _impactRange = 0;
         private bool _ready = false;
 
-
         private void Awake()
         {
-            _impactRangeGetter = _hammer.GetComponent<ImpactRangeGetter>();
-        }
+            _hammerController = _hammer.GetComponent<HammerController>();
+            _chiselController = _chisel.GetComponent<ChiselController>();
 
-        public async void LoadFile()
-        {
-            _voxelDataChunk.Dispose();
             _voxelDataChunk = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
 
             // ローカル → ワールド座標系の変換行列
             Matrix4x4 localToWorldMatrix = transform.localToWorldMatrix;
 
             _renderer = new Renderer(_voxelMesh, _voxelMaterial, localToWorldMatrix);
+        }
 
-            string fileName = "isfilled.txt";
+        public async void LoadFile()
+        {
+            string fileName = "model.dat";
             string path = Path.Combine(Application.persistentDataPath, fileName);
 
             if (File.Exists(path))
             {
                 await System.Threading.Tasks.Task.Run(() =>
                 {
-                    DataChunk.LoadIsFilledTxt("isfilled.txt", ref _voxelDataChunk);
+                    DataChunk.LoadDat(fileName, ref _voxelDataChunk);
                 });
 
                 for (int y = 0; y < _voxelDataChunk.yLength; y++)
@@ -79,20 +76,7 @@ namespace MRSculpture
             else
             {
                 Debug.Log("MRSculpture DataChunk load failed from file.");
-
-                // 全レイヤ分処理
-                for (int y = 0; y < _voxelDataChunk.yLength; y++)
-                {
-                    DataChunk xzLayer = _voxelDataChunk.GetXZLayer(y);
-
-                    for (int i = 0; i < xzLayer.Length; i++)
-                    {
-                        xzLayer.AddFlag(i, CellFlags.IsFilled);
-                    }
-                    _renderer.AddRenderBuffer(xzLayer, y);
-                }
-
-                Debug.Log("MRSculpture New DataChunk created.");
+                NewFile();
             }
 
             _ready = true;
@@ -100,27 +84,16 @@ namespace MRSculpture
 
         public async void SaveFile()
         {
-            string fileName = "isfilled.txt";
-            string path = Path.Combine(Application.persistentDataPath, fileName);
+            string fileName = "model.dat";
 
             await System.Threading.Tasks.Task.Run(() =>
             {
-                _voxelDataChunk.SaveIsFilledTxt("isfilled.txt");
+                _voxelDataChunk.SaveDat(fileName);
             });
-
-            Debug.Log("MRSculpture DataChunk saved to file: " + path);
         }
 
         public void NewFile()
         {
-            _voxelDataChunk.Dispose();
-            _voxelDataChunk = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
-
-            // ローカル → ワールド座標系の変換行列
-            Matrix4x4 localToWorldMatrix = transform.localToWorldMatrix;
-
-            _renderer = new Renderer(_voxelMesh, _voxelMaterial, localToWorldMatrix);
-
             // 楕円体の中心座標（グリッド中央）
             float centerX = (_voxelDataChunk.xLength - 1) / 2.0f;
             float centerY = (_voxelDataChunk.yLength - 1) / 2.0f;
@@ -180,75 +153,17 @@ namespace MRSculpture
 
         private void Update()
         {
-            if (!_ready)
-            {
-                return;
-            }
+            if (!_ready) return;
 
-            _impactRange = Mathf.Min(10, (int)(_impactRangeGetter.ImpactMagnitude * 5));
+            _impactRange = Mathf.Min(10, (int)(_hammerController.ImpactMagnitude * 5));
 
             Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(_boundsSize.x, _boundsSize.y, _boundsSize.z));
             Bounds boundingBox = new();
             boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
 
-            // 破壊中心のワールド座標を取得
-            Vector3 impactCenterWorldPosition = _impactCenter.transform.position;
-            // 破壊中心のワールド座標を、MainBehaviourのローカル座標系に変換
-            Vector3 _impactCenterLocalPosition = _mainBehaviourTransform.InverseTransformPoint(impactCenterWorldPosition);
-            // 破壊中心位置を基準に、最も近いボクセルグリッド座標（整数）を算出
-            Vector3Int center = new(
-                Mathf.RoundToInt(_impactCenterLocalPosition.x),
-                Mathf.RoundToInt(_impactCenterLocalPosition.y),
-                Mathf.RoundToInt(_impactCenterLocalPosition.z)
-            );
-
-            // X方向の探索範囲（visibleDistance分だけ前後に拡張、範囲外はクランプ）
-            int minX = Mathf.Max(0, center.x - _impactRange);
-            int maxX = Mathf.Min(_voxelDataChunk.xLength - 1, center.x + _impactRange);
-            // Y方向の探索範囲
-            int minY = Mathf.Max(0, center.y - _impactRange);
-            int maxY = Mathf.Min(_voxelDataChunk.yLength - 1, center.y + _impactRange);
-            // Z方向の探索範囲
-            int minZ = Mathf.Max(0, center.z - _impactRange);
-            int maxZ = Mathf.Min(_voxelDataChunk.zLength - 1, center.z + _impactRange);
-
-            // 距離判定用にvisibleDistanceの2乗を事前計算（パフォーマンス向上のため）
-            float sqrVisibleDistance = _impactRange * _impactRange;
-
-            // 各XZレイヤごとに処理
-            for (int y = minY; y <= maxY; y++)
+            if (_impactRange > 0)
             {
-                // Y層のXZ平面のDataChunkを取得
-                DataChunk xzLayer = _voxelDataChunk.GetXZLayer(y);
-                bool layerBufferNeedsUpdate = false; // レンダーバッファ更新が必要かどうか
-
-                // X方向の範囲をループ
-                for (int x = minX; x <= maxX; x++)
-                {
-                    // Z方向の範囲をループ
-                    for (int z = minZ; z <= maxZ; z++)
-                    {
-                        // セルのローカル空間での中心座標を計算（各軸+0.5でセル中心）
-                        Vector3 cellLocalPos = new(x + 0.5f, y + 0.5f, z + 0.5f);
-
-                        // 破壊中心との距離がvisibleDistance以内か判定
-                        if ((cellLocalPos - _impactCenterLocalPosition).sqrMagnitude > sqrVisibleDistance)
-                            continue; // 範囲外ならスキップ
-
-                        // ハプティクスを再生
-                        hapticSource.Play();
-                        // 破壊音を再生
-                        _audioSource.Play();
-                        // 対象セルからIsFilledフラグを削除
-                        xzLayer.RemoveFlag(x, 0, z, CellFlags.IsFilled);
-                        layerBufferNeedsUpdate = true; // このレイヤーのバッファ更新が必要
-                    }
-                }
-                // 現在のレイヤに含まれる何らかのセルが更新された場合のみレンダーバッファを更新
-                if (layerBufferNeedsUpdate)
-                {
-                    _renderer.UpdateRenderBuffer(xzLayer, y);
-                }
+                _chiselController.Carve(ref _voxelDataChunk, in _impactRange, ref _renderer);
             }
 
             _renderer.RenderMeshes(new Bounds(boundingBoxSize * 0.5f, boundingBoxSize));
@@ -258,11 +173,6 @@ namespace MRSculpture
         {
             _renderer.Dispose();
             _voxelDataChunk.Dispose();
-        }
-
-        private void OnApplicationQuit()
-        {
-            _voxelDataChunk.SaveIsFilledTxt("isfilled.txt");
         }
     }
 }
