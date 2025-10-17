@@ -203,52 +203,52 @@ namespace MRSculpture
         }
 
         /// <summary>
-        /// DataChunkのIsFilled情報をテキストファイルに保存（1: true, 0: false）
+        /// Datファイルを出力
         /// </summary>
-        public void SaveIsFilledTxt(string fileName)
+        public void SaveDat(string fileName)
         {
             string path = Path.Combine(UnityEngine.Application.persistentDataPath, fileName);
             try
             {
-                using (var sw = new StreamWriter(path, false))
+                using (var fs = new FileStream(path, FileMode.Create, FileAccess.Write))
+                using (var bw = new BinaryWriter(fs))
                 {
                     for (int i = 0; i < _data.Length; i++)
                     {
-                        int value = ((_data[i].status & (uint)CellFlags.IsFilled) != 0) ? 1 : 0;
-                        sw.WriteLine(value);
+                        byte value = ((_data[i].status & (uint)CellFlags.IsFilled) != 0) ? (byte)1 : (byte)0;
+                        bw.Write(value);
                     }
-                    sw.Flush(); // 明示的にフラッシュ
+                    bw.Flush(); // 明示的にフラッシュ
                 }
-                UnityEngine.Debug.Log($"MRSculpture IsFilled info saved: {path}");
+                UnityEngine.Debug.Log($"MRSculpture IsFilled info saved (binary): {path}");
             }
             catch (Exception ex)
             {
-                UnityEngine.Debug.LogError($"MRSculpture SaveIsFilledTxt failed: {ex.Message}");
+                UnityEngine.Debug.LogError($"MRSculpture SaveIsFilledBin failed: {ex.Message}");
             }
         }
 
         /// <summary>
-        /// テキストファイルからIsFilled情報をロード（1: true, 0: false）
+        /// Datファイルを入力
         /// </summary>
         /// <param name="fileName">ファイル名</param>
         /// <param name="chunk">データを格納するDataChunk（refで渡す）</param>
-        public static void LoadIsFilledTxt(string fileName, ref DataChunk chunk)
+        public static void LoadDat(string fileName, ref DataChunk chunk)
         {
             string path = Path.Combine(UnityEngine.Application.persistentDataPath, fileName);
-            using (var sr = new StreamReader(path))
+            using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read))
+            using (var br = new BinaryReader(fs))
             {
                 for (int i = 0; i < chunk.Length; i++)
                 {
-                    string line = sr.ReadLine();
-                    int value = int.Parse(line);
-                    UnityEngine.Debug.Log("value: " + value);
+                    byte value = br.ReadByte();
                     if (value == 1)
                     {
                         chunk.AddFlag(i, CellFlags.IsFilled);
                     }
                 }
             }
-            UnityEngine.Debug.Log($"MRSculpture IsFilled info loaded: {path}");
+            UnityEngine.Debug.Log($"MRSculpture IsFilled info loaded (binary): {path}");
         }
 
         // _dataへの読み取り専用プロパティ
