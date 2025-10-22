@@ -942,7 +942,6 @@ MonoBehaviour:
   _audioSource: {fileID: 5991813787010320134}
   _center: {fileID: 4248168302212892894}
   _target: {fileID: 0}
-  _dummy: {fileID: 3677224915888634137, guid: bd6924fa1e4ddd64bb09bd06ef935e55, type: 3}
 --- !u!82 &5991813787010320134
 AudioSource:
   m_ObjectHideFlags: 0

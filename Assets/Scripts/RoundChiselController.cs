@@ -12,7 +12,6 @@ namespace MRSculpture
         [SerializeField] private GameObject _center;
         private Transform _centerPosition;
         [SerializeField] private GameObject _target;
-        [SerializeField] private GameObject _dummy;
         private GameObject _dummyInstance;
 
         private Transform _targetTransform;
@@ -54,6 +53,7 @@ namespace MRSculpture
             Vector3Int center = Vector3Int.RoundToInt(currentImpactCenterLocalPosition);
 
             _impactRange = impactRange;
+
             // X方向の探索範囲（visibleDistance分だけ前後に拡張、範囲外はクランプ）
             int minX = Mathf.Max(0, center.x - impactRange);
             int maxX = Mathf.Min(voxelDataChunk.xLength - 1, center.x + impactRange);
@@ -111,26 +111,26 @@ namespace MRSculpture
         private void DownTriggerButton()
         {
             _isPressingTrigger = true;
-            MeshRenderer mesh = GetComponent<MeshRenderer>();
-            if (mesh != null)
-            {
-                mesh.enabled = false;
-            }
 
-            _dummyInstance = Instantiate(_dummy, gameObject.transform.position, gameObject.transform.rotation);
+            if (gameObject.name == "RoundChiselDummy") return;
+
+            _dummyInstance = Instantiate(gameObject, transform.position, transform.rotation);
+            _dummyInstance.name = "RoundChiselDummy";
             _centerPosition = _dummyInstance.transform.Find("ImpactCenter");
+
+            MeshRenderer mesh = GetComponent<MeshRenderer>();
+            if (mesh != null) mesh.enabled = false;
         }
 
         private void UpTriggerButton()
         {
             _isPressingTrigger = false;
-            MeshRenderer mesh = GetComponent<MeshRenderer>();
-            if (mesh != null)
-            {
-                mesh.enabled = true;
-            }
+
+            if (gameObject.name == "RoundChiselDummy") return;
 
             Destroy(_dummyInstance);
+            MeshRenderer mesh = GetComponent<MeshRenderer>();
+            if (mesh != null) mesh.enabled = true;
         }
 
         private void PlayFeedback()

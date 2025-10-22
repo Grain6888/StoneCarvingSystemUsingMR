@@ -12,7 +12,6 @@ namespace MRSculpture
         [SerializeField] private GameObject _center;
         private Transform _centerPosition;
         [SerializeField] private GameObject _target;
-        [SerializeField] private GameObject _dummy;
         private GameObject _dummyInstance;
 
         private Transform _targetTransform;
@@ -55,42 +54,49 @@ namespace MRSculpture
 
             _impactRange = impactRange;
 
-            // 法線方向（ワールド→ローカル変換）
-            Vector3 normalWorld = transform.up; // 通常はupが法線
-            Vector3 normalLocal = _targetTransform.InverseTransformDirection(normalWorld).normalized;
+            Vector3 forwardWorld = transform.forward;
+            Vector3 forwardLocal = _targetTransform.InverseTransformDirection(forwardWorld).normalized;
 
             // 法線に直交する2軸を取得
             Vector3 axis1, axis2;
             // 法線がY軸に近い場合はX/Zを使う
-            if (Mathf.Abs(Vector3.Dot(normalLocal, Vector3.up)) > 0.9f)
+            if (Mathf.Abs(Vector3.Dot(forwardLocal, Vector3.up)) > 0.9f)
+            {
                 axis1 = Vector3.right;
+            }
             else
+            {
                 axis1 = Vector3.up;
-            axis2 = Vector3.Cross(normalLocal, axis1).normalized;
-            axis1 = Vector3.Cross(axis2, normalLocal).normalized;
+            }
+            axis2 = Vector3.Cross(forwardLocal, axis1).normalized;
+            axis1 = Vector3.Cross(axis2, forwardLocal).normalized;
 
-            float halfNormal = _impactRange * 2;
-            float halfOther = _impactRange;
+            float xLength = _impactRange;
+            float yLength = _impactRange * 2;
+            float zLength = _impactRange * 4;
 
             int removedCount = 0;
 
             // 探索範囲を決定（直方体を囲むAABBでループ）
             // 直方体の8頂点を計算しAABBを求める
             Vector3[] corners = new Vector3[8];
-            int idx = 0;
+            int index = 0;
             for (int i = -1; i <= 1; i += 2)
-                for (int j = -1; j <= 1; j += 2)
-                    for (int k = -1; k <= 1; k += 2)
-                        corners[idx++] = center
-                            + normalLocal * halfNormal * i
-                            + axis1 * halfOther * j
-                            + axis2 * halfOther * k;
-
-            Vector3 min = corners[0], max = corners[0];
-            foreach (var c in corners)
             {
-                min = Vector3.Min(min, c);
-                max = Vector3.Max(max, c);
+                for (int j = -1; j <= 1; j += 2)
+                {
+                    for (int k = -1; k <= 1; k += 2)
+                    {
+                        corners[index++] = center + i * xLength * forwardLocal + j * yLength * axis1 + k * zLength * axis2;
+                    }
+                }
+            }
+            Vector3 min = corners[0];
+            Vector3 max = corners[0];
+            foreach (var corner in corners)
+            {
+                min = Vector3.Min(min, corner);
+                max = Vector3.Max(max, corner);
             }
 
             int minX = Mathf.Max(0, Mathf.FloorToInt(min.x));
@@ -110,16 +116,16 @@ namespace MRSculpture
                 {
                     for (int z = minZ; z <= maxZ; z++)
                     {
-                        Vector3 pos = new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);
+                        Vector3 pos = new(x + 0.5f, y + 0.5f, z + 0.5f);
                         // 直方体内か判定
                         Vector3 rel = pos - center;
-                        float dNormal = Vector3.Dot(rel, normalLocal);
+                        float dNormal = Vector3.Dot(rel, forwardLocal);
                         float d1 = Vector3.Dot(rel, axis1);
                         float d2 = Vector3.Dot(rel, axis2);
 
-                        if (Mathf.Abs(dNormal) <= halfNormal &&
-                            Mathf.Abs(d1) <= halfOther &&
-                            Mathf.Abs(d2) <= halfOther)
+                        if (Mathf.Abs(dNormal) <= xLength &&
+                            Mathf.Abs(d1) <= yLength &&
+                            Mathf.Abs(d2) <= zLength)
                         {
                             if (xzLayer.HasFlag(x, 0, z, CellFlags.IsFilled))
                             {
@@ -145,26 +151,26 @@ namespace MRSculpture
         private void DownTriggerButton()
         {
             _isPressingTrigger = true;
-            MeshRenderer mesh = GetComponent<MeshRenderer>();
-            if (mesh != null)
-            {
-                mesh.enabled = false;
-            }
 
-            _dummyInstance = Instantiate(_dummy, gameObject.transform.position, gameObject.transform.rotation);
+            if (gameObject.name == "FlatChiselDummy") return;
+
+            _dummyInstance = Instantiate(gameObject, gameObject.transform.position, gameObject.transform.rotation);
+            _dummyInstance.name = "FlatChiselDummy";
             _centerPosition = _dummyInstance.transform.Find("ImpactCenter");
+
+            MeshRenderer mesh = GetComponent<MeshRenderer>();
+            if (mesh != null) mesh.enabled = false;
         }
 
         private void UpTriggerButton()
         {
             _isPressingTrigger = false;
-            MeshRenderer mesh = GetComponent<MeshRenderer>();
-            if (mesh != null)
-            {
-                mesh.enabled = true;
-            }
+
+            if (gameObject.name == "FlatChiselDummy") return;
 
             Destroy(_dummyInstance);
+            MeshRenderer mesh = GetComponent<MeshRenderer>();
+            if (mesh != null) mesh.enabled = true;
         }
 
         private void PlayFeedback()
