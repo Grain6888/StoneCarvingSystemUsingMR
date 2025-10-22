@@ -113,9 +113,26 @@ namespace MRSculpture
             {
                 DataChunk xzLayer = _voxelDataChunk.GetXZLayer(y);
 
-                for (int i = 0; i < xzLayer.Length; i++)
+                for (int x = 0; x < _voxelDataChunk.xLength; x++)
                 {
-                    xzLayer.AddFlag(i, CellFlags.IsFilled);
+                    for (int z = 0; z < _voxelDataChunk.zLength; z++)
+                    {
+                        // 楕円体の方程式で判定
+                        float nx = (x - centerX) / radiusX;
+                        float ny = (y - centerY) / radiusY;
+                        float nz = (z - centerZ) / radiusZ;
+                        float nxi = (x - centerX) / innerRadiusX;
+                        float nyi = (y - centerY) / innerRadiusY;
+                        float nzi = (z - centerZ) / innerRadiusZ;
+
+                        // 外側楕円体の内側かつ内側楕円体の外側のみ埋める
+                        if (nx * nx + ny * ny + nz * nz <= 1.0f &&
+                            nxi * nxi + nyi * nyi + nzi * nzi >= 1.0f)
+                        {
+                            int index = xzLayer.GetIndex(x, 0, z);
+                            xzLayer.AddFlag(index, CellFlags.IsFilled);
+                        }
+                    }
                 }
                 _renderer.AddRenderBuffer(xzLayer, y);
             }
