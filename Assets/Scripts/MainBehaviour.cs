@@ -136,7 +136,7 @@ namespace MRSculpture
                         //    xzLayer.AddFlag(index, CellFlags.IsFilled);
                         //}
 
-                        int index = xzLayer.GetIndex(x, y, z);
+                        int index = xzLayer.GetIndex(x, 0, z);
                         xzLayer.AddFlag(index, CellFlags.IsFilled);
                     }
                 }

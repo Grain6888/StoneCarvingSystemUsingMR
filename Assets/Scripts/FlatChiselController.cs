@@ -51,51 +51,85 @@ namespace MRSculpture
             // ワールド座標 → ターゲットのローカル座標へ変換
             Vector3 currentImpactCenterLocalPosition = _targetTransform.InverseTransformPoint(impactCenterWorldPosition);
             // ローカル座標をボクセル単位に合わせる
-            Vector3Int center = Vector3Int.RoundToInt(currentImpactCenterLocalPosition);
+            Vector3 center = currentImpactCenterLocalPosition;
 
             _impactRange = impactRange;
-            // X方向の探索範囲（visibleDistance分だけ前後に拡張、範囲外はクランプ）
-            int minX = Mathf.Max(0, center.x - impactRange);
-            int maxX = Mathf.Min(voxelDataChunk.xLength - 1, center.x + impactRange);
-            // Y方向の探索範囲
-            int minY = Mathf.Max(0, center.y - impactRange);
-            int maxY = Mathf.Min(voxelDataChunk.yLength - 1, center.y + impactRange);
-            // Z方向の探索範囲
-            int minZ = Mathf.Max(0, center.z - impactRange);
-            int maxZ = Mathf.Min(voxelDataChunk.zLength - 1, center.z + impactRange);
 
-            // 距離判定用にvisibleDistanceの2乗を事前計算（パフォーマンス向上のため）
-            float sqrVisibleDistance = impactRange * impactRange;
+            // 法線方向（ワールド→ローカル変換）
+            Vector3 normalWorld = transform.up; // 通常はupが法線
+            Vector3 normalLocal = _targetTransform.InverseTransformDirection(normalWorld).normalized;
+
+            // 法線に直交する2軸を取得
+            Vector3 axis1, axis2;
+            // 法線がY軸に近い場合はX/Zを使う
+            if (Mathf.Abs(Vector3.Dot(normalLocal, Vector3.up)) > 0.9f)
+                axis1 = Vector3.right;
+            else
+                axis1 = Vector3.up;
+            axis2 = Vector3.Cross(normalLocal, axis1).normalized;
+            axis1 = Vector3.Cross(axis2, normalLocal).normalized;
+
+            float halfNormal = _impactRange * 2;
+            float halfOther = _impactRange;
+
             int removedCount = 0;
 
-            // 各XZレイヤごとに処理
+            // 探索範囲を決定（直方体を囲むAABBでループ）
+            // 直方体の8頂点を計算しAABBを求める
+            Vector3[] corners = new Vector3[8];
+            int idx = 0;
+            for (int i = -1; i <= 1; i += 2)
+                for (int j = -1; j <= 1; j += 2)
+                    for (int k = -1; k <= 1; k += 2)
+                        corners[idx++] = center
+                            + normalLocal * halfNormal * i
+                            + axis1 * halfOther * j
+                            + axis2 * halfOther * k;
+
+            Vector3 min = corners[0], max = corners[0];
+            foreach (var c in corners)
+            {
+                min = Vector3.Min(min, c);
+                max = Vector3.Max(max, c);
+            }
+
+            int minX = Mathf.Max(0, Mathf.FloorToInt(min.x));
+            int maxX = Mathf.Min(voxelDataChunk.xLength - 1, Mathf.CeilToInt(max.x));
+            int minY = Mathf.Max(0, Mathf.FloorToInt(min.y));
+            int maxY = Mathf.Min(voxelDataChunk.yLength - 1, Mathf.CeilToInt(max.y));
+            int minZ = Mathf.Max(0, Mathf.FloorToInt(min.z));
+            int maxZ = Mathf.Min(voxelDataChunk.zLength - 1, Mathf.CeilToInt(max.z));
+
+            // 直方体内判定
             for (int y = minY; y <= maxY; y++)
             {
                 DataChunk xzLayer = voxelDataChunk.GetXZLayer(y);
                 bool layerBufferNeedsUpdate = false;
 
-                // Y層のXZ平面のDataChunkを取得
                 for (int x = minX; x <= maxX; x++)
                 {
-                    // Z方向の範囲をループ
                     for (int z = minZ; z <= maxZ; z++)
                     {
-                        Vector3 cellLocalPos = new(x + 0.5f, y + 0.5f, z + 0.5f);
+                        Vector3 pos = new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);
+                        // 直方体内か判定
+                        Vector3 rel = pos - center;
+                        float dNormal = Vector3.Dot(rel, normalLocal);
+                        float d1 = Vector3.Dot(rel, axis1);
+                        float d2 = Vector3.Dot(rel, axis2);
 
-                        // 破壊中心との距離がvisibleDistance以内か判定
-                        if ((cellLocalPos - center).sqrMagnitude > sqrVisibleDistance)
-                            continue;
-
-                        if (xzLayer.HasFlag(x, 0, z, CellFlags.IsFilled))
+                        if (Mathf.Abs(dNormal) <= halfNormal &&
+                            Mathf.Abs(d1) <= halfOther &&
+                            Mathf.Abs(d2) <= halfOther)
                         {
-                            xzLayer.RemoveFlag(x, 0, z, CellFlags.IsFilled);
-                            removedCount++;
-                            layerBufferNeedsUpdate = true;
+                            if (xzLayer.HasFlag(x, 0, z, CellFlags.IsFilled))
+                            {
+                                xzLayer.RemoveFlag(x, 0, z, CellFlags.IsFilled);
+                                removedCount++;
+                                layerBufferNeedsUpdate = true;
+                            }
                         }
                     }
                 }
-
-                // 現在のレイヤに含まれる何らかのセルが更新された場合のみレンダーバッファを更新
                 if (layerBufferNeedsUpdate)
                 {
                     renderer.UpdateRenderBuffer(xzLayer, y);
