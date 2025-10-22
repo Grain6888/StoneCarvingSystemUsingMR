@@ -396,10 +396,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1298163962099382404, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
-      propertyPath: instanceId
-      value: 26fa09ee-db55-4007-ae91-b7b7dc4c91cc
-      objectReference: {fileID: 0}
+    - target: {fileID: 3596050053921634436, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
+      propertyPath: _target
+      value: 
+      objectReference: {fileID: 591202682}
     - target: {fileID: 3677224915888634137, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
       propertyPath: m_Name
       value: FlatChisel
@@ -449,6 +449,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
+--- !u!1 &58932230 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3677224915888634137, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
+  m_PrefabInstance: {fileID: 58932229}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &211303832
 GameObject:
   m_ObjectHideFlags: 0
@@ -975,7 +980,8 @@ MonoBehaviour:
   _voxelMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   _voxelMaterial: {fileID: 2100000, guid: f07cb93e85d10a34798cac9e79536d58, type: 2}
   _mainBehaviourTransform: {fileID: 591202684}
-  _chisel: {fileID: 487324546}
+  _roundChisel: {fileID: 487324546}
+  _flatChisel: {fileID: 58932230}
   _hammer: {fileID: 1370726366}
 --- !u!4 &591202684
 Transform:
@@ -2836,10 +2842,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4141510261998916575, guid: d54442b3834095b4c89a983676ac6063, type: 3}
-      propertyPath: _hammer
-      value: 
-      objectReference: {fileID: 1370726366}
-    - target: {fileID: 4141510261998916575, guid: d54442b3834095b4c89a983676ac6063, type: 3}
       propertyPath: _target
       value: 
       objectReference: {fileID: 591202682}
@@ -3208,7 +3210,7 @@ SceneRoots:
   - {fileID: 295445075}
   - {fileID: 591202684}
   - {fileID: 1794430709}
+  - {fileID: 58932229}
   - {fileID: 1370726365}
   - {fileID: 38932554}
   - {fileID: 1164445653}
-  - {fileID: 58932229}

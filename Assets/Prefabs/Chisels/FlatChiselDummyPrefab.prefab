@@ -676,7 +676,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 3bc310f9157aacd47b34a44228792cf1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.8
+      value: 0.9
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 3bc310f9157aacd47b34a44228792cf1, type: 3}
       propertyPath: m_LocalPosition.z
@@ -712,7 +712,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 3bc310f9157aacd47b34a44228792cf1, type: 3}
       propertyPath: m_Name
-      value: Hand_Tools_Pack_ubikcfuva_Mid_Chisel
+      value: FlatChiselDummyPrefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 3bc310f9157aacd47b34a44228792cf1, type: 3}
+      propertyPath: m_TagString
+      value: HandTool
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -750,7 +754,7 @@ PrefabInstance:
       addedObject: {fileID: 7498369125255797015}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3bc310f9157aacd47b34a44228792cf1, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 4141510261998916575}
+      addedObject: {fileID: 3596050053921634436}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3bc310f9157aacd47b34a44228792cf1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5991813787010320134}
@@ -782,7 +786,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockId: ad78e7c1-6a4d-422e-99f0-5b1a1ae07f6f
-  instanceId: ad9d87f0-f019-4485-9fd7-383bbef1252d
+  instanceId: 26fa09ee-db55-4007-ae91-b7b7dc4c91cc
   version: 1
   installationRoutineCheckpoint:
     _installationRoutineId: 
@@ -922,7 +926,7 @@ MonoBehaviour:
         Min: 1
         Max: 1
   _resetScaleResponsivenessOnConstraintOvershoot: 0
---- !u!114 &4141510261998916575
+--- !u!114 &3596050053921634436
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -931,15 +935,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 3677224915888634137}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 977ebee47dd583440b9fbaf5fdbd9fbb, type: 3}
+  m_Script: {fileID: 11500000, guid: 2a322a89ba50f6d4486cca3fe400c24d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MRSculpture.ChiselController
-  _hammer: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::MRSculpture.FlatChiselController
   _hapticSource: {fileID: 4287585763474344559}
   _audioSource: {fileID: 5991813787010320134}
   _center: {fileID: 4248168302212892894}
   _target: {fileID: 0}
-  _dummy: {fileID: 3677224915888634137, guid: 757f4b96d2186c2489d6f5e564fe90a9, type: 3}
+  _dummy: {fileID: 3677224915888634137}
 --- !u!82 &5991813787010320134
 AudioSource:
   m_ObjectHideFlags: 0

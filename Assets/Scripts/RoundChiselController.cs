@@ -3,7 +3,7 @@ using Oculus.Haptics;
 
 namespace MRSculpture
 {
-    public class ChiselController : MonoBehaviour
+    public class RoundChiselController : MonoBehaviour
     {
         [SerializeField] private HapticSource _hapticSource;
         [SerializeField] private AudioSource _audioSource;
@@ -118,7 +118,6 @@ namespace MRSculpture
             }
 
             _dummyInstance = Instantiate(_dummy, gameObject.transform.position, gameObject.transform.rotation);
-            _dummyInstance.name = "Chisel";
             _centerPosition = _dummyInstance.transform.Find("ImpactCenter");
         }
 

@@ -25,7 +25,7 @@ namespace MRSculpture
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.name != "Chisel")
+            if (!other.gameObject.CompareTag("HandTool"))
             {
                 _impactMagnitude = 0.0f;
                 return;
@@ -62,7 +62,7 @@ namespace MRSculpture
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.gameObject.name != "Chisel")
+            if (!other.gameObject.CompareTag("HandTool"))
             {
                 return;
             }

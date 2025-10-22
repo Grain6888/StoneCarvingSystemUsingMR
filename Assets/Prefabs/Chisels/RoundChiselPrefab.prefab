@@ -712,7 +712,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 3bc310f9157aacd47b34a44228792cf1, type: 3}
       propertyPath: m_Name
-      value: Hand_Tools_Pack_ubikcfuva_Mid_Chisel
+      value: RoundChiselPrefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 3bc310f9157aacd47b34a44228792cf1, type: 3}
+      propertyPath: m_TagString
+      value: HandTool
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -934,7 +938,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 977ebee47dd583440b9fbaf5fdbd9fbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MRSculpture.ChiselController
-  _hammer: {fileID: 0}
   _hapticSource: {fileID: 4287585763474344559}
   _audioSource: {fileID: 5991813787010320134}
   _center: {fileID: 4248168302212892894}
