@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddadf5158a83aa7428fc2150abee2567, type: 3}
   m_Name: NoticeFinishBuildSettings
   m_EditorClassIdentifier: Assembly-CSharp-Editor::NoticeFinishBuildSettings
-  soundClip: {fileID: 8300000, guid: 51de9b45b4ce299489042650c20e2e22, type: 3}
-  dialogTitle: "\u8AF8\u661F\u304D\u3089\u308A"
-  dialogMessage: "\n\n\u03BE*'\u03C9')\u03BE \uFF1C  \u304A\u4ED5\u4E8B\u3001\u304A\u308F\u3063\u305F\u306B\u3043!!"
-  dialogOk: "\u3046\u304D\u3083\u2606"
+  soundClip: {fileID: 8300000, guid: e15352c931cdf4c4f97de217b04f6615, type: 3}
+  dialogTitle: "\u30B9\u25CF\u30ED\u30FC"
+  dialogMessage: "\n\n\u30B3\u30F3\u30D1\u30A4\u30EB\u3044\u305F\u3060\u304D\u307E\u3057\u305Fapk\u304C\u5230\u7740\u3044\u305F\u3057\u307E\u3059\uFF0E"
+  dialogOk: OK
   enableNotification: 1

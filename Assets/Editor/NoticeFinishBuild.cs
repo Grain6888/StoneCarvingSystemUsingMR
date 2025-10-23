@@ -4,20 +4,22 @@ using System.Media;
 
 public class NoticeFinishBuild
 {
+    private static SoundPlayer _player; // 再生中のSoundPlayerを保持
+
     private static NoticeFinishBuildSettings LoadSettings()
     {
         return AssetDatabase.LoadAssetAtPath<NoticeFinishBuildSettings>("Assets/Editor/NoticeFinishBuildSettings.asset");
     }
 
-    [MenuItem("THE IDOLM@STER/諸星きらり", true)]
+    [MenuItem("Notice/Build Complete", true)]
     private static bool ToggleNotificationValidate()
     {
         NoticeFinishBuildSettings settings = LoadSettings();
-        Menu.SetChecked("THE IDOLM@STER/諸星きらり", settings != null && settings.enableNotification);
+        Menu.SetChecked("Notice/Build Complete", settings != null && settings.enableNotification);
         return true;
     }
 
-    [MenuItem("THE IDOLM@STER/諸星きらり")]
+    [MenuItem("Notice/Build Complete")]
     private static void ToggleNotification()
     {
         NoticeFinishBuildSettings settings = LoadSettings();
@@ -42,22 +44,34 @@ public class NoticeFinishBuild
         string dialogTitle = settings.dialogTitle;
         string dialogMessage = settings.dialogMessage;
         string dialogOk = settings.dialogOk;
-        EditorUtility.DisplayDialog(dialogTitle, dialogMessage, dialogOk);
+        bool choice = EditorUtility.DisplayDialog(dialogTitle, dialogMessage, dialogOk);
+        if (choice) StopCustomSound();
     }
+
 
     private static void PlayCustomSound(string soundPath)
     {
+        StopCustomSound(); // 既存の再生を停止
+
         if (System.IO.File.Exists(soundPath))
         {
-            using (SoundPlayer player = new(soundPath))
-            {
-                player.Load();
-                player.Play();
-            }
+            _player = new SoundPlayer(soundPath);
+            _player.Load();
+            _player.Play();
         }
         else
         {
             EditorApplication.Beep();
+        }
+    }
+
+    private static void StopCustomSound()
+    {
+        if (_player != null)
+        {
+            _player.Stop();
+            _player.Dispose();
+            _player = null;
         }
     }
 }
