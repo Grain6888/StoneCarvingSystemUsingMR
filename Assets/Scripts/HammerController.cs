@@ -1,5 +1,4 @@
 ﻿using Oculus.Haptics;
-using Oculus.Interaction.Input;
 using UnityEngine;
 
 namespace MRSculpture
@@ -8,24 +7,26 @@ namespace MRSculpture
     {
         [SerializeField] private OVRInput.Controller _controllerWithHammer;
         [SerializeField] private AudioSource _audioSource;
-        private GameObject _questController;
+        [SerializeField] private GameObject _LControllerVisual;
+        [SerializeField] private GameObject _RControllerVisual;
+        private SkinnedMeshRenderer _controller;
 
         private float _impactMagnitude = 0.0f;
 
         public float ImpactMagnitude => _impactMagnitude;
         [SerializeField] private HapticSource _hapticSource;
 
-        private bool _isPressingGrip = false;
+        private bool _isPressingHandTrigger = false;
 
         private void Awake()
         {
             if (_controllerWithHammer == OVRInput.Controller.LTouch)
             {
-                _questController = GameObject.Find("OVRLeftControllerVisual");
+                _controller = _LControllerVisual.GetComponent<SkinnedMeshRenderer>();
             }
             else if (_controllerWithHammer == OVRInput.Controller.RTouch)
             {
-                _questController = GameObject.Find("OVRRightControllerVisual");
+                _controller = _RControllerVisual.GetComponent<SkinnedMeshRenderer>();
             }
         }
 
@@ -33,8 +34,8 @@ namespace MRSculpture
         {
             if (_impactMagnitude <= 0.0f) return;
             if (_impactMagnitude > 0.0f) _impactMagnitude = 0.0f;
-            if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger)) DownTriggerButton();
-            if (OVRInput.GetUp(OVRInput.Button.PrimaryHandTrigger)) UpTriggerButton();
+            if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger)) DownHandTrigger();
+            if (OVRInput.GetUp(OVRInput.Button.PrimaryHandTrigger)) UpHandTrigger();
         }
 
         private void OnTriggerEnter(Collider other)
@@ -83,14 +84,16 @@ namespace MRSculpture
             _impactMagnitude = 0.0f;
         }
 
-        private void DownTriggerButton()
+        private void DownHandTrigger()
         {
-            _isPressingGrip = true;
+            _controller.enabled = false;
+            _isPressingHandTrigger = true;
         }
 
-        private void UpTriggerButton()
+        private void UpHandTrigger()
         {
-            _isPressingGrip = false;
+            _controller.enabled = true;
+            _isPressingHandTrigger = false;
         }
     }
 }

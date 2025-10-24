@@ -8,7 +8,9 @@ namespace MRSculpture
         [SerializeField] private HapticSource _hapticSource;
         [SerializeField] private AudioSource _audioSource;
         [SerializeField] private OVRInput.Controller _controllerWithRoundChisel;
-        private GameObject _questController;
+        [SerializeField] private GameObject _LControllerVisual;
+        [SerializeField] private GameObject _RControllerVisual;
+        private SkinnedMeshRenderer _controller;
 
         private int _impactRange;
         [SerializeField] private GameObject _center;
@@ -18,24 +20,36 @@ namespace MRSculpture
 
         private Transform _targetTransform;
 
-        private bool _isPressingTrigger = false;
+        private bool _isPressingIndexTrigger = false;
+        private bool _isPressingHandTrigger = false;
 
         private void Awake()
         {
             _targetTransform = _target.transform;
+
+            if (_controllerWithRoundChisel == OVRInput.Controller.LTouch)
+            {
+                _controller = _LControllerVisual.GetComponent<SkinnedMeshRenderer>();
+            }
+            else if (_controllerWithRoundChisel == OVRInput.Controller.RTouch)
+            {
+                _controller = _RControllerVisual.GetComponent<SkinnedMeshRenderer>();
+            }
         }
 
         public void Update()
         {
-            if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger)) DownTriggerButton();
-            if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger)) UpTriggerButton();
+            if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger)) DownIndexTrigger();
+            if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger)) UpIndexTrigger();
+            if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger)) DownHandTrigger();
+            if (OVRInput.GetUp(OVRInput.Button.PrimaryHandTrigger)) UpHandTrigger();
         }
 
         public void Carve(ref DataChunk voxelDataChunk, in int impactRange, ref Renderer renderer)
         {
             // ワールド座標を取得
             Vector3 impactCenterWorldPosition;
-            if (_isPressingTrigger)
+            if (_isPressingIndexTrigger)
             {
                 impactCenterWorldPosition = _centerPosition.position;
             }
@@ -104,9 +118,9 @@ namespace MRSculpture
             }
         }
 
-        private void DownTriggerButton()
+        private void DownIndexTrigger()
         {
-            _isPressingTrigger = true;
+            _isPressingIndexTrigger = true;
 
             if (gameObject.name == "RoundChiselDummy") return;
 
@@ -118,9 +132,9 @@ namespace MRSculpture
             if (mesh != null) mesh.enabled = false;
         }
 
-        private void UpTriggerButton()
+        private void UpIndexTrigger()
         {
-            _isPressingTrigger = false;
+            _isPressingIndexTrigger = false;
 
             if (gameObject.name == "RoundChiselDummy") return;
 
@@ -144,6 +158,18 @@ namespace MRSculpture
                 _audioSource.volume = amplitude;
                 _audioSource.Play();
             }
+        }
+
+        private void DownHandTrigger()
+        {
+            _controller.enabled = false;
+            _isPressingHandTrigger = true;
+        }
+
+        private void UpHandTrigger()
+        {
+            _controller.enabled = true;
+            _isPressingHandTrigger = false;
         }
     }
 }

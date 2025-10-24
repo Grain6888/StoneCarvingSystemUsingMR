@@ -940,6 +940,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MRSculpture.ChiselController
   _hapticSource: {fileID: 4287585763474344559}
   _audioSource: {fileID: 5991813787010320134}
+  _controllerWithRoundChisel: 1
+  _LControllerVisual: {fileID: 0}
+  _RControllerVisual: {fileID: 0}
   _center: {fileID: 4248168302212892894}
   _target: {fileID: 0}
 --- !u!82 &5991813787010320134
