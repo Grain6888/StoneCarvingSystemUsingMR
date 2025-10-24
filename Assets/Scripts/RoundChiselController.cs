@@ -7,6 +7,8 @@ namespace MRSculpture
     {
         [SerializeField] private HapticSource _hapticSource;
         [SerializeField] private AudioSource _audioSource;
+        [SerializeField] private OVRInput.Controller _controllerWithRoundChisel;
+        private GameObject _questController;
 
         private int _impactRange;
         [SerializeField] private GameObject _center;
@@ -25,14 +27,8 @@ namespace MRSculpture
 
         public void Update()
         {
-            if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger))
-            {
-                DownTriggerButton();
-            }
-            if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger))
-            {
-                UpTriggerButton();
-            }
+            if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger)) DownTriggerButton();
+            if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger)) UpTriggerButton();
         }
 
         public void Carve(ref DataChunk voxelDataChunk, in int impactRange, ref Renderer renderer)

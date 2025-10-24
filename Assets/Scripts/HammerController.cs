@@ -1,4 +1,5 @@
 ﻿using Oculus.Haptics;
+using Oculus.Interaction.Input;
 using UnityEngine;
 
 namespace MRSculpture
@@ -7,20 +8,33 @@ namespace MRSculpture
     {
         [SerializeField] private OVRInput.Controller _controllerWithHammer;
         [SerializeField] private AudioSource _audioSource;
+        private GameObject _questController;
 
         private float _impactMagnitude = 0.0f;
 
         public float ImpactMagnitude => _impactMagnitude;
         [SerializeField] private HapticSource _hapticSource;
 
-        void Update()
-        {
-            if (_impactMagnitude <= 0.0f)
-            {
-                return;
-            }
+        private bool _isPressingGrip = false;
 
+        private void Awake()
+        {
+            if (_controllerWithHammer == OVRInput.Controller.LTouch)
+            {
+                _questController = GameObject.Find("OVRLeftControllerVisual");
+            }
+            else if (_controllerWithHammer == OVRInput.Controller.RTouch)
+            {
+                _questController = GameObject.Find("OVRRightControllerVisual");
+            }
+        }
+
+        private void Update()
+        {
+            if (_impactMagnitude <= 0.0f) return;
             if (_impactMagnitude > 0.0f) _impactMagnitude = 0.0f;
+            if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger)) DownTriggerButton();
+            if (OVRInput.GetUp(OVRInput.Button.PrimaryHandTrigger)) UpTriggerButton();
         }
 
         private void OnTriggerEnter(Collider other)
@@ -67,6 +81,16 @@ namespace MRSculpture
                 return;
             }
             _impactMagnitude = 0.0f;
+        }
+
+        private void DownTriggerButton()
+        {
+            _isPressingGrip = true;
+        }
+
+        private void UpTriggerButton()
+        {
+            _isPressingGrip = false;
         }
     }
 }

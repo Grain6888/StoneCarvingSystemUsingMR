@@ -16,4 +16,4 @@ MonoBehaviour:
   dialogTitle: "\u30B9\u25CF\u30ED\u30FC"
   dialogMessage: "\n\n\u30B3\u30F3\u30D1\u30A4\u30EB\u3044\u305F\u3060\u304D\u307E\u3057\u305Fapk\u304C\u5230\u7740\u3044\u305F\u3057\u307E\u3059\uFF0E"
   dialogOk: OK
-  enableNotification: 1
+  enableNotification: 0
