@@ -48,7 +48,7 @@ namespace MRSculpture
 
             _impactRange = impactRange;
 
-            // X方向の探索範囲（visibleDistance分だけ前後に拡張、範囲外はクランプ）
+            // X方向の探索範囲（impactRange分だけ前後に拡張、範囲外はクランプ）
             int minX = Mathf.Max(0, center.x - impactRange);
             int maxX = Mathf.Min(voxelDataChunk.xLength - 1, center.x + impactRange);
             // Y方向の探索範囲

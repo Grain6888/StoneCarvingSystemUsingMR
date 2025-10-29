@@ -57,9 +57,9 @@
                 float3 vec1 = Vertices[Indices[vindex + 2]] - Vertices[Indices[vindex]];
                 o.normalOS = normalize(cross(vec0, vec1));
 #else
-                float QUANTIIZE_FACTOR = 32768.0;
+                float QUANTIZE_FACTOR = 32768.0;
                 int3 n = Normals[Indices[v.vertexId]];
-                o.normalOS = normalize(float3(n.x / QUANTIIZE_FACTOR, n.y / QUANTIIZE_FACTOR, n.z / QUANTIIZE_FACTOR));
+                o.normalOS = normalize(float3(n.x / QUANTIZE_FACTOR, n.y / QUANTIZE_FACTOR, n.z / QUANTIZE_FACTOR));
 #endif
                 o.lightDirOS = ObjSpaceLightDir(posOS);
                 return o;

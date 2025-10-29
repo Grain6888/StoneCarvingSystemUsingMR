@@ -224,8 +224,8 @@ void GenerateNormals(uint3 id : SV_DispatchThreadID)
     float3 vec0 = Vertices[Indices[vindex + 1]] - Vertices[Indices[vindex]];
     float3 vec1 = Vertices[Indices[vindex + 2]] - Vertices[Indices[vindex]];
     float3 normal = normalize(cross(vec0, vec1));
-    float QUANTIIZE_FACTOR = 32768.0;
-    int3 inormal = (int3) (normal * QUANTIIZE_FACTOR);
+    float QUANTIZE_FACTOR = 32768.0;
+    int3 inormal = (int3) (normal * QUANTIZE_FACTOR);
 
     uint idx0 = Indices[vindex + 0];
     uint idx1 = Indices[vindex + 1];
