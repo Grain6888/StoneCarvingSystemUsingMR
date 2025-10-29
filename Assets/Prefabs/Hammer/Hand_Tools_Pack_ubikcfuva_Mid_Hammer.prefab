@@ -846,8 +846,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MRSculpture.HammerController
   _controllerWithHammer: 2
   _audioSource: {fileID: 2794396699892361264}
-  _LControllerVisual: {fileID: 0}
-  _RControllerVisual: {fileID: 0}
   _hapticSource: {fileID: 6184266713493396220}
 --- !u!114 &6184266713493396220
 MonoBehaviour:
@@ -861,7 +859,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9dc93c7e1ae142448d4a122be86ea8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _clip: {fileID: 2460798210113038985, guid: 3b032ec40d4d2a6498e0bccabf071e99, type: 3}
+  _clip: {fileID: 2460798210113038985, guid: 7d24476b6f90c724891fe89ea25bf00f, type: 3}
   _controller: 1
   _loop: 0
   _amplitude: 1

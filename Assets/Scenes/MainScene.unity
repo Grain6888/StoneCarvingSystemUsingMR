@@ -405,22 +405,6 @@ PrefabInstance:
       propertyPath: _target
       value: 
       objectReference: {fileID: 591202682}
-    - target: {fileID: 3596050053921634436, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
-      propertyPath: _controllerLeft
-      value: 
-      objectReference: {fileID: 1126614561}
-    - target: {fileID: 3596050053921634436, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
-      propertyPath: _controllerRight
-      value: 
-      objectReference: {fileID: 2126263266}
-    - target: {fileID: 3596050053921634436, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
-      propertyPath: _LControllerVisual
-      value: 
-      objectReference: {fileID: 1126614561}
-    - target: {fileID: 3596050053921634436, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
-      propertyPath: _RControllerVisual
-      value: 
-      objectReference: {fileID: 2126263266}
     - target: {fileID: 3677224915888634137, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
       propertyPath: m_Name
       value: FlatChisel
@@ -2481,22 +2465,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6317936036108156069, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
-      propertyPath: _controllerLeft
-      value: 
-      objectReference: {fileID: 580116709}
-    - target: {fileID: 6317936036108156069, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
-      propertyPath: _controllerRight
-      value: 
-      objectReference: {fileID: 36133704}
-    - target: {fileID: 6317936036108156069, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
-      propertyPath: _LControllerVisual
-      value: 
-      objectReference: {fileID: 580116709}
-    - target: {fileID: 6317936036108156069, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
-      propertyPath: _RControllerVisual
-      value: 
-      objectReference: {fileID: 36133704}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2911,22 +2879,6 @@ PrefabInstance:
       propertyPath: _target
       value: 
       objectReference: {fileID: 591202682}
-    - target: {fileID: 4141510261998916575, guid: d54442b3834095b4c89a983676ac6063, type: 3}
-      propertyPath: _controllerLeft
-      value: 
-      objectReference: {fileID: 1126614561}
-    - target: {fileID: 4141510261998916575, guid: d54442b3834095b4c89a983676ac6063, type: 3}
-      propertyPath: _controllerRight
-      value: 
-      objectReference: {fileID: 2126263266}
-    - target: {fileID: 4141510261998916575, guid: d54442b3834095b4c89a983676ac6063, type: 3}
-      propertyPath: _LControllerVisual
-      value: 
-      objectReference: {fileID: 1126614561}
-    - target: {fileID: 4141510261998916575, guid: d54442b3834095b4c89a983676ac6063, type: 3}
-      propertyPath: _RControllerVisual
-      value: 
-      objectReference: {fileID: 2126263266}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
