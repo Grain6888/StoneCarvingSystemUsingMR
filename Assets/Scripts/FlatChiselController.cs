@@ -7,7 +7,6 @@ namespace MRSculpture
     {
         [SerializeField] private HapticSource _hapticSource;
         [SerializeField] private AudioSource _audioSource;
-        [SerializeField] private OVRInput.Controller _controllerWithFlatChisel;
 
         private int _impactRange;
         [SerializeField] private GameObject _center;
