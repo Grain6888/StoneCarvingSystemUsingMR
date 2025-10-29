@@ -7,25 +7,20 @@ namespace MRSculpture
     {
         [SerializeField] private OVRInput.Controller _controllerWithHammer;
         [SerializeField] private AudioSource _audioSource;
-
         private float _impactMagnitude = 0.0f;
 
         public float ImpactMagnitude => _impactMagnitude;
         [SerializeField] private HapticSource _hapticSource;
 
-        void Update()
+        private void Update()
         {
-            if (_impactMagnitude <= 0.0f)
-            {
-                return;
-            }
-
+            if (_impactMagnitude <= 0.0f) return;
             if (_impactMagnitude > 0.0f) _impactMagnitude = 0.0f;
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.name != "Chisel")
+            if (!other.gameObject.CompareTag("HandTool"))
             {
                 _impactMagnitude = 0.0f;
                 return;
@@ -62,7 +57,7 @@ namespace MRSculpture
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.gameObject.name != "Chisel")
+            if (!other.gameObject.CompareTag("HandTool"))
             {
                 return;
             }

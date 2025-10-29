@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"*.asset": "yaml",
+			"*.meta": "yaml",
+			"*.prefab": "yaml",
+			"*.unity": "yaml"
+		},
+		"dotnet.defaultSolution": "MixedRealitySculpture_URP_Unity6.slnx",
+		"cSpell.words": [
+			"Behaviour",
+			"Mathf"
+		]
+	}
+}

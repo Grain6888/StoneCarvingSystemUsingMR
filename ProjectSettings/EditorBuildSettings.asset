@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/HalloweenScene.unity
     guid: ebd997db409913a4c8204a2f2094152c
+  - enabled: 0
+    path: Assets/Scenes/NaiveSurfaceNets.unity
+    guid: 73bcbc36ba3009f4bb24e8d914107fbe
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
     com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: 7b3fc588c25158c4a9f1c354597125e6, type: 2}
