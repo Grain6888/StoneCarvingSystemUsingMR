@@ -662,7 +662,7 @@ PrefabInstance:
       addedObject: {fileID: 1661873145031277832}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1cef2fa4d5b05ff4ea3ad849bf6ced2b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3093340553798845310}
+      addedObject: {fileID: 6317936036108156069}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1cef2fa4d5b05ff4ea3ad849bf6ced2b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6184266713493396220}
@@ -832,7 +832,7 @@ MonoBehaviour:
         Min: 1
         Max: 1
   _resetScaleResponsivenessOnConstraintOvershoot: 0
---- !u!114 &3093340553798845310
+--- !u!114 &6317936036108156069
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -843,9 +843,11 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e66d90feea09a67428d9e382f6d5962e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::MRSculpture.HammerController
   _controllerWithHammer: 2
   _audioSource: {fileID: 2794396699892361264}
+  _LControllerVisual: {fileID: 0}
+  _RControllerVisual: {fileID: 0}
   _hapticSource: {fileID: 6184266713493396220}
 --- !u!114 &6184266713493396220
 MonoBehaviour:

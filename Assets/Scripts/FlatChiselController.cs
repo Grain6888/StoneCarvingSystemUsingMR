@@ -71,8 +71,7 @@ namespace MRSculpture
             float width = _impactRange;
             float depth = _impactRange;
 
-            // 探索範囲を決定（直方体を囲むAABBでループ）
-            // 直方体の8頂点を計算しAABBを求める
+            // 直方体の8頂点を計算
             Vector3[] corners = new Vector3[8];
             corners[0] = center + height * heightDirection + width * widthDirection + depth * depthDirection;
             corners[1] = center + height * heightDirection + width * widthDirection - depth * depthDirection;

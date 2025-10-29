@@ -119,6 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &36133704 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5525962229547929510, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
+  m_PrefabInstance: {fileID: 2046136733}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &38932550
 GameObject:
   m_ObjectHideFlags: 0
@@ -951,6 +956,11 @@ CanvasRenderer:
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3677224915888634137, guid: d54442b3834095b4c89a983676ac6063, type: 3}
   m_PrefabInstance: {fileID: 1794430709}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &580116709 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1713458016222277555, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
+  m_PrefabInstance: {fileID: 2046136733}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &591202682
 GameObject:
@@ -2419,14 +2429,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3093340553798845310, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
-      propertyPath: _LControllerVisual
-      value: 
-      objectReference: {fileID: 1126614561}
-    - target: {fileID: 3093340553798845310, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
-      propertyPath: _RControllerVisual
-      value: 
-      objectReference: {fileID: 2126263266}
     - target: {fileID: 3510805639411572367, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
       propertyPath: m_Name
       value: Hammer
@@ -2471,6 +2473,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6317936036108156069, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
+      propertyPath: _LControllerVisual
+      value: 
+      objectReference: {fileID: 580116709}
+    - target: {fileID: 6317936036108156069, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
+      propertyPath: _RControllerVisual
+      value: 
+      objectReference: {fileID: 36133704}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3105,6 +3115,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1168042862848444296, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1168042863143544391, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -3128,6 +3142,10 @@ PrefabInstance:
     - target: {fileID: 4148778239110795873, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
       propertyPath: m_Name
       value: '[BuildingBlock] OVRInteractionComprehensive'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4305865058757919010, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4397664628265918113, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
       propertyPath: m_LocalPosition.x

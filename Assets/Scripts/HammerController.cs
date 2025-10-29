@@ -23,10 +23,16 @@ namespace MRSculpture
             if (_controllerWithHammer == OVRInput.Controller.LTouch)
             {
                 _controller = _LControllerVisual.GetComponent<SkinnedMeshRenderer>();
+                Debug.Log("MRSculpture : HammerController: Left controller assigned.");
             }
             else if (_controllerWithHammer == OVRInput.Controller.RTouch)
             {
                 _controller = _RControllerVisual.GetComponent<SkinnedMeshRenderer>();
+                Debug.Log("MRSculpture : HammerController: Right controller assigned.");
+            }
+            else
+            {
+                Debug.LogError("MRSculpture : HammerController: Invalid controller assignment.");
             }
         }
 
@@ -86,12 +92,14 @@ namespace MRSculpture
 
         private void DownHandTrigger()
         {
+            Debug.Log("MRSculpture : HammerController: Hand trigger pressed.");
             _controller.enabled = false;
             _isPressingHandTrigger = true;
         }
 
         private void UpHandTrigger()
         {
+            Debug.Log("MRSculpture : HammerController: Hand trigger released.");
             _controller.enabled = true;
             _isPressingHandTrigger = false;
         }
