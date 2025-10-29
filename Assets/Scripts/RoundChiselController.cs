@@ -8,9 +8,6 @@ namespace MRSculpture
         [SerializeField] private HapticSource _hapticSource;
         [SerializeField] private AudioSource _audioSource;
         [SerializeField] private OVRInput.Controller _controllerWithRoundChisel;
-        [SerializeField] private GameObject _LControllerVisual;
-        [SerializeField] private GameObject _RControllerVisual;
-        private SkinnedMeshRenderer _controller;
 
         private int _impactRange;
         [SerializeField] private GameObject _center;
@@ -21,28 +18,16 @@ namespace MRSculpture
         private Transform _targetTransform;
 
         private bool _isPressingIndexTrigger = false;
-        private bool _isPressingHandTrigger = false;
 
         private void Awake()
         {
             _targetTransform = _target.transform;
-
-            if (_controllerWithRoundChisel == OVRInput.Controller.LTouch)
-            {
-                _controller = _LControllerVisual.GetComponent<SkinnedMeshRenderer>();
-            }
-            else if (_controllerWithRoundChisel == OVRInput.Controller.RTouch)
-            {
-                _controller = _RControllerVisual.GetComponent<SkinnedMeshRenderer>();
-            }
         }
 
         public void Update()
         {
             if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger)) DownIndexTrigger();
             if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger)) UpIndexTrigger();
-            if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger)) DownHandTrigger();
-            if (OVRInput.GetUp(OVRInput.Button.PrimaryHandTrigger)) UpHandTrigger();
         }
 
         public void Carve(ref DataChunk voxelDataChunk, in int impactRange, ref Renderer renderer)
@@ -158,18 +143,6 @@ namespace MRSculpture
                 _audioSource.volume = amplitude;
                 _audioSource.Play();
             }
-        }
-
-        private void DownHandTrigger()
-        {
-            _controller.enabled = false;
-            _isPressingHandTrigger = true;
-        }
-
-        private void UpHandTrigger()
-        {
-            _controller.enabled = true;
-            _isPressingHandTrigger = false;
         }
     }
 }
