@@ -456,6 +456,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CaptionController
   _cameraRig: {fileID: 0}
+  _captionCanvas: {fileID: 0}
 --- !u!1 &6730901870501978960
 GameObject:
   m_ObjectHideFlags: 0
@@ -991,6 +992,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1cef2fa4d5b05ff4ea3ad849bf6ced2b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 873186541879155987}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1cef2fa4d5b05ff4ea3ad849bf6ced2b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1928757374584337480}
   m_SourcePrefab: {fileID: 100100000, guid: 1cef2fa4d5b05ff4ea3ad849bf6ced2b, type: 3}
 --- !u!1 &3510805639411572367 stripped
 GameObject:
@@ -1315,6 +1319,64 @@ MonoBehaviour:
   directivityPattern: 0
   directSoundEnabled: 1
   mediumAbsorption: 1
+--- !u!114 &1928757374584337480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3510805639411572367}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2f8f6e9e6f3e114b9bf9a57c2160615, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Oculus.Interaction::Oculus.Interaction.PointableUnityEventWrapper
+  _pointable: {fileID: 1844846212548999178}
+  _whenRelease:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenHover:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenUnhover:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenSelect:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 535107355327153563}
+        m_TargetAssemblyTypeName: CaptionController, Assembly-CSharp
+        m_MethodName: HideCaption
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  _whenUnselect:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 535107355327153563}
+        m_TargetAssemblyTypeName: CaptionController, Assembly-CSharp
+        m_MethodName: ShowCaption
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  _whenMove:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenCancel:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &4319853145546081333 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1cef2fa4d5b05ff4ea3ad849bf6ced2b, type: 3}
