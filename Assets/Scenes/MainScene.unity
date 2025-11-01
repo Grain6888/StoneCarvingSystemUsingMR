@@ -453,6 +453,10 @@ PrefabInstance:
       propertyPath: _cameraRig
       value: 
       objectReference: {fileID: 2040508047}
+    - target: {fileID: 8529253340307364957, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
+      propertyPath: _captionCanvas
+      value: 
+      objectReference: {fileID: 58932231}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -461,6 +465,11 @@ PrefabInstance:
 --- !u!1 &58932230 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3677224915888634137, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
+  m_PrefabInstance: {fileID: 58932229}
+  m_PrefabAsset: {fileID: 0}
+--- !u!223 &58932231 stripped
+Canvas:
+  m_CorrespondingSourceObject: {fileID: 3498364569404321207, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
   m_PrefabInstance: {fileID: 58932229}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &211303832
@@ -988,9 +997,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _boundsSize:
-    x: 128
-    y: 128
-    z: 128
+    x: 80
+    y: 80
+    z: 80
   _voxelMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   _voxelMaterial: {fileID: 2100000, guid: f07cb93e85d10a34798cac9e79536d58, type: 2}
   _mainBehaviourTransform: {fileID: 591202684}
@@ -2429,6 +2438,10 @@ PrefabInstance:
       propertyPath: _cameraRig
       value: 
       objectReference: {fileID: 2040508047}
+    - target: {fileID: 535107355327153563, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
+      propertyPath: _captionCanvas
+      value: 
+      objectReference: {fileID: 1370726367}
     - target: {fileID: 3510805639411572367, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
       propertyPath: m_Name
       value: Hammer
@@ -2481,6 +2494,11 @@ PrefabInstance:
 --- !u!1 &1370726366 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3510805639411572367, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
+  m_PrefabInstance: {fileID: 1370726365}
+  m_PrefabAsset: {fileID: 0}
+--- !u!223 &1370726367 stripped
+Canvas:
+  m_CorrespondingSourceObject: {fileID: 7778781379937705842, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
   m_PrefabInstance: {fileID: 1370726365}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1389792904
@@ -2843,6 +2861,10 @@ PrefabInstance:
       propertyPath: _cameraRig
       value: 
       objectReference: {fileID: 2040508047}
+    - target: {fileID: 738748662068489316, guid: d54442b3834095b4c89a983676ac6063, type: 3}
+      propertyPath: _captionCanvas
+      value: 
+      objectReference: {fileID: 1794430710}
     - target: {fileID: 3677224915888634137, guid: d54442b3834095b4c89a983676ac6063, type: 3}
       propertyPath: m_Name
       value: RoundChisel
@@ -2896,6 +2918,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d54442b3834095b4c89a983676ac6063, type: 3}
+--- !u!223 &1794430710 stripped
+Canvas:
+  m_CorrespondingSourceObject: {fileID: 3205195583388491098, guid: d54442b3834095b4c89a983676ac6063, type: 3}
+  m_PrefabInstance: {fileID: 1794430709}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1889504618
 GameObject:
   m_ObjectHideFlags: 0

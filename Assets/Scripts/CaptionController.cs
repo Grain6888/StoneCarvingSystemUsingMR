@@ -8,11 +8,6 @@ public class CaptionController : MonoBehaviour
     [SerializeField]
     private Canvas _captionCanvas;
 
-    private void Awake()
-    {
-        _captionCanvas = GetComponent<Canvas>();
-    }
-
     private void Update()
     {
         transform.LookAt(_cameraRig, Vector3.up);
