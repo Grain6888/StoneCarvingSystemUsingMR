@@ -292,7 +292,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CaptionController
   _cameraRig: {fileID: 0}
-  _captionCanvas: {fileID: 0}
+  _captionCanvas: {fileID: 3498364569404321207}
 --- !u!1 &6576365408258161138
 GameObject:
   m_ObjectHideFlags: 0

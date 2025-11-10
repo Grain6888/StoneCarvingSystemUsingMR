@@ -963,7 +963,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CaptionController
   _cameraRig: {fileID: 0}
-  _captionCanvas: {fileID: 0}
+  _captionCanvas: {fileID: 3205195583388491098}
 --- !u!1001 &4596285459214943304
 PrefabInstance:
   m_ObjectHideFlags: 0
