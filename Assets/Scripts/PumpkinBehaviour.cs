@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MRSculpture
 {
-    public class MainBehaviour : MonoBehaviour
+    public class PumpkinBehaviour : MonoBehaviour
     {
         /// <summary>
         /// 彫刻素材の生成範囲
@@ -96,20 +96,20 @@ namespace MRSculpture
 
         public void NewFile()
         {
-            //// 楕円体の中心座標（グリッド中央）
-            //float centerX = (_voxelDataChunk.xLength - 1) / 2.0f;
-            //float centerY = (_voxelDataChunk.yLength - 1) / 2.0f;
-            //float centerZ = (_voxelDataChunk.zLength - 1) / 2.0f;
+            // 楕円体の中心座標（グリッド中央）
+            float centerX = (_voxelDataChunk.xLength - 1) / 2.0f;
+            float centerY = (_voxelDataChunk.yLength - 1) / 2.0f;
+            float centerZ = (_voxelDataChunk.zLength - 1) / 2.0f;
 
-            //// 楕円体の各軸半径
-            //float radiusX = _voxelDataChunk.xLength / 2.0f;
-            //float radiusY = _voxelDataChunk.yLength / 2.0f;
-            //float radiusZ = _voxelDataChunk.zLength / 2.0f;
+            // 楕円体の各軸半径
+            float radiusX = _voxelDataChunk.xLength / 2.0f;
+            float radiusY = _voxelDataChunk.yLength / 2.0f;
+            float radiusZ = _voxelDataChunk.zLength / 2.0f;
 
-            //// 内側楕円体の各軸半径（最低厚み5ブロック分小さく）
-            //float innerRadiusX = Mathf.Max(radiusX - 5.0f, 0.0f);
-            //float innerRadiusY = Mathf.Max(radiusY - 5.0f, 0.0f);
-            //float innerRadiusZ = Mathf.Max(radiusZ - 5.0f, 0.0f);
+            // 内側楕円体の各軸半径（最低厚み5ブロック分小さく）
+            float innerRadiusX = Mathf.Max(radiusX - 5.0f, 0.0f);
+            float innerRadiusY = Mathf.Max(radiusY - 5.0f, 0.0f);
+            float innerRadiusZ = Mathf.Max(radiusZ - 5.0f, 0.0f);
 
             for (int y = 0; y < _voxelDataChunk.yLength; y++)
             {
@@ -119,24 +119,21 @@ namespace MRSculpture
                 {
                     for (int z = 0; z < _voxelDataChunk.zLength; z++)
                     {
-                        //// 楕円体の方程式で判定
-                        //float nx = (x - centerX) / radiusX;
-                        //float ny = (y - centerY) / radiusY;
-                        //float nz = (z - centerZ) / radiusZ;
-                        //float nxi = (x - centerX) / innerRadiusX;
-                        //float nyi = (y - centerY) / innerRadiusY;
-                        //float nzi = (z - centerZ) / innerRadiusZ;
+                        // 楕円体の方程式で判定
+                        float nx = (x - centerX) / radiusX;
+                        float ny = (y - centerY) / radiusY;
+                        float nz = (z - centerZ) / radiusZ;
+                        float nxi = (x - centerX) / innerRadiusX;
+                        float nyi = (y - centerY) / innerRadiusY;
+                        float nzi = (z - centerZ) / innerRadiusZ;
 
-                        //// 外側楕円体の内側かつ内側楕円体の外側のみ埋める
-                        //if (nx * nx + ny * ny + nz * nz <= 1.0f &&
-                        //    nxi * nxi + nyi * nyi + nzi * nzi >= 1.0f)
-                        //{
-                        //    int index = xzLayer.GetIndex(x, 0, z);
-                        //    xzLayer.AddFlag(index, CellFlags.IsFilled);
-                        //}
-
-                        int index = xzLayer.GetIndex(x, 0, z);
-                        xzLayer.AddFlag(index, CellFlags.IsFilled);
+                        // 外側楕円体の内側かつ内側楕円体の外側のみ埋める
+                        if (nx * nx + ny * ny + nz * nz <= 1.0f &&
+                           nxi * nxi + nyi * nyi + nzi * nzi >= 1.0f)
+                        {
+                            int index = xzLayer.GetIndex(x, 0, z);
+                            xzLayer.AddFlag(index, CellFlags.IsFilled);
+                        }
                     }
                 }
                 _renderer.AddRenderBuffer(xzLayer, y);

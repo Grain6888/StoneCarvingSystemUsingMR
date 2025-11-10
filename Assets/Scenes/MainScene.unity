@@ -405,22 +405,6 @@ PrefabInstance:
       propertyPath: _target
       value: 
       objectReference: {fileID: 591202682}
-    - target: {fileID: 3596050053921634436, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
-      propertyPath: _controllerLeft
-      value: 
-      objectReference: {fileID: 1126614561}
-    - target: {fileID: 3596050053921634436, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
-      propertyPath: _controllerRight
-      value: 
-      objectReference: {fileID: 2126263266}
-    - target: {fileID: 3596050053921634436, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
-      propertyPath: _LControllerVisual
-      value: 
-      objectReference: {fileID: 1126614561}
-    - target: {fileID: 3596050053921634436, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
-      propertyPath: _RControllerVisual
-      value: 
-      objectReference: {fileID: 2126263266}
     - target: {fileID: 3677224915888634137, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
       propertyPath: m_Name
       value: FlatChisel
@@ -465,6 +449,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7927705283060053774, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
+      propertyPath: _pointable
+      value: 
+      objectReference: {fileID: 58932239}
+    - target: {fileID: 8529253340307364957, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
+      propertyPath: _cameraRig
+      value: 
+      objectReference: {fileID: 2040508047}
+    - target: {fileID: 8966988460086192345, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8966988460086192345, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -475,6 +475,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3677224915888634137, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
   m_PrefabInstance: {fileID: 58932229}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &58932239 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6854316036187942572, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
+  m_PrefabInstance: {fileID: 58932229}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 58932230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43f86b14a27b52f4f9298c33015b5c26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &211303832
 GameObject:
   m_ObjectHideFlags: 0
@@ -965,6 +976,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3677224915888634137, guid: d54442b3834095b4c89a983676ac6063, type: 3}
   m_PrefabInstance: {fileID: 1794430709}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &487324554 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6854316036187942572, guid: d54442b3834095b4c89a983676ac6063, type: 3}
+  m_PrefabInstance: {fileID: 1794430709}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 487324546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43f86b14a27b52f4f9298c33015b5c26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &580116709 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1713458016222277555, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
@@ -1000,9 +1022,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _boundsSize:
-    x: 128
-    y: 128
-    z: 128
+    x: 80
+    y: 80
+    z: 80
   _voxelMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   _voxelMaterial: {fileID: 2100000, guid: f07cb93e85d10a34798cac9e79536d58, type: 2}
   _mainBehaviourTransform: {fileID: 591202684}
@@ -2437,6 +2459,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 535107355327153563, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
+      propertyPath: _cameraRig
+      value: 
+      objectReference: {fileID: 2040508047}
+    - target: {fileID: 535107355327153563, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
+      propertyPath: _captionCanvas
+      value: 
+      objectReference: {fileID: 1370726367}
+    - target: {fileID: 1072073631624436883, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1072073631624436883, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3510805639411572367, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
       propertyPath: m_Name
       value: Hammer
@@ -2481,22 +2519,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6317936036108156069, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
-      propertyPath: _controllerLeft
-      value: 
-      objectReference: {fileID: 580116709}
-    - target: {fileID: 6317936036108156069, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
-      propertyPath: _controllerRight
-      value: 
-      objectReference: {fileID: 36133704}
-    - target: {fileID: 6317936036108156069, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
-      propertyPath: _LControllerVisual
-      value: 
-      objectReference: {fileID: 580116709}
-    - target: {fileID: 6317936036108156069, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
-      propertyPath: _RControllerVisual
-      value: 
-      objectReference: {fileID: 36133704}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2505,6 +2527,11 @@ PrefabInstance:
 --- !u!1 &1370726366 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3510805639411572367, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
+  m_PrefabInstance: {fileID: 1370726365}
+  m_PrefabAsset: {fileID: 0}
+--- !u!223 &1370726367 stripped
+Canvas:
+  m_CorrespondingSourceObject: {fileID: 7778781379937705842, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
   m_PrefabInstance: {fileID: 1370726365}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1389792904
@@ -2863,6 +2890,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 738748662068489316, guid: d54442b3834095b4c89a983676ac6063, type: 3}
+      propertyPath: _cameraRig
+      value: 
+      objectReference: {fileID: 2040508047}
     - target: {fileID: 3677224915888634137, guid: d54442b3834095b4c89a983676ac6063, type: 3}
       propertyPath: m_Name
       value: RoundChisel
@@ -2911,22 +2942,18 @@ PrefabInstance:
       propertyPath: _target
       value: 
       objectReference: {fileID: 591202682}
-    - target: {fileID: 4141510261998916575, guid: d54442b3834095b4c89a983676ac6063, type: 3}
-      propertyPath: _controllerLeft
+    - target: {fileID: 4700933103573049749, guid: d54442b3834095b4c89a983676ac6063, type: 3}
+      propertyPath: _pointable
       value: 
-      objectReference: {fileID: 1126614561}
-    - target: {fileID: 4141510261998916575, guid: d54442b3834095b4c89a983676ac6063, type: 3}
-      propertyPath: _controllerRight
-      value: 
-      objectReference: {fileID: 2126263266}
-    - target: {fileID: 4141510261998916575, guid: d54442b3834095b4c89a983676ac6063, type: 3}
-      propertyPath: _LControllerVisual
-      value: 
-      objectReference: {fileID: 1126614561}
-    - target: {fileID: 4141510261998916575, guid: d54442b3834095b4c89a983676ac6063, type: 3}
-      propertyPath: _RControllerVisual
-      value: 
-      objectReference: {fileID: 2126263266}
+      objectReference: {fileID: 487324554}
+    - target: {fileID: 5255131440064524102, guid: d54442b3834095b4c89a983676ac6063, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5255131440064524102, guid: d54442b3834095b4c89a983676ac6063, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3089,7 +3116,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 4294967287
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
