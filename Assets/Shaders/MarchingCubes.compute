@@ -11,10 +11,14 @@ uint MaxTriangle;
 float Scale;
 float Isovalue;
 
+// CellFlags (C# と一致)
+static const uint CELLFLAG_IS_FILLED = 1u;
+
 // グリッド空間からオブジェクト空間への変換
+// 原点(0,0,0)から生成されるように、中心オフセットを削除
 float3 TransformPoint(float3 p)
 {
-    return (p + 0.5 - Dims / 2) * Scale;
+    return p * Scale;
 }
 
 //
@@ -29,13 +33,21 @@ uint EdgeIndexFromTriangleTable(uint2 data, uint index)
 }
 
 //
-// 入力ボクセル
+// 入力: DataChunk の各セルの status をそのまま受け取る
 //
-StructuredBuffer<float> Voxels;
+StructuredBuffer<uint> Voxels;
+
+bool HasFlag(uint flags, uint bit)
+{
+    return (flags & bit) != 0;
+}
 
 float VoxelValue(uint x, uint y, uint z)
 {
-    return Voxels[x + Dims.x * (y + Dims.y * z)];
+    // 指定のインデックス対応: index = x + (z * Dims.x) + (y * Dims.x * Dims.z)
+    uint idx = x + Dims.x * z + (Dims.x * Dims.z) * y;
+    uint flags = Voxels[idx];
+    return HasFlag(flags, CELLFLAG_IS_FILLED) ? 1.0 : 0.0;
 }
 
 // 勾配を計算したボクセル値
@@ -118,7 +130,7 @@ void MeshReconstruction(uint3 id : SV_DispatchThreadID)
     // （頂点の二値状態のビットフィールドとして初期化）
     uint selector = 0;
     for (i = 0; i < 8; i++)
-        selector |= (samples[i].w <= Isovalue) << i;
+        selector |= (samples[i].w < Isovalue) << i;
 
     // 空のキューブの特例。交差がない場合は早期に終了。
     if (selector == 0 || selector == 0xff)
@@ -174,9 +186,9 @@ void ClearUnused(uint id : SV_DispatchThreadID)
         if (count >= MaxTriangle)
             break;
         uint vidx = count * 3;
-        WriteVertex(vidx + 0, 0, 0);
-        WriteVertex(vidx + 1, 0, 0);
-        WriteVertex(vidx + 2, 0, 0);
+        WriteVertex(vidx + 0, float3(0, 0, 0), float3(0, 0, 0));
+        WriteVertex(vidx + 1, float3(0, 0, 0), float3(0, 0, 0));
+        WriteVertex(vidx + 2, float3(0, 0, 0), float3(0, 0, 0));
         WriteIndices(vidx, uint3(0, 0, 0));
     }
 }

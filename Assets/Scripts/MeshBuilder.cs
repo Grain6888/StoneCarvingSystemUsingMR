@@ -71,8 +71,9 @@ namespace MarchingCubes
             _compute.DispatchThreads(1, 1024, 1, 1);
 
             // バウンディングボックス
-            var ext = new Vector3(_grids.x, _grids.y, _grids.z) * scale;
-            _mesh.bounds = new Bounds(Vector3.zero, ext);
+            // 0..(Dims*Scale) のボリュームに合わせて中心とサイズを設定
+            var size = new Vector3(_grids.x, _grids.y, _grids.z) * scale;
+            _mesh.bounds = new Bounds(size * 0.5f, size);
         }
 
         #endregion

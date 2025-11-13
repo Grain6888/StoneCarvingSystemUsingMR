@@ -2,6 +2,7 @@
 using Unity.Mathematics;
 using UnityEngine;
 using MarchingCubes;
+using Unity.Collections;
 
 namespace MRSculpture
 {
@@ -14,7 +15,7 @@ namespace MRSculpture
 
         [SerializeField] float _gridScale = 1.0f;
         [SerializeField] int _triangleBudget = 65536 * 16;
-        [SerializeField] ComputeShader _builderCompute = null;   // MarchingCubes.compute
+        [SerializeField] ComputeShader _builderCompute = null; // MarchingCubes.compute
         float _builtTargetValue = 0.9f;
         int _voxelCount => _boundsSize.x * _boundsSize.y * _boundsSize.z;
         ComputeBuffer _voxelBuffer;
@@ -63,7 +64,8 @@ namespace MRSculpture
 
             _renderer = new Renderer(_voxelMesh, _voxelMaterial, localToWorldMatrix);
 
-            _voxelBuffer = new ComputeBuffer(_voxelCount, sizeof(float));
+            // フラグ（uint）をそのまま Compute に渡す
+            _voxelBuffer = new ComputeBuffer(_voxelCount, sizeof(uint));
             _builder = new MeshBuilder(_boundsSize, _triangleBudget, _builderCompute);
 
             NewFile();
@@ -110,11 +112,10 @@ namespace MRSculpture
 
         public void NewFile()
         {
-            // VoxelBuffer を指定の規則で初期化
+            // DataChunk を基準にボクセル状態を管理
             int xSize = _boundsSize.x;
             int ySize = _boundsSize.y;
             int zSize = _boundsSize.z;
-            float[] voxels = new float[_voxelCount];
 
             for (int y = 0; y < ySize; y++)
             {
@@ -122,56 +123,63 @@ namespace MRSculpture
                 {
                     for (int x = 0; x < xSize; x++)
                     {
-                        // 指定のインデックス規則
                         int index = x + (z * xSize) + (y * xSize * zSize);
 
-                        // 立方体の表面から2マス以内は 0.0、それ以外は 1.0
-                        bool nearSurface = (x < 2) || (x >= xSize - 2) ||
-                                           (y < 2) || (y >= ySize - 2) ||
-                                           (z < 2) || (z >= zSize - 2);
-                        voxels[index] = nearSurface ? 0.0f : 1.0f;
+                        // 立方体の表面から2マス分は空、それ以外は埋める
+                        bool nearSurface = (x <= 1) || (x >= xSize - 1) ||
+                                           (y <= 1) || (y >= ySize - 1) ||
+                                           (z <= 1) || (z >= zSize - 1);
+
+                        if (nearSurface)
+                        {
+                            _voxelDataChunk.RemoveAllFlags(index);
+                        }
+                        else
+                        {
+                            _voxelDataChunk.AddFlag(index, CellFlags.IsFilled);
+                        }
                     }
                 }
             }
 
-            _voxelBuffer.SetData(voxels);
+            _voxelBuffer.SetData(_voxelDataChunk.DataArray);
 
-            Debug.Log("MRSculpture : New voxel buffer created.");
+            Debug.Log("MRSculpture : New voxel flags uploaded to GPU from DataChunk.");
 
             _ready = true;
         }
 
-        private bool rendered = false;
-
+        //private int _frameCount = 0;
         private void Update()
         {
             if (!_ready) return;
 
-            if (rendered)
-            {
-                return;
-            }
-            else
-            {
-                _builder.BuildIsosurface(_voxelBuffer, _builtTargetValue, _gridScale);
-                GetComponent<MeshFilter>().sharedMesh = _builder.Mesh;
-                rendered = true;
-                Debug.Log("MRSculpture : Initial mesh built.");
-            }
+            //_frameCount++;
 
-            //_impactRange = Mathf.Min(10, (int)(_hammerController.ImpactMagnitude * 5));
-
-            //Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(_boundsSize.x, _boundsSize.y, _boundsSize.z));
-            //Bounds boundingBox = new();
-            //boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
-
-            //if (_impactRange > 0)
+            //if (_frameCount < 120)
             //{
-            //    _roundChiselController.Carve(ref _voxelDataChunk, in _impactRange, ref _renderer);
-            //    _flatChiselController.Carve(ref _voxelDataChunk, in _impactRange, ref _renderer);
+            //    return;
             //}
 
+            _impactRange = Mathf.Min(10, (int)(_hammerController.ImpactMagnitude * 5));
+
+            Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(_boundsSize.x, _boundsSize.y, _boundsSize.z));
+            Bounds boundingBox = new();
+            boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
+
+            if (_impactRange > 0)
+            {
+                _roundChiselController.Carve(ref _voxelDataChunk, in _impactRange, ref _renderer);
+                _flatChiselController.Carve(ref _voxelDataChunk, in _impactRange, ref _renderer);
+            }
+
             //_renderer.RenderMeshes(new Bounds(boundingBoxSize * 0.5f, boundingBoxSize));
+
+            _voxelBuffer.SetData(_voxelDataChunk.DataArray);
+            _builder.BuildIsosurface(_voxelBuffer, _builtTargetValue, _gridScale);
+            GetComponent<MeshFilter>().sharedMesh = _builder.Mesh;
+            Debug.Log("MRSculpture : Initial mesh built.");
+            //_frameCount = 0;
         }
 
         private void OnDestroy()
@@ -181,5 +189,39 @@ namespace MRSculpture
             _voxelBuffer.Dispose();
             _builder.Dispose();
         }
+
+        //private void OnDrawGizmos()
+        //{
+        //    // Sceneビューのみ
+        //    var cam = Camera.current;
+        //    if (cam == null || cam.cameraType != CameraType.SceneView) return;
+
+        //    // DataChunk が有効か
+        //    if (!_voxelDataChunk.DataArray.IsCreated) return;
+
+        //    int xSize = _voxelDataChunk.xLength;
+        //    int ySize = _voxelDataChunk.yLength;
+        //    int zSize = _voxelDataChunk.zLength;
+
+        //    Vector3 cellSize = Vector3.one * _gridScale;
+
+        //    // すべてのボクセルを描画（IsFilled: 緑、未充填: 赤）
+        //    for (int y = 0; y < ySize; y++)
+        //    {
+        //        for (int z = 0; z < zSize; z++)
+        //        {
+        //            for (int x = 0; x < xSize; x++)
+        //            {
+        //                int index = _voxelDataChunk.GetIndex(x, y, z);
+        //                bool filled = _voxelDataChunk.HasFlag(index, CellFlags.IsFilled);
+        //                Gizmos.color = filled ? Color.green : Color.red;
+
+        //                Vector3 centerLocal = new Vector3((x + 0.5f) * _gridScale, (y + 0.5f) * _gridScale, (z + 0.5f) * _gridScale);
+        //                Vector3 centerWS = transform.TransformPoint(centerLocal);
+        //                Gizmos.DrawWireCube(centerWS, cellSize);
+        //            }
+        //        }
+        //    }
+        //}
     }
 }
