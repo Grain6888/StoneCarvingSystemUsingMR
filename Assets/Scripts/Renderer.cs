@@ -65,8 +65,8 @@ namespace MRSculpture
 
         public void AddRenderBuffer(DataChunk XZlayer, int y)
         {
-            Mesh mesh = MeshData.CreateMesh(ref XZlayer, y, ref _mesh);
-            _meshes.Add(mesh);
+            //Mesh mesh = MeshData.CreateMesh(ref XZlayer, y, ref _mesh);
+            //_meshes.Add(mesh);
         }
 
         public void UpdateRenderBuffer(DataChunk xzLayer, int y)
@@ -75,8 +75,8 @@ namespace MRSculpture
             {
                 xzLayer.RemoveFlag(i, CellFlags.IsMeshGenerated);
             }
-            Mesh mesh = MeshData.CreateMesh(ref xzLayer, y, ref _mesh);
-            _meshes[y] = mesh;
+            //Mesh mesh = MeshData.CreateMesh(ref xzLayer, y, ref _mesh);
+            //_meshes[y] = mesh;
         }
 
         public void RenderMeshes(Bounds boundingBox)
