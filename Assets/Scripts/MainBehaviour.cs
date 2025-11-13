@@ -15,7 +15,7 @@ namespace MRSculpture
         [SerializeField] float _gridScale = 1.0f;
         [SerializeField] int _triangleBudget = 65536 * 16;
         [SerializeField] ComputeShader _builderCompute = null;   // MarchingCubes.compute
-        float _builtTargetValue = 1.0f;
+        float _builtTargetValue = 0.9f;
         int _voxelCount => _boundsSize.x * _boundsSize.y * _boundsSize.z;
         ComputeBuffer _voxelBuffer;
         MeshBuilder _builder;
@@ -136,7 +136,7 @@ namespace MRSculpture
 
             _voxelBuffer.SetData(voxels);
 
-            Debug.Log("MRSculpture New voxel buffer created.");
+            Debug.Log("MRSculpture : New voxel buffer created.");
 
             _ready = true;
         }
@@ -156,6 +156,7 @@ namespace MRSculpture
                 _builder.BuildIsosurface(_voxelBuffer, _builtTargetValue, _gridScale);
                 GetComponent<MeshFilter>().sharedMesh = _builder.Mesh;
                 rendered = true;
+                Debug.Log("MRSculpture : Initial mesh built.");
             }
 
             //_impactRange = Mathf.Min(10, (int)(_hammerController.ImpactMagnitude * 5));
