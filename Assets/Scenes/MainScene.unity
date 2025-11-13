@@ -1026,6 +1026,9 @@ MonoBehaviour:
     x: 80
     y: 80
     z: 80
+  _gridScale: 1
+  _triangleBudget: 1048576
+  _builderCompute: {fileID: 7200000, guid: 5676387eaa52f3e4ea7d01daa2457019, type: 3}
   _voxelMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   _voxelMaterial: {fileID: 2100000, guid: f07cb93e85d10a34798cac9e79536d58, type: 2}
   _mainBehaviourTransform: {fileID: 591202684}
