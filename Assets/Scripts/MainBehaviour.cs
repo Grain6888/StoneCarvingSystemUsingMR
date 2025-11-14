@@ -69,6 +69,11 @@ namespace MRSculpture
             _builder = new MeshBuilder(_boundsSize, _triangleBudget, _builderCompute);
 
             NewFile();
+
+            _voxelBuffer.SetData(_voxelDataChunk.DataArray);
+            _builder.BuildIsosurface(_voxelBuffer, _builtTargetValue, _gridScale);
+            GetComponent<MeshFilter>().sharedMesh = _builder.Mesh;
+            Debug.Log("MRSculpture : Initial mesh built.");
         }
 
         public async void LoadFile()
@@ -149,17 +154,9 @@ namespace MRSculpture
             _ready = true;
         }
 
-        //private int _frameCount = 0;
         private void Update()
         {
             if (!_ready) return;
-
-            //_frameCount++;
-
-            //if (_frameCount < 120)
-            //{
-            //    return;
-            //}
 
             _impactRange = Mathf.Min(10, (int)(_hammerController.ImpactMagnitude * 5));
 
@@ -171,14 +168,14 @@ namespace MRSculpture
             {
                 _roundChiselController.Carve(ref _voxelDataChunk, in _impactRange, ref _renderer);
                 _flatChiselController.Carve(ref _voxelDataChunk, in _impactRange, ref _renderer);
+                _voxelBuffer.SetData(_voxelDataChunk.DataArray);
+                _builder.BuildIsosurface(_voxelBuffer, _builtTargetValue, _gridScale);
+                GetComponent<MeshFilter>().sharedMesh = _builder.Mesh;
+                Debug.Log("MRSculpture : Mesh updated.");
             }
 
             //_renderer.RenderMeshes(new Bounds(boundingBoxSize * 0.5f, boundingBoxSize));
 
-            _voxelBuffer.SetData(_voxelDataChunk.DataArray);
-            _builder.BuildIsosurface(_voxelBuffer, _builtTargetValue, _gridScale);
-            GetComponent<MeshFilter>().sharedMesh = _builder.Mesh;
-            Debug.Log("MRSculpture : Initial mesh built.");
             //_frameCount = 0;
         }
 
