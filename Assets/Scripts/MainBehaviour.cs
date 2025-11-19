@@ -117,32 +117,15 @@ namespace MRSculpture
 
         public void NewFile()
         {
-            // DataChunk を基準にボクセル状態を管理
-            int xSize = _boundsSize.x;
-            int ySize = _boundsSize.y;
-            int zSize = _boundsSize.z;
-
-            for (int y = 0; y < ySize; y++)
+            for (int y = 0; y < _voxelDataChunk.yLength; y++)
             {
-                for (int z = 0; z < zSize; z++)
+                for (int z = 0; z < _voxelDataChunk.zLength; z++)
                 {
-                    for (int x = 0; x < xSize; x++)
+                    for (int x = 0; x < _voxelDataChunk.xLength; x++)
                     {
-                        int index = x + (z * xSize) + (y * xSize * zSize);
-
-                        // 立方体の表面から2マス分は空、それ以外は埋める
-                        bool nearSurface = (x <= 1) || (x >= xSize - 1) ||
-                                           (y <= 1) || (y >= ySize - 1) ||
-                                           (z <= 1) || (z >= zSize - 1);
-
-                        if (nearSurface)
-                        {
-                            _voxelDataChunk.RemoveAllFlags(index);
-                        }
-                        else
-                        {
-                            _voxelDataChunk.AddFlag(index, CellFlags.IsFilled);
-                        }
+                        int index = _voxelDataChunk.GetIndex(x, y, z);
+                        //_voxelDataChunk.RemoveAllFlags(index);
+                        _voxelDataChunk.AddFlag(index, CellFlags.IsFilled);
                     }
                 }
             }
@@ -187,38 +170,51 @@ namespace MRSculpture
             _builder.Dispose();
         }
 
-        //private void OnDrawGizmos()
-        //{
-        //    // Sceneビューのみ
-        //    var cam = Camera.current;
-        //    if (cam == null || cam.cameraType != CameraType.SceneView) return;
+#if UNITY_EDITOR
+        private void OnDrawGizmos()
+        {
+            int maxVoxelsToDraw = 100 * 100 * 100;
+            if (_voxelCount > maxVoxelsToDraw)
+            {
+                Debug.LogWarning($"MRSculpture : ボクセル数 {_voxelCount} が描画可能な最大ボクセル数 {maxVoxelsToDraw} を超えました．Gizmoの描画は省略されます．");
+                return;
+            }
 
-        //    // DataChunk が有効か
-        //    if (!_voxelDataChunk.DataArray.IsCreated) return;
+            // Sceneビューのみ
+            Camera cam = Camera.current;
+            if (cam == null || cam.cameraType != CameraType.SceneView)
+            {
+                Debug.LogWarning("MRSculpture : Sceneビュー以外ではGizmoは描画されません．");
+                return;
+            }
 
-        //    int xSize = _voxelDataChunk.xLength;
-        //    int ySize = _voxelDataChunk.yLength;
-        //    int zSize = _voxelDataChunk.zLength;
+            // DataChunk が有効か
+            if (!_voxelDataChunk.DataArray.IsCreated)
+            {
+                Debug.LogWarning("MRSculpture : DataChunkが有効ではありません．Gizmoの描画は省略されます．");
+                return;
+            }
 
-        //    Vector3 cellSize = Vector3.one * _gridScale;
+            // すべてのボクセルを描画（IsFilled: 緑、未充填: 赤）
+            Vector3 cellSize = Vector3.one * _gridScale;
+            for (int y = 0; y < _voxelDataChunk.yLength; y++)
+            {
+                for (int z = 0; z < _voxelDataChunk.zLength; z++)
+                {
+                    for (int x = 0; x < _voxelDataChunk.xLength; x++)
+                    {
+                        int index = _voxelDataChunk.GetIndex(x, y, z);
+                        bool filled = _voxelDataChunk.HasFlag(index, CellFlags.IsFilled);
+                        Gizmos.color = filled ? Color.green : Color.red;
 
-        //    // すべてのボクセルを描画（IsFilled: 緑、未充填: 赤）
-        //    for (int y = 0; y < ySize; y++)
-        //    {
-        //        for (int z = 0; z < zSize; z++)
-        //        {
-        //            for (int x = 0; x < xSize; x++)
-        //            {
-        //                int index = _voxelDataChunk.GetIndex(x, y, z);
-        //                bool filled = _voxelDataChunk.HasFlag(index, CellFlags.IsFilled);
-        //                Gizmos.color = filled ? Color.green : Color.red;
-
-        //                Vector3 centerLocal = new Vector3((x + 0.5f) * _gridScale, (y + 0.5f) * _gridScale, (z + 0.5f) * _gridScale);
-        //                Vector3 centerWS = transform.TransformPoint(centerLocal);
-        //                Gizmos.DrawWireCube(centerWS, cellSize);
-        //            }
-        //        }
-        //    }
-        //}
+                        Vector3 centerLocal = new(x + 0.5f, y + 0.5f, z + 0.5f);
+                        Vector3 centerLocalScaled = centerLocal * _gridScale;
+                        Vector3 centerWorld = transform.TransformPoint(centerLocalScaled);
+                        Gizmos.DrawWireCube(centerWorld, cellSize);
+                    }
+                }
+            }
+        }
     }
+#endif
 }

@@ -25,7 +25,7 @@ namespace MRSculpture
             this.xLength = xLength;
             this.yLength = yLength;
             this.zLength = zLength;
-            _data = new NativeArray<CellManager>(this.xLength * this.yLength * this.zLength, Allocator.Persistent);
+            _data = new NativeArray<CellManager>(this.xLength * this.yLength * this.zLength, Allocator.Persistent, NativeArrayOptions.ClearMemory);
         }
 
         /// <summary>
@@ -98,6 +98,11 @@ namespace MRSculpture
         /// <param name="flags"></param>
         public unsafe void AddFlag(int x, int y, int z, CellFlags flags)
         {
+            if (IsSafeZone(x, y, z))
+            {
+                return;
+            }
+
             int index = GetIndex(x, y, z);
             // 1次元配列の先頭ポインタ + index で index番目の要素にアクセス
             CellManager* cell = (CellManager*)_data.GetUnsafePtr() + index;
@@ -149,6 +154,13 @@ namespace MRSculpture
             cell->RemoveAllFlags();
         }
 
+        public readonly bool IsSafeZone(in int x, in int y, in int z)
+        {
+            return (x <= 0 || x >= xLength - 1) ||
+                   (y <= 0 || y >= yLength - 1) ||
+                   (z <= 0 || z >= zLength - 1);
+        }
+
         /// <summary>
         /// インデクスに対応するセルにフラグを追加
         /// </summary>
@@ -156,6 +168,11 @@ namespace MRSculpture
         /// <param name="flags"></param>
         public unsafe void AddFlag(int index, CellFlags flags)
         {
+            if (IsSafeZone(index))
+            {
+                return;
+            }
+
             // 1次元配列の先頭ポインタ + index で index番目の要素にアクセス
             CellManager* cell = (CellManager*)_data.GetUnsafePtr() + index;
             cell->AddFlag(flags);
@@ -195,6 +212,12 @@ namespace MRSculpture
             // 1次元配列の先頭ポインタ + index で index番目の要素にアクセス
             CellManager* cell = (CellManager*)_data.GetUnsafePtr() + index;
             cell->RemoveAllFlags();
+        }
+
+        public bool IsSafeZone(in int index)
+        {
+            GetPosition(index, out int x, out int y, out int z);
+            return IsSafeZone(x, y, z);
         }
 
         public void Dispose()

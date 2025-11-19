@@ -19,7 +19,7 @@ static const uint CELLFLAG_IS_FILLED = 1u;
 // グリッド空間からオブジェクト空間への変換 (原点基準)
 float3 TransformPoint(float3 p)
 {
-    return p * Scale;
+    return p * Scale + Scale * 0.5;
 }
 
 //
