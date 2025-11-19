@@ -411,7 +411,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3677224915888634137, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4054348215497106339, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
       propertyPath: m_LocalPosition.x
@@ -463,11 +463,11 @@ PrefabInstance:
       objectReference: {fileID: 2040508047}
     - target: {fileID: 8966988460086192345, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 170.38
       objectReference: {fileID: 0}
     - target: {fileID: 8966988460086192345, guid: e881c4323c6a4cb41852fe3b512839a9, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 40.22
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1033,7 +1033,7 @@ MonoBehaviour:
   _triangleBudget: 1048606
   _builderCompute: {fileID: 7200000, guid: 5676387eaa52f3e4ea7d01daa2457019, type: 3}
   _voxelMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-  _voxelMaterial: {fileID: 2100000, guid: 767d2909f74d3a243ba48cc16da35ac4, type: 2}
+  _voxelMaterial: {fileID: 0}
   _mainBehaviourTransform: {fileID: 591202684}
   _roundChisel: {fileID: 487324546}
   _flatChisel: {fileID: 58932230}
@@ -1078,7 +1078,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 767d2909f74d3a243ba48cc16da35ac4, type: 2}
+  - {fileID: 2100000, guid: 2ad5b2a002f233e498b9a061d6f90e64, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2405,11 +2405,11 @@ PrefabInstance:
       objectReference: {fileID: 1370726367}
     - target: {fileID: 1072073631624436883, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 140.24
       objectReference: {fileID: 0}
     - target: {fileID: 1072073631624436883, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 40.22
       objectReference: {fileID: 0}
     - target: {fileID: 3510805639411572367, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
       propertyPath: m_Name
@@ -2417,7 +2417,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3510805639411572367, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4319853145546081333, guid: ce97eb5897532014faf3cb0594f6f81f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2840,7 +2840,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3677224915888634137, guid: d54442b3834095b4c89a983676ac6063, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4054348215497106339, guid: d54442b3834095b4c89a983676ac6063, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2892,11 +2892,11 @@ PrefabInstance:
       objectReference: {fileID: 487324554}
     - target: {fileID: 5255131440064524102, guid: d54442b3834095b4c89a983676ac6063, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 216.42
       objectReference: {fileID: 0}
     - target: {fileID: 5255131440064524102, guid: d54442b3834095b4c89a983676ac6063, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 40.22
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
