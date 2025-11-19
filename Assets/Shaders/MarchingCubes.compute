@@ -3,7 +3,9 @@
 
 // HLSL に sizeof 演算子がないための回避策
 #define SIZEOF_UINT 4
+#define SIZEOF_FLOAT2 8
 #define SIZEOF_FLOAT3 12
+#define VERTEX_STRIDE (SIZEOF_FLOAT3*2 + SIZEOF_FLOAT2) // pos + normal + uv
 
 // パラメーター
 uint3 Dims;
@@ -14,8 +16,7 @@ float Isovalue;
 // CellFlags (C# と一致)
 static const uint CELLFLAG_IS_FILLED = 1u;
 
-// グリッド空間からオブジェクト空間への変換
-// 原点(0,0,0)から生成されるように、中心オフセットを削除
+// グリッド空間からオブジェクト空間への変換 (原点基準)
 float3 TransformPoint(float3 p)
 {
     return p * Scale;
@@ -75,10 +76,33 @@ RWStructuredBuffer<uint> Counter; // カウントのみに使用
 // 頂点バッファ アクセサ
 void WriteVertex(uint offset, float3 p, float3 n)
 {
-    uint addr_p = offset * SIZEOF_FLOAT3 * 2;
-    uint addr_n = addr_p + SIZEOF_FLOAT3;
-    VertexBuffer.Store3(addr_p, asuint(p));
-    VertexBuffer.Store3(addr_n, asuint(n));
+    uint base_addr = offset * VERTEX_STRIDE;
+    uint addr_pos = base_addr;
+    uint addr_nrm = addr_pos + SIZEOF_FLOAT3;
+    uint addr_uv = addr_nrm + SIZEOF_FLOAT3;
+
+    float3 an = abs(n);
+    float2 uv;
+    float invX = 1.0 / (Dims.x * Scale);
+    float invY = 1.0 / (Dims.y * Scale);
+    float invZ = 1.0 / (Dims.z * Scale);
+
+    if (an.y >= an.x && an.y >= an.z) // 上下 -> XZ
+    {
+        uv = float2(p.x * invX, p.z * invZ);
+    }
+    else if (an.x >= an.z) // ±X 側面 -> ZY
+    {
+        uv = float2(p.z * invZ, p.y * invY);
+    }
+    else // ±Z 側面 -> XY
+    {
+        uv = float2(p.x * invX, p.y * invY);
+    }
+
+    VertexBuffer.Store3(addr_pos, asuint(p));
+    VertexBuffer.Store3(addr_nrm, asuint(n));
+    VertexBuffer.Store2(addr_uv, asuint(uv));
 }
 
 // インデックス バッファ アクセサ

@@ -1028,12 +1028,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57d33861cf9e02f4aaf442e0826d8f49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _boundsSize: {x: 128, y: 128, z: 128}
+  _boundsSize: {x: 150, y: 250, z: 120}
   _gridScale: 1
   _triangleBudget: 1048606
   _builderCompute: {fileID: 7200000, guid: 5676387eaa52f3e4ea7d01daa2457019, type: 3}
   _voxelMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-  _voxelMaterial: {fileID: 2100000, guid: f07cb93e85d10a34798cac9e79536d58, type: 2}
+  _voxelMaterial: {fileID: 2100000, guid: 767d2909f74d3a243ba48cc16da35ac4, type: 2}
   _mainBehaviourTransform: {fileID: 591202684}
   _roundChisel: {fileID: 487324546}
   _flatChisel: {fileID: 58932230}
@@ -1048,7 +1048,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: 0}
-  m_LocalScale: {x: 0.05, y: 0.05, z: 0.05}
+  m_LocalScale: {x: 0.002, y: 0.002, z: 0.002}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}

@@ -158,7 +158,7 @@ namespace MRSculpture
         {
             if (!_ready) return;
 
-            _impactRange = Mathf.Min(10, (int)(_hammerController.ImpactMagnitude * 5));
+            _impactRange = Mathf.Min(70, (int)(_hammerController.ImpactMagnitude * 15));
 
             Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(_boundsSize.x, _boundsSize.y, _boundsSize.z));
             Bounds boundingBox = new();

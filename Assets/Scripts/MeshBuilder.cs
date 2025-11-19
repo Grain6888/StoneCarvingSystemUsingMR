@@ -123,8 +123,11 @@ namespace MarchingCubes
             var vn = new VertexAttributeDescriptor
               (VertexAttribute.Normal, VertexAttributeFormat.Float32, 3);
 
+            var uv0 = new VertexAttributeDescriptor
+              (VertexAttribute.TexCoord0, VertexAttributeFormat.Float32, 2);
+
             // 頂点/インデックスバッファフォーマット設定
-            _mesh.SetVertexBufferParams(vertexCount, vp, vn);
+            _mesh.SetVertexBufferParams(vertexCount, vp, vn, uv0);
             _mesh.SetIndexBufferParams(vertexCount, IndexFormat.UInt32);
 
             // サブメッシュ初期化
