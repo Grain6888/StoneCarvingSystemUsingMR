@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Oculus.Interaction
 {
@@ -40,12 +40,10 @@ namespace Oculus.Interaction
         {
             if (_view != null)
             {
-                Debug.Log("MRSculpture : Current State: " + _view.State);
                 return _view.State;
             }
             else
             {
-                // Debug.Log("MRSculpture : Current State: interactable view is null");
                 return InteractableState.Normal;
             }
         }
