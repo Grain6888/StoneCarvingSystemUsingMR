@@ -13,9 +13,8 @@ namespace MRSculpture
         /// </summary>
         public Vector3Int _boundsSize = new(100, 100, 100);
 
-        [SerializeField] float _gridScale = 1.0f;
         [SerializeField] int _triangleBudget = 65536 * 16;
-        [SerializeField] ComputeShader _builderCompute = null; // MarchingCubes.compute
+        [SerializeField] ComputeShader _builderCompute = null;
         float _builtTargetValue = 0.9f;
         int _voxelCount => _boundsSize.x * _boundsSize.y * _boundsSize.z;
         ComputeBuffer _voxelBuffer;
@@ -26,28 +25,12 @@ namespace MRSculpture
         /// </summary>
         private DataChunk _voxelDataChunk;
 
-        /// <summary>
-        /// ボクセル → メッシュに変換・描画を管理するレンダラ
-        /// </summary>
-        private Renderer _renderer;
-
-        /// <summary>
-        /// ボクセルメッシュ
-        /// </summary>
-        [SerializeField] private Mesh _voxelMesh;
-
-        /// <summary>
-        /// ボクセルマテリアル
-        /// </summary>
-        [SerializeField] private Material _voxelMaterial;
-
-        [SerializeField] private Transform _mainBehaviourTransform;
         [SerializeField] private GameObject _roundChisel;
+        private RoundChiselController _roundChiselController;
         [SerializeField] private GameObject _flatChisel;
+        private FlatChiselController _flatChiselController;
         [SerializeField] private GameObject _hammer;
         private HammerController _hammerController;
-        private RoundChiselController _roundChiselController;
-        private FlatChiselController _flatChiselController;
         private int _impactRange = 0;
         private bool _ready = false;
 
@@ -59,21 +42,11 @@ namespace MRSculpture
 
             _voxelDataChunk = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
 
-            // ローカル → ワールド座標系の変換行列
-            Matrix4x4 localToWorldMatrix = transform.localToWorldMatrix;
-
-            _renderer = new Renderer(_voxelMesh, _voxelMaterial, localToWorldMatrix);
-
             // フラグ（uint）をそのまま Compute に渡す
             _voxelBuffer = new ComputeBuffer(_voxelCount, sizeof(uint));
             _builder = new MeshBuilder(_boundsSize, _triangleBudget, _builderCompute);
 
             NewFile();
-
-            _voxelBuffer.SetData(_voxelDataChunk.DataArray);
-            _builder.BuildIsosurface(_voxelBuffer, _builtTargetValue, _gridScale);
-            GetComponent<MeshFilter>().sharedMesh = _builder.Mesh;
-            Debug.Log("MRSculpture : Initial mesh built.");
         }
 
         public async void LoadFile()
@@ -88,17 +61,15 @@ namespace MRSculpture
                     DataChunk.LoadDat(fileName, ref _voxelDataChunk);
                 });
 
-                for (int y = 0; y < _voxelDataChunk.yLength; y++)
-                {
-                    DataChunk xzLayer = _voxelDataChunk.GetXZLayer(y);
-                    _renderer.AddRenderBuffer(xzLayer, y);
-                }
-
-                Debug.Log("MRSculpture DataChunk loaded from file.");
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                Debug.Log($"MRSculpture : DataChunk loaded from {fileName}");
+#endif
             }
             else
             {
-                Debug.Log("MRSculpture DataChunk load failed from file.");
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                Debug.LogWarning("MRSculpture : DataChunk load failed.");
+#endif
                 NewFile();
             }
 
@@ -123,16 +94,18 @@ namespace MRSculpture
                 {
                     for (int x = 0; x < _voxelDataChunk.xLength; x++)
                     {
-                        int index = _voxelDataChunk.GetIndex(x, y, z);
-                        //_voxelDataChunk.RemoveAllFlags(index);
-                        _voxelDataChunk.AddFlag(index, CellFlags.IsFilled);
+                        _voxelDataChunk.AddFlag(x, y, z, CellFlags.IsFilled);
                     }
                 }
             }
 
             _voxelBuffer.SetData(_voxelDataChunk.DataArray);
+            _builder.BuildIsosurface(_voxelBuffer, _builtTargetValue);
+            GetComponent<MeshFilter>().sharedMesh = _builder.Mesh;
 
-            Debug.Log("MRSculpture : New voxel flags uploaded to GPU from DataChunk.");
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log("MRSculpture : New DataChunk created.");
+#endif
 
             _ready = true;
         }
@@ -149,22 +122,19 @@ namespace MRSculpture
 
             if (_impactRange > 0)
             {
-                _roundChiselController.Carve(ref _voxelDataChunk, in _impactRange, ref _renderer);
-                _flatChiselController.Carve(ref _voxelDataChunk, in _impactRange, ref _renderer);
+                _roundChiselController.Carve(ref _voxelDataChunk, in _impactRange);
+                _flatChiselController.Carve(ref _voxelDataChunk, in _impactRange);
                 _voxelBuffer.SetData(_voxelDataChunk.DataArray);
-                _builder.BuildIsosurface(_voxelBuffer, _builtTargetValue, _gridScale);
+                _builder.BuildIsosurface(_voxelBuffer, _builtTargetValue);
                 GetComponent<MeshFilter>().sharedMesh = _builder.Mesh;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log("MRSculpture : Mesh updated.");
+#endif
             }
-
-            //_renderer.RenderMeshes(new Bounds(boundingBoxSize * 0.5f, boundingBoxSize));
-
-            //_frameCount = 0;
         }
 
         private void OnDestroy()
         {
-            _renderer.Dispose();
             _voxelDataChunk.Dispose();
             _voxelBuffer.Dispose();
             _builder.Dispose();
@@ -176,7 +146,7 @@ namespace MRSculpture
             int maxVoxelsToDraw = 100 * 100 * 100;
             if (_voxelCount > maxVoxelsToDraw)
             {
-                Debug.LogWarning($"MRSculpture : ボクセル数 {_voxelCount} が描画可能な最大ボクセル数 {maxVoxelsToDraw} を超えました．Gizmoの描画は省略されます．");
+                Debug.LogWarning($"MRSculpture : The number of voxels {_voxelCount} exceeds the maximum drawable voxel count {maxVoxelsToDraw}. Gizmo will be skipped.");
                 return;
             }
 
@@ -184,19 +154,18 @@ namespace MRSculpture
             Camera cam = Camera.current;
             if (cam == null || cam.cameraType != CameraType.SceneView)
             {
-                Debug.LogWarning("MRSculpture : Sceneビュー以外ではGizmoは描画されません．");
+                Debug.LogWarning("MRSculpture : Gizmos are not drawn outside the Scene view.");
                 return;
             }
 
             // DataChunk が有効か
             if (!_voxelDataChunk.DataArray.IsCreated)
             {
-                Debug.LogWarning("MRSculpture : DataChunkが有効ではありません．Gizmoの描画は省略されます．");
+                Debug.LogWarning("MRSculpture : DataChunk is not valid. Gizmo drawing will be skipped.");
                 return;
             }
 
             // すべてのボクセルを描画（IsFilled: 緑、未充填: 赤）
-            Vector3 cellSize = Vector3.one * _gridScale;
             for (int y = 0; y < _voxelDataChunk.yLength; y++)
             {
                 for (int z = 0; z < _voxelDataChunk.zLength; z++)
@@ -208,13 +177,13 @@ namespace MRSculpture
                         Gizmos.color = filled ? Color.green : Color.red;
 
                         Vector3 centerLocal = new(x + 0.5f, y + 0.5f, z + 0.5f);
-                        Vector3 centerLocalScaled = centerLocal * _gridScale;
+                        Vector3 centerLocalScaled = centerLocal;
                         Vector3 centerWorld = transform.TransformPoint(centerLocalScaled);
-                        Gizmos.DrawWireCube(centerWorld, cellSize);
+                        Gizmos.DrawWireCube(centerWorld, Vector3.one);
                     }
                 }
             }
         }
-    }
 #endif
+    }
 }

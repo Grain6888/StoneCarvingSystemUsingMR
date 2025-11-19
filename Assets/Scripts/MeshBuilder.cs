@@ -21,7 +21,7 @@ namespace MarchingCubes
         public void Dispose()
           => ReleaseAll();
 
-        public void BuildIsosurface(ComputeBuffer voxels, float target, float scale)
+        public void BuildIsosurface(ComputeBuffer voxels, float target, float scale = 1.0f)
           => RunCompute(voxels, target, scale);
 
         #endregion

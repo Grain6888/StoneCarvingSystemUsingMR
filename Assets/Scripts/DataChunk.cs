@@ -243,11 +243,15 @@ namespace MRSculpture
                     }
                     bw.Flush(); // 明示的にフラッシュ
                 }
-                UnityEngine.Debug.Log($"MRSculpture IsFilled info saved (binary): {path}");
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                UnityEngine.Debug.Log($"MRSculpture : Saved file. {path}");
+#endif
             }
             catch (Exception ex)
             {
-                UnityEngine.Debug.LogError($"MRSculpture SaveIsFilledBin failed: {ex.Message}");
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                UnityEngine.Debug.LogError($"MRSculpture : Save failed because {ex.Message}");
+#endif
             }
         }
 
@@ -271,7 +275,9 @@ namespace MRSculpture
                     }
                 }
             }
-            UnityEngine.Debug.Log($"MRSculpture IsFilled info loaded (binary): {path}");
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            UnityEngine.Debug.Log($"MRSculpture : Opened {path}");
+#endif
         }
 
         // _dataへの読み取り専用プロパティ

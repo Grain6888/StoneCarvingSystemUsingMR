@@ -29,7 +29,7 @@ namespace MRSculpture
             if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger)) UpIndexTrigger();
         }
 
-        public void Carve(ref DataChunk voxelDataChunk, in int impactRange, ref Renderer renderer)
+        public void Carve(ref DataChunk voxelDataChunk, in int impactRange)
         {
             _impactRange = impactRange;
 
@@ -90,7 +90,6 @@ namespace MRSculpture
             for (int y = minY; y <= maxY; y++)
             {
                 DataChunk xzLayer = voxelDataChunk.GetXZLayer(y);
-                bool layerBufferNeedsUpdate = false;
 
                 // Y層のXZ平面のDataChunkを取得
                 for (int x = minX; x <= maxX; x++)
@@ -112,14 +111,9 @@ namespace MRSculpture
                             {
                                 xzLayer.RemoveFlag(x, 0, z, CellFlags.IsFilled);
                                 removedCount++;
-                                layerBufferNeedsUpdate = true;
                             }
                         }
                     }
-                }
-                if (layerBufferNeedsUpdate)
-                {
-                    renderer.UpdateRenderBuffer(xzLayer, y);
                 }
             }
 
