@@ -6,12 +6,15 @@ using Unity.Collections;
 
 namespace MRSculpture
 {
+    [RequireComponent(typeof(BoxCollider))]
     public class MainBehaviour : MonoBehaviour
     {
         /// <summary>
         /// 彫刻素材の生成範囲
         /// </summary>
         public Vector3Int _boundsSize = new(100, 100, 100);
+
+        private BoxCollider _boundsCollider = null;
 
         [SerializeField] int _triangleBudget = 65536 * 16;
         [SerializeField] ComputeShader _builderCompute = null;
@@ -36,6 +39,17 @@ namespace MRSculpture
 
         private void Awake()
         {
+            _boundsCollider = GetComponent<BoxCollider>();
+            _boundsCollider.size = new(
+                _boundsSize.x,
+                _boundsSize.y,
+                _boundsSize.z
+            );
+            _boundsCollider.center = new(
+                _boundsSize.x * 0.5f,
+                _boundsSize.y * 0.5f,
+                _boundsSize.z * 0.5f
+            );
             _hammerController = _hammer.GetComponent<HammerController>();
             _roundChiselController = _roundChisel.GetComponent<RoundChiselController>();
             _flatChiselController = _flatChisel.GetComponent<FlatChiselController>();
@@ -177,8 +191,7 @@ namespace MRSculpture
                         Gizmos.color = filled ? Color.green : Color.red;
 
                         Vector3 centerLocal = new(x + 0.5f, y + 0.5f, z + 0.5f);
-                        Vector3 centerLocalScaled = centerLocal;
-                        Vector3 centerWorld = transform.TransformPoint(centerLocalScaled);
+                        Vector3 centerWorld = transform.TransformPoint(centerLocal);
                         Gizmos.DrawWireCube(centerWorld, Vector3.one);
                     }
                 }
