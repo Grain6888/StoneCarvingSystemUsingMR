@@ -1,8 +1,6 @@
 ﻿using System.IO;
-using Unity.Mathematics;
 using UnityEngine;
 using MarchingCubes;
-using Unity.Collections;
 
 namespace MRSculpture
 {
@@ -28,6 +26,8 @@ namespace MRSculpture
         /// </summary>
         private DataChunk _voxelDataChunk;
 
+        [SerializeField] private GameObject _pinChisel;
+        private PinChiselController _pinChiselController;
         [SerializeField] private GameObject _roundChisel;
         private RoundChiselController _roundChiselController;
         [SerializeField] private GameObject _flatChisel;
@@ -51,6 +51,7 @@ namespace MRSculpture
                 _boundsSize.z * 0.5f
             );
             _hammerController = _hammer.GetComponent<HammerController>();
+            _pinChiselController = _pinChisel.GetComponent<PinChiselController>();
             _roundChiselController = _roundChisel.GetComponent<RoundChiselController>();
             _flatChiselController = _flatChisel.GetComponent<FlatChiselController>();
 
@@ -136,6 +137,7 @@ namespace MRSculpture
 
             if (_impactRange > 0)
             {
+                _pinChiselController.Carve(ref _voxelDataChunk, in _impactRange);
                 _roundChiselController.Carve(ref _voxelDataChunk, in _impactRange);
                 _flatChiselController.Carve(ref _voxelDataChunk, in _impactRange);
                 _voxelBuffer.SetData(_voxelDataChunk.DataArray);
