@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Hammer_512px
+  m_Name: Hammer_2048px
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -29,11 +29,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 7ef1d4fde514a444a9ad79b8a56c7fb4, type: 3}
+        m_Texture: {fileID: 2800000, guid: dc9721b018d8b9b4285edd0972d4ce3e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 594f94f923400fe47a32fdc55847d118, type: 3}
+        m_Texture: {fileID: 2800000, guid: fc4eaeae026a8d3428b18c34abd7fa6a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -53,11 +53,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 7ef1d4fde514a444a9ad79b8a56c7fb4, type: 3}
+        m_Texture: {fileID: 2800000, guid: dc9721b018d8b9b4285edd0972d4ce3e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
-        m_Texture: {fileID: 2800000, guid: b7cd918036928f24ea07fa257c9139e6, type: 3}
+        m_Texture: {fileID: 2800000, guid: 79183076fb06eef4ea878f707216a749, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:

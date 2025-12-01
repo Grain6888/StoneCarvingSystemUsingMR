@@ -56,7 +56,7 @@ Transform:
   m_GameObject: {fileID: 578117062985504126}
   serializedVersion: 2
   m_LocalRotation: {x: 0.61237246, y: -0.61237246, z: -0.35355335, w: 0.35355335}
-  m_LocalPosition: {x: -3.16, y: 0, z: -0.19}
+  m_LocalPosition: {x: -2.75, y: 0, z: -0.19}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -511,7 +511,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2140d2b457bea84881488302059889b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Oculus.Interaction::Oculus.Interaction.Surfaces.ColliderSurface
-  _collider: {fileID: 0}
+  _collider: {fileID: 6739300857835019174}
 --- !u!1001 &2703494377450894194
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -522,15 +522,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 1a6ee210d496af947af627baf8d9f058, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.05
+      value: 0.059999995
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1a6ee210d496af947af627baf8d9f058, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.05
+      value: 0.059999995
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1a6ee210d496af947af627baf8d9f058, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.05
+      value: 0.059999995
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1a6ee210d496af947af627baf8d9f058, type: 3}
       propertyPath: m_LocalPosition.x
@@ -584,6 +584,14 @@ PrefabInstance:
       propertyPath: m_TagString
       value: HandTool
       objectReference: {fileID: 0}
+    - target: {fileID: 1484313413898175824, guid: 1a6ee210d496af947af627baf8d9f058, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 0acaa7d5bf3401045a03275fb6e3209c, type: 2}
+    - target: {fileID: 1990606015684193080, guid: 1a6ee210d496af947af627baf8d9f058, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 0acaa7d5bf3401045a03275fb6e3209c, type: 2}
     - target: {fileID: 9107197109585318073, guid: 1a6ee210d496af947af627baf8d9f058, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -708,7 +716,7 @@ MonoBehaviour:
   _addNewPointsToFront: 0
   _forwardElement: {fileID: 0}
   _oneGrabTransformer: {fileID: 583487143947957522}
-  _twoGrabTransformer: {fileID: 0}
+  _twoGrabTransformer: {fileID: 583487143947957522}
   _targetTransform: {fileID: 2453903990094861465}
   _maxGrabPoints: -1
   _rigidbody: {fileID: 2454605105659186728}
