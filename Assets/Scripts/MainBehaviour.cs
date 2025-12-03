@@ -34,6 +34,8 @@ namespace MRSculpture
         private FlatChiselController _flatChiselController;
         [SerializeField] private GameObject _hammer;
         private HammerController _hammerController;
+        [SerializeField] private GameObject _tester;
+        private TesterController _testerController;
         private int _impactRange = 0;
         private bool _ready = false;
 
@@ -54,6 +56,7 @@ namespace MRSculpture
             _pinChiselController = _pinChisel.GetComponent<PinChiselController>();
             _roundChiselController = _roundChisel.GetComponent<RoundChiselController>();
             _flatChiselController = _flatChisel.GetComponent<FlatChiselController>();
+            _testerController = _tester.GetComponent<TesterController>();
 
             _voxelDataChunk = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
 
@@ -137,9 +140,10 @@ namespace MRSculpture
 
             if (_impactRange > 0)
             {
-                _pinChiselController.Carve(ref _voxelDataChunk, in _impactRange);
-                _roundChiselController.Carve(ref _voxelDataChunk, in _impactRange);
-                _flatChiselController.Carve(ref _voxelDataChunk, in _impactRange);
+                //_pinChiselController.Carve(ref _voxelDataChunk, in _impactRange);
+                //_roundChiselController.Carve(ref _voxelDataChunk, in _impactRange);
+                //_flatChiselController.Carve(ref _voxelDataChunk, in _impactRange);
+                _testerController.Carve(ref _voxelDataChunk, in _impactRange);
                 _voxelBuffer.SetData(_voxelDataChunk.DataArray);
                 _builder.BuildIsosurface(_voxelBuffer, _builtTargetValue);
                 GetComponent<MeshFilter>().sharedMesh = _builder.Mesh;
