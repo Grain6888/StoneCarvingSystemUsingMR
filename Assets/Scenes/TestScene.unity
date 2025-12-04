@@ -1979,7 +1979,6 @@ MonoBehaviour:
   _maxImpactRange: 70
   _hapticSource: {fileID: 1104615383}
   _audioSource: {fileID: 1104615382}
-  _lowPolyLevel: 2
 --- !u!114 &1104615380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3786,10 +3785,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 5713017460364757568, guid: 2f2699e874963734a819cc4e69f08049, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 2ad5b2a002f233e498b9a061d6f90e64, type: 2}
     - target: {fileID: 5749685076871990883, guid: 2f2699e874963734a819cc4e69f08049, type: 3}
       propertyPath: _hammer
       value: 

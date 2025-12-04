@@ -113,6 +113,7 @@ MonoBehaviour:
   _roundChisel: {fileID: 0}
   _flatChisel: {fileID: 0}
   _hammer: {fileID: 0}
+  _tester: {fileID: 0}
 --- !u!33 &2848881931665970154
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -146,7 +147,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 767d2909f74d3a243ba48cc16da35ac4, type: 2}
+  - {fileID: 2100000, guid: 2ad5b2a002f233e498b9a061d6f90e64, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -287,18 +288,18 @@ MonoBehaviour:
   _scaleConstraints:
     ConstraintsAreRelative: 1
     XAxis:
-      ConstrainAxis: 0
+      ConstrainAxis: 1
       AxisRange:
-        Min: 1
-        Max: 1
+        Min: 0.25
+        Max: 4
     YAxis:
-      ConstrainAxis: 0
+      ConstrainAxis: 1
       AxisRange:
-        Min: 1
-        Max: 1
+        Min: 0.25
+        Max: 4
     ZAxis:
-      ConstrainAxis: 0
+      ConstrainAxis: 1
       AxisRange:
-        Min: 1
-        Max: 1
+        Min: 0.25
+        Max: 4
   _resetScaleResponsivenessOnConstraintOvershoot: 0

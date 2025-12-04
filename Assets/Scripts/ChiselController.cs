@@ -24,11 +24,13 @@ namespace MRSculpture
         [SerializeField] private HapticSource _hapticSource;
         [SerializeField] private AudioSource _audioSource;
 
-        [SerializeField, Range(0, 10)] private int _lowPolyLevel = 1;
+        private int _lowPolyLevel;
+        private float _initialStoneScaleX;
 
         private void Awake()
         {
             _stoneTransform = _stone.transform;
+            _initialStoneScaleX = _stoneTransform.localScale.x;
             _stoneController = _stone.GetComponent<StoneController>();
             _colliderTransform = _collider.transform;
             _hammerController = _hammer.GetComponent<HammerController>();
@@ -43,6 +45,8 @@ namespace MRSculpture
         {
             _impactRange = Mathf.Min(_maxImpactRange, (int)(_hammerController.ImpactMagnitude * 15));
             _impactRange = 30;
+
+            UpdateLowPolyLevelByStoneScale();
 
             if (_impactRange > 0)
             {
@@ -94,6 +98,28 @@ namespace MRSculpture
             if (removedCount > 0)
             {
                 PlayFeedback();
+            }
+        }
+
+        private void UpdateLowPolyLevelByStoneScale()
+        {
+            if (_stoneTransform == null) return;
+
+            float scale = _stoneTransform.localScale.x;
+            float minScale = _initialStoneScaleX * 0.25f;
+            float maxScale = _initialStoneScaleX;
+            float clampedScale = Mathf.Clamp(scale, minScale, maxScale);
+
+            if (scale >= _initialStoneScaleX)
+            {
+                _lowPolyLevel = 1;
+            }
+            else
+            {
+                float t = (clampedScale - minScale) / (maxScale - minScale);
+                int newLowPolyLevel = Mathf.RoundToInt(Mathf.Lerp(6, 2, t));
+                newLowPolyLevel = Mathf.Clamp(newLowPolyLevel, 2, 6);
+                _lowPolyLevel = newLowPolyLevel;
             }
         }
 
