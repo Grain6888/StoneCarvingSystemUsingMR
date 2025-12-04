@@ -14,7 +14,6 @@ namespace MRSculpture
             _collider = _colliderObject.GetComponent<Collider>();
         }
 
-
         public void Carve(ref DataChunk voxelDataChunk, in int impactRange)
         {
             _impactRange = 30;

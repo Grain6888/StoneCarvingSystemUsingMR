@@ -163,6 +163,11 @@ namespace MRSculpture
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+
             int maxVoxelsToDraw = 100 * 100 * 100;
             if (_voxelCount > maxVoxelsToDraw)
             {
