@@ -4,27 +4,79 @@ using System;
 
 namespace MRSculpture
 {
+    /// <summary>
+    /// 彫刻用のノミ Chisel を制御するクラス
+    /// </summary>
     public class ChiselController : MonoBehaviour
     {
+        /// <summary>
+        /// 彫刻対象の石材 GameObject
+        /// </summary>
         [SerializeField] private GameObject _stone;
+
+        /// <summary>
+        /// Stone の Transform
+        /// </summary>
         private Transform _stoneTransform;
+
+        /// <summary>
+        /// 石材コントローラ
+        /// </summary>
         private StoneController _stoneController;
 
+        /// <summary>
+        /// 衝撃判定用 Collider
+        /// </summary>
         [SerializeField] private Collider _collider;
+
+        /// <summary>
+        /// Collider の Transform
+        /// </summary>
         private Transform _colliderTransform;
 
+        /// <summary>
+        /// ハンマー GameObject
+        /// </summary>
         [SerializeField] private GameObject _hammer;
+
+        /// <summary>
+        /// ハンマーコントローラ
+        /// </summary>
         private HammerController _hammerController;
 
-        [SerializeField, Range(0, 200)] private int _maxImpactRange = 70;
+        /// <summary>
+        /// 現在の衝撃範囲
+        /// </summary>
         private int _impactRange;
 
+        /// <summary>
+        /// ImpactRange の最大値
+        /// </summary>
+        [SerializeField, Range(0, 200)] private int _maxImpactRange = 70;
+
+        /// <summary>
+        /// ボクセル DataChunk
+        /// </summary>
         private DataChunk _voxelDataChunk;
 
+        /// <summary>
+        /// 触覚フィードバック用 HapticSource
+        /// </summary>
         [SerializeField] private HapticSource _hapticSource;
+
+        /// <summary>
+        /// 音響フィードバック用 AudioSource
+        /// </summary>
         [SerializeField] private AudioSource _audioSource;
 
+        /// <summary>
+        /// ボクセルの削除解像度 (1で等倍)
+        /// </summary>
         private int _lowPolyLevel;
+
+        /// <summary>
+        /// 石材の初期スケール (X軸)
+        /// </summary>
         private float _initialStoneScaleX;
 
         private void Awake()
@@ -36,6 +88,10 @@ namespace MRSculpture
             _hammerController = _hammer.GetComponent<HammerController>();
         }
 
+        /// <summary>
+        /// ボクセル DataChunk をアタッチする
+        /// </summary>
+        /// <param name="voxelDataChunk">ボクセル DataChunk</param>
         public void AttachDataChunk(ref DataChunk voxelDataChunk)
         {
             _voxelDataChunk = voxelDataChunk;
@@ -55,9 +111,12 @@ namespace MRSculpture
             }
         }
 
+        /// <summary>
+        /// Collider 内のボクセルを削除する
+        /// </summary>
         public void Carve()
         {
-            float scaling = 0.002f * _impactRange;
+            float scaling = _initialStoneScaleX * _impactRange;
             _colliderTransform.localScale = Vector3.one * scaling;
 
             ExtractVoxel(out int minX, out int maxX, out int minY, out int maxY, out int minZ, out int maxZ);
@@ -101,6 +160,9 @@ namespace MRSculpture
             }
         }
 
+        /// <summary>
+        /// 石材の縮小率に応じて LowPolyLevel を更新する
+        /// </summary>
         private void UpdateLowPolyLevelByStoneScale()
         {
             if (_stoneTransform == null) return;
@@ -123,14 +185,20 @@ namespace MRSculpture
             }
         }
 
+        /// <summary>
+        /// Collider の中心と大きさから処理対象の範囲を算出する
+        /// </summary>
+        /// <param name="minX">処理範囲の最小X座標</param>
+        /// <param name="maxX">処理範囲の最大X座標</param>
+        /// <param name="minY">処理範囲の最小Y座標</param>
+        /// <param name="maxY">処理範囲の最大Y座標</param>
+        /// <param name="minZ">処理範囲の最小Z座標</param>
+        /// <param name="maxZ">処理範囲の最大Z座標</param>
         private void ExtractVoxel(out int minX, out int maxX, out int minY, out int maxY, out int minZ, out int maxZ)
         {
-            // 衝撃中心のワールド座標を取得
             Vector3 impactCenterWorldPosition = _colliderTransform.position;
-            // ワールド座標 → 石材のローカル座標へ変換
             Vector3 impactCenterLocalPosition = _stoneTransform.InverseTransformPoint(impactCenterWorldPosition);
 
-            // colliderのローカルスケール（石材基準）を取得
             Vector3 colliderLocalScale = new(
                 _colliderTransform.localScale.x / _stoneTransform.localScale.x,
                 _colliderTransform.localScale.y / _stoneTransform.localScale.y,
@@ -145,6 +213,9 @@ namespace MRSculpture
             maxZ = Mathf.Min(_voxelDataChunk.zLength - 1, Mathf.CeilToInt(impactCenterLocalPosition.z + colliderLocalScale.z));
         }
 
+        /// <summary>
+        /// フィードバックを再生する
+        /// </summary>
         private void PlayFeedback()
         {
             float amplitude = Mathf.Clamp01(_impactRange / 10f);
