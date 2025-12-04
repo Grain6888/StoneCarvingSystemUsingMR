@@ -196,6 +196,7 @@ GameObject:
   - component: {fileID: 4930349878224799874}
   - component: {fileID: 4020234306482142200}
   - component: {fileID: 1406476302583184020}
+  - component: {fileID: 4376980114854071517}
   - component: {fileID: 3620702249095010055}
   - component: {fileID: 1693596312545556897}
   - component: {fileID: 4813101351979833692}
@@ -363,7 +364,7 @@ MonoBehaviour:
         Min: 1
         Max: 1
   _resetScaleResponsivenessOnConstraintOvershoot: 0
---- !u!114 &3620702249095010055
+--- !u!114 &4376980114854071517
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -371,6 +372,24 @@ MonoBehaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4198608406479654735}
   m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 344cbc957d5f0fa459d4dc650b0c6bdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MRSculpture.ChiselController
+  _stone: {fileID: 0}
+  _collider: {fileID: 6575895830427188220}
+  _hammer: {fileID: 0}
+  _maxImpactRange: 80
+  _hapticSource: {fileID: 1693596312545556897}
+  _audioSource: {fileID: 4813101351979833692}
+--- !u!114 &3620702249095010055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4198608406479654735}
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6b44461935454c9499ffdcead2c12682, type: 3}
   m_Name: 
@@ -725,6 +744,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7741276184209966702}
+  - component: {fileID: 6575895830427188220}
   m_Layer: 0
   m_Name: ImpactCenter
   m_TagString: Untagged
@@ -747,6 +767,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8020018203462174736}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &6575895830427188220
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8020179982226132349}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &9207230702519562297
 GameObject:
   m_ObjectHideFlags: 0

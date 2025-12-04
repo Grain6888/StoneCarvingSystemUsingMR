@@ -74,6 +74,8 @@ namespace MRSculpture
         /// </summary>
         private int _lowPolyLevel;
 
+        [SerializeField, Range(1, 50)] private int _sensitivity = 20;
+
         /// <summary>
         /// 石材の初期スケール (X軸)
         /// </summary>
@@ -99,13 +101,12 @@ namespace MRSculpture
 
         private void Update()
         {
-            _impactRange = Mathf.Min(_maxImpactRange, (int)(_hammerController.ImpactMagnitude * 15));
-            _impactRange = 30;
-
+            _impactRange = Mathf.Min(_maxImpactRange, (int)(_hammerController.ImpactMagnitude * _sensitivity));
             UpdateLowPolyLevelByStoneScale();
 
             if (_impactRange > 0)
             {
+                Debug.Log($"MRSculpture : impact range = {_impactRange}");
                 Carve();
                 _stoneController.UpdateMesh();
             }
@@ -116,7 +117,7 @@ namespace MRSculpture
         /// </summary>
         public void Carve()
         {
-            float scaling = _initialStoneScaleX * _impactRange;
+            float scaling = _initialStoneScaleX * _impactRange / transform.localScale.x;
             _colliderTransform.localScale = Vector3.one * scaling;
 
             ExtractVoxel(out int minX, out int maxX, out int minY, out int maxY, out int minZ, out int maxZ);
@@ -200,9 +201,9 @@ namespace MRSculpture
             Vector3 impactCenterLocalPosition = _stoneTransform.InverseTransformPoint(impactCenterWorldPosition);
 
             Vector3 colliderLocalScale = new(
-                _colliderTransform.localScale.x / _stoneTransform.localScale.x,
-                _colliderTransform.localScale.y / _stoneTransform.localScale.y,
-                _colliderTransform.localScale.z / _stoneTransform.localScale.z
+                _colliderTransform.localScale.x * transform.localScale.x / _stoneTransform.localScale.x,
+                _colliderTransform.localScale.y * transform.localScale.y / _stoneTransform.localScale.y,
+                _colliderTransform.localScale.z * transform.localScale.z / _stoneTransform.localScale.z
             );
 
             minX = Mathf.Max(0, Mathf.FloorToInt(impactCenterLocalPosition.x - colliderLocalScale.x));

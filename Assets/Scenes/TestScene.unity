@@ -1753,7 +1753,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!135 &1104615372
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1979,6 +1979,7 @@ MonoBehaviour:
   _maxImpactRange: 70
   _hapticSource: {fileID: 1104615383}
   _audioSource: {fileID: 1104615382}
+  _sensitivity: 0
 --- !u!114 &1104615380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3731,6 +3732,22 @@ PrefabInstance:
     - target: {fileID: 4198608406479654735, guid: 7e4eadab6a0b8ac409f92cf994d5d823, type: 3}
       propertyPath: m_Name
       value: PinChisel
+      objectReference: {fileID: 0}
+    - target: {fileID: 4376980114854071517, guid: 7e4eadab6a0b8ac409f92cf994d5d823, type: 3}
+      propertyPath: _stone
+      value: 
+      objectReference: {fileID: 591202682}
+    - target: {fileID: 4376980114854071517, guid: 7e4eadab6a0b8ac409f92cf994d5d823, type: 3}
+      propertyPath: _hammer
+      value: 
+      objectReference: {fileID: 813992593}
+    - target: {fileID: 4376980114854071517, guid: 7e4eadab6a0b8ac409f92cf994d5d823, type: 3}
+      propertyPath: _sensitivity
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4376980114854071517, guid: 7e4eadab6a0b8ac409f92cf994d5d823, type: 3}
+      propertyPath: _maxImpactRange
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 8020018203462174736, guid: 7e4eadab6a0b8ac409f92cf994d5d823, type: 3}
       propertyPath: m_LocalPosition.x
