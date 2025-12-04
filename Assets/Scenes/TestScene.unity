@@ -961,11 +961,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57d33861cf9e02f4aaf442e0826d8f49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &591202690 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7935628380353662937, guid: 2f2699e874963734a819cc4e69f08049, type: 3}
-  m_PrefabInstance: {fileID: 5329379558266549201}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &813992592
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1974,8 +1969,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 344cbc957d5f0fa459d4dc650b0c6bdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MRSculpture.TesterController
-  _targetTransform: {fileID: 591202690}
-  _colliderObject: {fileID: 1104615375}
+  _stone: {fileID: 591202682}
+  _collider: {fileID: 1104615372}
+  _hammer: {fileID: 813992593}
 --- !u!1 &1108888116
 GameObject:
   m_ObjectHideFlags: 0

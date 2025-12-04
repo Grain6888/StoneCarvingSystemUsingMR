@@ -67,6 +67,11 @@ namespace MRSculpture
             NewFile();
         }
 
+        private void Start()
+        {
+            _testerController.AttachDataChunk(ref _voxelDataChunk);
+        }
+
         public async void LoadFile()
         {
             string fileName = "model.dat";
@@ -128,29 +133,35 @@ namespace MRSculpture
             _ready = true;
         }
 
-        private void Update()
+        //private void Update()
+        //{
+        //    if (!_ready) return;
+
+        //    _impactRange = Mathf.Min(70, (int)(_hammerController.ImpactMagnitude * 15));
+
+        //    Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(_boundsSize.x, _boundsSize.y, _boundsSize.z));
+        //    Bounds boundingBox = new();
+        //    boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
+
+        //    if (_impactRange > 0)
+        //    {
+        //        //_pinChiselController.Carve(ref _voxelDataChunk, in _impactRange);
+        //        //_roundChiselController.Carve(ref _voxelDataChunk, in _impactRange);
+        //        //_flatChiselController.Carve(ref _voxelDataChunk, in _impactRange);
+        //        _testerController.Carve(ref _voxelDataChunk, in _impactRange);
+
+        //        UpdateMesh();
+        //    }
+        //}
+
+        public void UpdateMesh()
         {
-            if (!_ready) return;
-
-            _impactRange = Mathf.Min(70, (int)(_hammerController.ImpactMagnitude * 15));
-
-            Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(_boundsSize.x, _boundsSize.y, _boundsSize.z));
-            Bounds boundingBox = new();
-            boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
-
-            if (_impactRange > 0)
-            {
-                //_pinChiselController.Carve(ref _voxelDataChunk, in _impactRange);
-                //_roundChiselController.Carve(ref _voxelDataChunk, in _impactRange);
-                //_flatChiselController.Carve(ref _voxelDataChunk, in _impactRange);
-                _testerController.Carve(ref _voxelDataChunk, in _impactRange);
-                _voxelBuffer.SetData(_voxelDataChunk.DataArray);
-                _builder.BuildIsosurface(_voxelBuffer, _builtTargetValue);
-                GetComponent<MeshFilter>().sharedMesh = _builder.Mesh;
+            _voxelBuffer.SetData(_voxelDataChunk.DataArray);
+            _builder.BuildIsosurface(_voxelBuffer, _builtTargetValue);
+            GetComponent<MeshFilter>().sharedMesh = _builder.Mesh;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-                Debug.Log("MRSculpture : Mesh updated.");
+            Debug.Log("MRSculpture : Mesh updated.");
 #endif
-            }
         }
 
         private void OnDestroy()
