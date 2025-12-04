@@ -6,7 +6,7 @@ namespace MRSculpture
     {
         [SerializeField] private GameObject _stone;
         private Transform _stoneTransform;
-        private MainBehaviour _stoneController;
+        private StoneController _stoneController;
 
         [SerializeField] private Collider _collider;
         private Transform _colliderTransform;
@@ -22,7 +22,7 @@ namespace MRSculpture
         private void Awake()
         {
             _stoneTransform = _stone.transform;
-            _stoneController = _stone.GetComponent<MainBehaviour>();
+            _stoneController = _stone.GetComponent<StoneController>();
             _colliderTransform = _collider.transform;
             _hammerController = _hammer.GetComponent<HammerController>();
         }

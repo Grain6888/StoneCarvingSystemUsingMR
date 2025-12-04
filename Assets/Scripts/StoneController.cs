@@ -5,7 +5,7 @@ using MarchingCubes;
 namespace MRSculpture
 {
     [RequireComponent(typeof(BoxCollider))]
-    public class MainBehaviour : MonoBehaviour
+    public class StoneController : MonoBehaviour
     {
         /// <summary>
         /// 彫刻素材の生成範囲
