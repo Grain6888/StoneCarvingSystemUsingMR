@@ -16,13 +16,15 @@ namespace MRSculpture
         [SerializeField] private GameObject _hammer;
         private HammerController _hammerController;
 
-        [SerializeField] private int _maxImpactRange = 70;
+        [SerializeField, Range(0, 200)] private int _maxImpactRange = 70;
         private int _impactRange;
 
         private DataChunk _voxelDataChunk;
 
         [SerializeField] private HapticSource _hapticSource;
         [SerializeField] private AudioSource _audioSource;
+
+        [SerializeField, Range(0, 10)] private int _lowPolyLevel = 1;
 
         private void Awake()
         {
@@ -59,18 +61,31 @@ namespace MRSculpture
             Matrix4x4 targetMatrix = _stoneTransform.localToWorldMatrix;
             Collider[] hitColliders = new Collider[10];
             int removedCount = 0;
-            for (int y = minY; y <= maxY; y++)
+            for (int y = minY; y <= maxY; y += _lowPolyLevel)
             {
-                for (int x = minX; x <= maxX; x++)
+                for (int x = minX; x <= maxX; x += _lowPolyLevel)
                 {
-                    for (int z = minZ; z <= maxZ; z++)
+                    for (int z = minZ; z <= maxZ; z += _lowPolyLevel)
                     {
                         _voxelDataChunk.GetWorldPosition(x, y, z, targetMatrix, out Vector3 cellWorldPos);
                         int hits = Physics.OverlapSphereNonAlloc(cellWorldPos, 0f, hitColliders);
-                        if (Array.IndexOf(hitColliders, _collider, 0, hits) >= 0 && _voxelDataChunk.HasFlag(x, y, z, CellFlags.IsFilled))
+                        if (Array.IndexOf(hitColliders, _collider, 0, hits) >= 0)
                         {
-                            _voxelDataChunk.RemoveFlag(x, y, z, CellFlags.IsFilled);
-                            removedCount++;
+                            for (int yy = y - _lowPolyLevel / 2; yy <= y + _lowPolyLevel / 2; yy++)
+                            {
+                                for (int xx = x - _lowPolyLevel / 2; xx <= x + _lowPolyLevel / 2; xx++)
+                                {
+                                    for (int zz = z - _lowPolyLevel / 2; zz <= z + _lowPolyLevel / 2; zz++)
+                                    {
+                                        if (xx < 0 || xx >= _voxelDataChunk.xLength ||
+                                            yy < 0 || yy >= _voxelDataChunk.yLength ||
+                                            zz < 0 || zz >= _voxelDataChunk.zLength) continue;
+                                        if (!_voxelDataChunk.HasFlag(xx, yy, zz, CellFlags.IsFilled)) continue;
+                                        _voxelDataChunk.RemoveFlag(xx, yy, zz, CellFlags.IsFilled);
+                                        removedCount++;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
