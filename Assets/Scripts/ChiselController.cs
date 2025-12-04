@@ -87,17 +87,21 @@ namespace MRSculpture
             // 衝撃中心のワールド座標を取得
             Vector3 impactCenterWorldPosition = _colliderTransform.position;
             // ワールド座標 → 石材のローカル座標へ変換
-            Vector3 currentImpactCenterLocalPosition = _stoneTransform.InverseTransformPoint(impactCenterWorldPosition);
-            // ローカル座標をボクセル単位に変換
-            Vector3Int center = Vector3Int.RoundToInt(currentImpactCenterLocalPosition);
+            Vector3 impactCenterLocalPosition = _stoneTransform.InverseTransformPoint(impactCenterWorldPosition);
 
-            // 各軸の探索範囲を計算（範囲外はクランプ）
-            minX = Mathf.Max(0, center.x - _impactRange);
-            maxX = Mathf.Min(_voxelDataChunk.xLength - 1, center.x + _impactRange);
-            minY = Mathf.Max(0, center.y - _impactRange);
-            maxY = Mathf.Min(_voxelDataChunk.yLength - 1, center.y + _impactRange);
-            minZ = Mathf.Max(0, center.z - _impactRange);
-            maxZ = Mathf.Min(_voxelDataChunk.zLength - 1, center.z + _impactRange);
+            // colliderのローカルスケール（石材基準）を取得
+            Vector3 colliderLocalScale = new(
+                _colliderTransform.localScale.x / _stoneTransform.localScale.x,
+                _colliderTransform.localScale.y / _stoneTransform.localScale.y,
+                _colliderTransform.localScale.z / _stoneTransform.localScale.z
+            );
+
+            minX = Mathf.Max(0, Mathf.FloorToInt(impactCenterLocalPosition.x - colliderLocalScale.x));
+            maxX = Mathf.Min(_voxelDataChunk.xLength - 1, Mathf.CeilToInt(impactCenterLocalPosition.x + colliderLocalScale.x));
+            minY = Mathf.Max(0, Mathf.FloorToInt(impactCenterLocalPosition.y - colliderLocalScale.y));
+            maxY = Mathf.Min(_voxelDataChunk.yLength - 1, Mathf.CeilToInt(impactCenterLocalPosition.y + colliderLocalScale.y));
+            minZ = Mathf.Max(0, Mathf.FloorToInt(impactCenterLocalPosition.z - colliderLocalScale.z));
+            maxZ = Mathf.Min(_voxelDataChunk.zLength - 1, Mathf.CeilToInt(impactCenterLocalPosition.z + colliderLocalScale.z));
         }
 
         private void PlayFeedback()
