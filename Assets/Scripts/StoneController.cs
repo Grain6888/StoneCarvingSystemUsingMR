@@ -4,7 +4,6 @@ using MarchingCubes;
 
 namespace MRSculpture
 {
-    [RequireComponent(typeof(BoxCollider))]
     public class StoneController : MonoBehaviour
     {
         /// <summary>
@@ -35,7 +34,7 @@ namespace MRSculpture
         [SerializeField] private GameObject _hammer;
         private HammerController _hammerController;
         [SerializeField] private GameObject _tester;
-        private TesterController _testerController;
+        private ChiselController _testerController;
         private int _impactRange = 0;
         private bool _ready = false;
 
@@ -56,7 +55,7 @@ namespace MRSculpture
             _pinChiselController = _pinChisel.GetComponent<PinChiselController>();
             _roundChiselController = _roundChisel.GetComponent<RoundChiselController>();
             _flatChiselController = _flatChisel.GetComponent<FlatChiselController>();
-            _testerController = _tester.GetComponent<TesterController>();
+            _testerController = _tester.GetComponent<ChiselController>();
 
             _voxelDataChunk = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
 
