@@ -58,11 +58,12 @@ GameObject:
   - component: {fileID: 3526814697005865358}
   - component: {fileID: 1772725599422418571}
   - component: {fileID: 7747762068653720922}
-  - component: {fileID: 428719612520463572}
+  - component: {fileID: 7273763232703764734}
   - component: {fileID: 1396304128867557142}
   - component: {fileID: 1337703738526647340}
   - component: {fileID: 7149729015249433782}
   - component: {fileID: 282723256485641656}
+  - component: {fileID: 5578481447593544762}
   m_Layer: 0
   m_Name: RoundChisel
   m_TagString: HandTool
@@ -225,7 +226,7 @@ MonoBehaviour:
         Min: 1
         Max: 1
   _resetScaleResponsivenessOnConstraintOvershoot: 0
---- !u!114 &428719612520463572
+--- !u!114 &7273763232703764734
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -234,13 +235,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 2294733142500760753}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 977ebee47dd583440b9fbaf5fdbd9fbb, type: 3}
+  m_Script: {fileID: 11500000, guid: 344cbc957d5f0fa459d4dc650b0c6bdb, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MRSculpture.RoundChiselController
+  m_EditorClassIdentifier: Assembly-CSharp::MRSculpture.ChiselController
+  _stone: {fileID: 0}
+  _collider: {fileID: 8246786167150245974}
+  _hammer: {fileID: 0}
+  _maxImpactRange: 70
   _hapticSource: {fileID: 1396304128867557142}
   _audioSource: {fileID: 1337703738526647340}
-  _center: {fileID: 6133343899544720004}
-  _target: {fileID: 0}
+  _sensitivity: 40
 --- !u!114 &1396304128867557142
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -393,6 +397,64 @@ MonoBehaviour:
   directivityPattern: 0
   directSoundEnabled: 1
   mediumAbsorption: 1
+--- !u!114 &5578481447593544762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2294733142500760753}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2f8f6e9e6f3e114b9bf9a57c2160615, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Oculus.Interaction::Oculus.Interaction.PointableUnityEventWrapper
+  _pointable: {fileID: 1772725599422418571}
+  _whenRelease:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenHover:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenUnhover:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenSelect:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7273763232703764734}
+        m_TargetAssemblyTypeName: MRSculpture.ChiselController, Assembly-CSharp
+        m_MethodName: set_enabled
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  _whenUnselect:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7273763232703764734}
+        m_TargetAssemblyTypeName: MRSculpture.ChiselController, Assembly-CSharp
+        m_MethodName: set_enabled
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  _whenMove:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenCancel:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &3275431196300621892
 GameObject:
   m_ObjectHideFlags: 0
@@ -698,6 +760,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7867838477992674361}
+  - component: {fileID: 8246786167150245974}
   m_Layer: 0
   m_Name: ImpactCenter
   m_TagString: Untagged
@@ -720,6 +783,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4041965121804011472}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &8246786167150245974
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6133343899544720004}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6170939649387350681
 GameObject:
   m_ObjectHideFlags: 0

@@ -28,7 +28,7 @@ namespace MRSculpture
         [SerializeField] private GameObject _pinChisel;
         private ChiselController _pinChiselController;
         [SerializeField] private GameObject _roundChisel;
-        private RoundChiselController _roundChiselController;
+        private ChiselController _roundChiselController;
         [SerializeField] private GameObject _flatChisel;
         private FlatChiselController _flatChiselController;
         [SerializeField] private GameObject _hammer;
@@ -52,8 +52,8 @@ namespace MRSculpture
                 _boundsSize.z * 0.5f
             );
             _hammerController = _hammer.GetComponent<HammerController>();
+            _roundChiselController = _roundChisel.GetComponent<ChiselController>();
             _pinChiselController = _pinChisel.GetComponent<ChiselController>();
-            _roundChiselController = _roundChisel.GetComponent<RoundChiselController>();
             _flatChiselController = _flatChisel.GetComponent<FlatChiselController>();
             _testerController = _tester.GetComponent<ChiselController>();
 
@@ -68,6 +68,7 @@ namespace MRSculpture
 
         private void Start()
         {
+            _roundChiselController.AttachDataChunk(ref _voxelDataChunk);
             _pinChiselController.AttachDataChunk(ref _voxelDataChunk);
             _testerController.AttachDataChunk(ref _voxelDataChunk);
         }

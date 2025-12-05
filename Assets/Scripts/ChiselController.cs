@@ -100,6 +100,9 @@ namespace MRSculpture
         public void AttachDataChunk(ref DataChunk voxelDataChunk)
         {
             _voxelDataChunk = voxelDataChunk;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log($"MRSculpture : DataChunk attached to {name}.");
+#endif
         }
 
         private void Update()
@@ -110,7 +113,7 @@ namespace MRSculpture
             if (_impactRange > 0)
             {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-                Debug.Log($"MRSculpture : {name} ImpactRange = {_impactRange}");
+                Debug.Log($"MRSculpture : {name} cought ImpactRange = {_impactRange}");
 #endif
                 Carve();
                 _stoneController.UpdateMesh();
