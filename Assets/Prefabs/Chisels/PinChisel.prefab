@@ -197,7 +197,6 @@ GameObject:
   - component: {fileID: 4020234306482142200}
   - component: {fileID: 1406476302583184020}
   - component: {fileID: 4376980114854071517}
-  - component: {fileID: 3620702249095010055}
   - component: {fileID: 1693596312545556897}
   - component: {fileID: 4813101351979833692}
   - component: {fileID: 5855387263255840073}
@@ -379,25 +378,10 @@ MonoBehaviour:
   _stone: {fileID: 0}
   _collider: {fileID: 6575895830427188220}
   _hammer: {fileID: 0}
-  _maxImpactRange: 80
+  _maxImpactRange: 10
   _hapticSource: {fileID: 1693596312545556897}
   _audioSource: {fileID: 4813101351979833692}
---- !u!114 &3620702249095010055
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4198608406479654735}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b44461935454c9499ffdcead2c12682, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MRSculpture.PinChiselController
-  _hapticSource: {fileID: 1693596312545556897}
-  _audioSource: {fileID: 4813101351979833692}
-  _center: {fileID: 8020179982226132349}
-  _target: {fileID: 0}
+  _sensitivity: 20
 --- !u!114 &1693596312545556897
 MonoBehaviour:
   m_ObjectHideFlags: 0

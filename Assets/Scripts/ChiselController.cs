@@ -74,6 +74,9 @@ namespace MRSculpture
         /// </summary>
         private int _lowPolyLevel;
 
+        /// <summary>
+        /// ハンマーの衝撃感度
+        /// </summary>
         [SerializeField, Range(1, 50)] private int _sensitivity = 20;
 
         /// <summary>
@@ -106,7 +109,9 @@ namespace MRSculpture
 
             if (_impactRange > 0)
             {
-                Debug.Log($"MRSculpture : impact range = {_impactRange}");
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                Debug.Log($"MRSculpture : {name} ImpactRange = {_impactRange}");
+#endif
                 Carve();
                 _stoneController.UpdateMesh();
             }

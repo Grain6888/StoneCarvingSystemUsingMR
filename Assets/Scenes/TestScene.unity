@@ -3725,10 +3725,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3620702249095010055, guid: 7e4eadab6a0b8ac409f92cf994d5d823, type: 3}
-      propertyPath: _target
-      value: 
-      objectReference: {fileID: 591202682}
     - target: {fileID: 4198608406479654735, guid: 7e4eadab6a0b8ac409f92cf994d5d823, type: 3}
       propertyPath: m_Name
       value: PinChisel
@@ -3741,14 +3737,6 @@ PrefabInstance:
       propertyPath: _hammer
       value: 
       objectReference: {fileID: 813992593}
-    - target: {fileID: 4376980114854071517, guid: 7e4eadab6a0b8ac409f92cf994d5d823, type: 3}
-      propertyPath: _sensitivity
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4376980114854071517, guid: 7e4eadab6a0b8ac409f92cf994d5d823, type: 3}
-      propertyPath: _maxImpactRange
-      value: 40
-      objectReference: {fileID: 0}
     - target: {fileID: 8020018203462174736, guid: 7e4eadab6a0b8ac409f92cf994d5d823, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.2
