@@ -15,7 +15,7 @@ EditorBuildSettings:
     path: Assets/Scenes/HalloweenScene.unity
     guid: a2fd6eecce88fcf49ad6d2889e4f19df
   - enabled: 1
-    path: Assets/Scenes/TestScene.unity
+    path: Assets/Scenes/MainScene.unity
     guid: 61b9f1034209a5f41a36a1b3ea886306
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

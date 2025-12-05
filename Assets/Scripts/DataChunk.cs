@@ -1,9 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Numerics;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
-using UnityEngine;
 
 namespace MRSculpture
 {
