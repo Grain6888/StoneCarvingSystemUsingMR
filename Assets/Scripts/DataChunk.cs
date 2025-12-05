@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
+using System.Numerics;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
+using UnityEngine;
 
 namespace MRSculpture
 {
@@ -87,6 +88,19 @@ namespace MRSculpture
             x = index % xLength;
             z = index / xLength % zLength;
             y = index / xLength / zLength;
+        }
+
+        public void GetWorldPosition(int index, UnityEngine.Matrix4x4 calcMat, out UnityEngine.Vector3 worldPosition)
+        {
+            GetPosition(index, out int x, out int y, out int z);
+            UnityEngine.Vector3 localPosition = new(x, y, z);
+            worldPosition = calcMat.MultiplyPoint3x4(localPosition);
+        }
+
+        public readonly void GetWorldPosition(int x, int y, int z, UnityEngine.Matrix4x4 calcMat, out UnityEngine.Vector3 worldPosition)
+        {
+            UnityEngine.Vector3 localPosition = new(x, y, z);
+            worldPosition = calcMat.MultiplyPoint3x4(localPosition);
         }
 
         /// <summary>
