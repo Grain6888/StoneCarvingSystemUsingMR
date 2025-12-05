@@ -60,7 +60,8 @@ PrefabInstance:
       propertyPath: _maxImpactRange
       value: 40
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5578481447593544762, guid: 388a9ba5341755241aefdc7536e7304e, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

@@ -30,13 +30,13 @@ namespace MRSculpture
         [SerializeField] private GameObject _roundChisel;
         private ChiselController _roundChiselController;
         [SerializeField] private GameObject _flatChisel;
-        private FlatChiselController _flatChiselController;
-        [SerializeField] private GameObject _hammer;
-        private HammerController _hammerController;
-        [SerializeField] private GameObject _tester;
-        private ChiselController _testerController;
-        private int _impactRange = 0;
-        private bool _ready = false;
+        private ChiselController _flatChiselController;
+        //[SerializeField] private GameObject _hammer;
+        //private HammerController _hammerController;
+        //[SerializeField] private GameObject _tester;
+        //private ChiselController _testerController;
+        //private int _impactRange = 0;
+        //private bool _ready = false;
 
         private void Awake()
         {
@@ -51,11 +51,11 @@ namespace MRSculpture
                 _boundsSize.y * 0.5f,
                 _boundsSize.z * 0.5f
             );
-            _hammerController = _hammer.GetComponent<HammerController>();
+            //_hammerController = _hammer.GetComponent<HammerController>();
             _roundChiselController = _roundChisel.GetComponent<ChiselController>();
             _pinChiselController = _pinChisel.GetComponent<ChiselController>();
-            _flatChiselController = _flatChisel.GetComponent<FlatChiselController>();
-            _testerController = _tester.GetComponent<ChiselController>();
+            _flatChiselController = _flatChisel.GetComponent<ChiselController>();
+            //_testerController = _tester.GetComponent<ChiselController>();
 
             _voxelDataChunk = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
 
@@ -70,7 +70,8 @@ namespace MRSculpture
         {
             _roundChiselController.AttachDataChunk(ref _voxelDataChunk);
             _pinChiselController.AttachDataChunk(ref _voxelDataChunk);
-            _testerController.AttachDataChunk(ref _voxelDataChunk);
+            _flatChiselController.AttachDataChunk(ref _voxelDataChunk);
+            //_testerController.AttachDataChunk(ref _voxelDataChunk);
         }
 
         public async void LoadFile()
@@ -97,7 +98,7 @@ namespace MRSculpture
                 NewFile();
             }
 
-            _ready = true;
+            //_ready = true;
         }
 
         public async void SaveFile()
@@ -131,7 +132,7 @@ namespace MRSculpture
             Debug.Log("MRSculpture : New DataChunk created.");
 #endif
 
-            _ready = true;
+            //_ready = true;
         }
 
         //private void Update()
