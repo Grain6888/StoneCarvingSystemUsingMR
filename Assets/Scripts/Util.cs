@@ -15,8 +15,8 @@ namespace MarchingCubes
         public static void DispatchThreads
           (this ComputeShader compute, int kernel, int x, int y, int z)
         {
-            uint xc, yc, zc;
-            compute.GetKernelThreadGroupSizes(kernel, out xc, out yc, out zc);
+            uint yc, zc;
+            compute.GetKernelThreadGroupSizes(kernel, out uint xc, out yc, out zc);
 
             x = (x + (int)xc - 1) / (int)xc;
             y = (y + (int)yc - 1) / (int)yc;
