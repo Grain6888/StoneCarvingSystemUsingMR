@@ -4,63 +4,97 @@ using MarchingCubes;
 
 namespace MRSculpture
 {
+    [RequireComponent(typeof(MeshFilter))]
+    [RequireComponent(typeof(BoxCollider))]
     public class StoneController : MonoBehaviour
     {
         /// <summary>
-        /// 彫刻素材の生成範囲
+        /// 石材の生成範囲 (単位はボクセル)
         /// </summary>
-        public Vector3Int _boundsSize = new(100, 100, 100);
-
-        private BoxCollider _boundsCollider = null;
-
-        [SerializeField] int _triangleBudget = 65536 * 16;
-        [SerializeField] ComputeShader _builderCompute = null;
-        float _builtTargetValue = 0.9f;
-        int _voxelCount => _boundsSize.x * _boundsSize.y * _boundsSize.z;
-        ComputeBuffer _voxelBuffer;
-        MeshBuilder _builder;
+        [SerializeField] private Vector3Int _boundsSize = new(100, 100, 100);
 
         /// <summary>
-        /// 彫刻素材のボクセルデータを保存するDataChunk
+        /// 彫刻素材のボクセルデータを格納する DataChunk
         /// </summary>
         private DataChunk _voxelDataChunk;
 
+        /// <summary>
+        /// 石材の BoxCollider
+        /// </summary>
+        private BoxCollider _boundsCollider = null;
+
+        /// <summary>
+        /// メッシュ生成時の三角形の最大数
+        /// </summary>
+        [SerializeField] int _triangleBudget = 65536 * 16;
+
+        /// <summary>
+        /// メッシュ生成に使用する ComputeShader
+        /// </summary>
+        [SerializeField] ComputeShader _builderCompute = null;
+
+        /// <summary>
+        /// 等値面の値
+        /// </summary>
+        private readonly float _builtTargetValue = 0.9f;
+
+        /// <summary>
+        /// 範囲内の総ボクセル数
+        /// </summary>
+        private int VoxelCount => _boundsSize.x * _boundsSize.y * _boundsSize.z;
+
+        /// <summary>
+        /// ComputeShader にボクセルデータを渡すための ComputeBuffer
+        /// </summary>
+        private ComputeBuffer _voxelBuffer;
+
+        /// <summary>
+        /// メッシュ生成処理
+        /// </summary>
+        private MeshBuilder _builder;
+
+        /// <summary>
+        /// 精密ノミ
+        /// </summary>
         [SerializeField] private GameObject _pinChisel;
+
+        /// <summary>
+        /// 精密ノミ用コントローラ
+        /// </summary>
         private ChiselController _pinChiselController;
+
+        /// <summary>
+        /// 丸ノミ
+        /// </summary>
         [SerializeField] private GameObject _roundChisel;
+
+        /// <summary>
+        /// 丸ノミ用のコントローラ
+        /// </summary>
         private ChiselController _roundChiselController;
+
+        /// <summary>
+        /// 平ノミ
+        /// </summary>
         [SerializeField] private GameObject _flatChisel;
+
+        /// <summary>
+        /// 平ノミ用のコントローラ
+        /// </summary>
         private ChiselController _flatChiselController;
-        //[SerializeField] private GameObject _hammer;
-        //private HammerController _hammerController;
-        //[SerializeField] private GameObject _tester;
-        //private ChiselController _testerController;
-        //private int _impactRange = 0;
-        //private bool _ready = false;
 
         private void Awake()
         {
             _boundsCollider = GetComponent<BoxCollider>();
-            _boundsCollider.size = new(
-                _boundsSize.x,
-                _boundsSize.y,
-                _boundsSize.z
-            );
-            _boundsCollider.center = new(
-                _boundsSize.x * 0.5f,
-                _boundsSize.y * 0.5f,
-                _boundsSize.z * 0.5f
-            );
-            //_hammerController = _hammer.GetComponent<HammerController>();
+            SetupBoundsCollider();
+
             _roundChiselController = _roundChisel.GetComponent<ChiselController>();
             _pinChiselController = _pinChisel.GetComponent<ChiselController>();
             _flatChiselController = _flatChisel.GetComponent<ChiselController>();
-            //_testerController = _tester.GetComponent<ChiselController>();
 
             _voxelDataChunk = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
 
-            // フラグ（uint）をそのまま Compute に渡す
-            _voxelBuffer = new ComputeBuffer(_voxelCount, sizeof(uint));
+            _voxelBuffer = new ComputeBuffer(VoxelCount, sizeof(uint));
             _builder = new MeshBuilder(_boundsSize, _triangleBudget, _builderCompute);
 
             NewFile();
@@ -71,9 +105,13 @@ namespace MRSculpture
             _roundChiselController.AttachDataChunk(ref _voxelDataChunk);
             _pinChiselController.AttachDataChunk(ref _voxelDataChunk);
             _flatChiselController.AttachDataChunk(ref _voxelDataChunk);
-            //_testerController.AttachDataChunk(ref _voxelDataChunk);
         }
 
+        /// <summary>
+        /// <para>
+        /// ファイルからボクセルデータを読み込む．ファイルが存在しない場合は新規作成する．
+        /// </para>
+        /// </summary>
         public async void LoadFile()
         {
             string fileName = "model.dat";
@@ -97,10 +135,13 @@ namespace MRSculpture
 #endif
                 NewFile();
             }
-
-            //_ready = true;
         }
 
+        /// <summary>
+        /// <para>
+        /// 現在のボクセルデータをファイルに保存する．
+        /// </para>
+        /// </summary>
         public async void SaveFile()
         {
             string fileName = "model.dat";
@@ -111,6 +152,9 @@ namespace MRSculpture
             });
         }
 
+        /// <summary>
+        /// DataChunk を全て埋まった状態で初期化し，初期メッシュを生成する．
+        /// </summary>
         public void NewFile()
         {
             for (int y = 0; y < _voxelDataChunk.yLength; y++)
@@ -131,31 +175,28 @@ namespace MRSculpture
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log("MRSculpture : New DataChunk created.");
 #endif
-
-            //_ready = true;
         }
 
-        //private void Update()
-        //{
-        //    if (!_ready) return;
+        /// <summary>
+        /// 石材の生成範囲から石材の BoxCollider を設定する．
+        /// </summary>
+        private void SetupBoundsCollider()
+        {
+            _boundsCollider.size = new(
+                _boundsSize.x,
+                _boundsSize.y,
+                _boundsSize.z
+            );
+            _boundsCollider.center = new(
+                _boundsSize.x * 0.5f,
+                _boundsSize.y * 0.5f,
+                _boundsSize.z * 0.5f
+            );
+        }
 
-        //    _impactRange = Mathf.Min(70, (int)(_hammerController.ImpactMagnitude * 15));
-
-        //    Vector3 boundingBoxSize = transform.localToWorldMatrix.MultiplyPoint(new Vector3(_boundsSize.x, _boundsSize.y, _boundsSize.z));
-        //    Bounds boundingBox = new();
-        //    boundingBox.SetMinMax(Vector3.zero, boundingBoxSize);
-
-        //    if (_impactRange > 0)
-        //    {
-        //        //_pinChiselController.Carve(ref _voxelDataChunk, in _impactRange);
-        //        //_roundChiselController.Carve(ref _voxelDataChunk, in _impactRange);
-        //        //_flatChiselController.Carve(ref _voxelDataChunk, in _impactRange);
-        //        _testerController.Carve(ref _voxelDataChunk, in _impactRange);
-
-        //        UpdateMesh();
-        //    }
-        //}
-
+        /// <summary>
+        /// 石材のメッシュを更新する．
+        /// </summary>
         public void UpdateMesh()
         {
             _voxelBuffer.SetData(_voxelDataChunk.DataArray);
@@ -174,6 +215,14 @@ namespace MRSculpture
         }
 
 #if UNITY_EDITOR
+        /// <summary>
+        /// <para>
+        /// デバッグ用．
+        /// </para>
+        /// <para>
+        /// Scene ビューで DataChunk 内の全ボクセルを Gizmo で表示する．
+        /// </para>
+        /// </summary>
         private void OnDrawGizmos()
         {
             if (!Application.isPlaying)
@@ -182,13 +231,12 @@ namespace MRSculpture
             }
 
             int maxVoxelsToDraw = 100 * 100 * 100;
-            if (_voxelCount > maxVoxelsToDraw)
+            if (VoxelCount > maxVoxelsToDraw)
             {
-                Debug.LogWarning($"MRSculpture : The number of voxels {_voxelCount} exceeds the maximum drawable voxel count {maxVoxelsToDraw}. Gizmo will be skipped.");
+                Debug.LogWarning($"MRSculpture : The number of voxels {VoxelCount} exceeds the maximum drawable voxel count {maxVoxelsToDraw}. Gizmo will be skipped.");
                 return;
             }
 
-            // Sceneビューのみ
             Camera cam = Camera.current;
             if (cam == null || cam.cameraType != CameraType.SceneView)
             {
@@ -196,14 +244,12 @@ namespace MRSculpture
                 return;
             }
 
-            // DataChunk が有効か
             if (!_voxelDataChunk.DataArray.IsCreated)
             {
                 Debug.LogWarning("MRSculpture : DataChunk is not valid. Gizmo drawing will be skipped.");
                 return;
             }
 
-            // すべてのボクセルを描画（IsFilled: 緑、未充填: 赤）
             for (int y = 0; y < _voxelDataChunk.yLength; y++)
             {
                 for (int z = 0; z < _voxelDataChunk.zLength; z++)
@@ -212,7 +258,7 @@ namespace MRSculpture
                     {
                         int index = _voxelDataChunk.GetIndex(x, y, z);
                         bool filled = _voxelDataChunk.HasFlag(index, CellFlags.IsFilled);
-                        Gizmos.color = filled ? Color.green : Color.red;
+                        Gizmos.color = filled ? Color.green : Color.red; // 埋 : 緑, 空 : 赤
 
                         Vector3 centerLocal = new(x + 0.5f, y + 0.5f, z + 0.5f);
                         Vector3 centerWorld = transform.TransformPoint(centerLocal);

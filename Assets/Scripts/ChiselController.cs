@@ -10,12 +10,12 @@ namespace MRSculpture
     public class ChiselController : MonoBehaviour
     {
         /// <summary>
-        /// 彫刻対象の石材 GameObject
+        /// 石材
         /// </summary>
         [SerializeField] private GameObject _stone;
 
         /// <summary>
-        /// Stone の Transform
+        /// 石材の Transform
         /// </summary>
         private Transform _stoneTransform;
 
@@ -35,7 +35,7 @@ namespace MRSculpture
         private Transform _colliderTransform;
 
         /// <summary>
-        /// ハンマー GameObject
+        /// ハンマー
         /// </summary>
         [SerializeField] private GameObject _hammer;
 
