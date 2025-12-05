@@ -2599,6 +2599,48 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1204523912}
   m_CullTransparentMesh: 1
+--- !u!1001 &1259071875
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8318727854624371221}
+    m_Modifications:
+    - target: {fileID: 78847480523005808, guid: 3732624f49fa1e74985a6b5402a9aa85, type: 3}
+      propertyPath: CollisionModule.m_Planes.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 78847480523005808, guid: 3732624f49fa1e74985a6b5402a9aa85, type: 3}
+      propertyPath: 'CollisionModule.m_Planes.Array.data[0]'
+      value: 
+      objectReference: {fileID: 7544607033575490707}
+    - target: {fileID: 6069681288548086902, guid: 3732624f49fa1e74985a6b5402a9aa85, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6069681288548086902, guid: 3732624f49fa1e74985a6b5402a9aa85, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6069681288548086902, guid: 3732624f49fa1e74985a6b5402a9aa85, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7438035885335132081, guid: 3732624f49fa1e74985a6b5402a9aa85, type: 3}
+      propertyPath: m_Name
+      value: StoneParticle
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3732624f49fa1e74985a6b5402a9aa85, type: 3}
+--- !u!4 &1259071876 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6069681288548086902, guid: 3732624f49fa1e74985a6b5402a9aa85, type: 3}
+  m_PrefabInstance: {fileID: 1259071875}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1324278803
 GameObject:
   m_ObjectHideFlags: 0
@@ -3670,10 +3712,6 @@ PrefabInstance:
       propertyPath: _hammer
       value: 
       objectReference: {fileID: 813992593}
-    - target: {fileID: 205497617521191288, guid: b65e3770425bc2c4c96e5bc32f44cf63, type: 3}
-      propertyPath: _maxImpactRange
-      value: 50
-      objectReference: {fileID: 0}
     - target: {fileID: 1299027413538844945, guid: b65e3770425bc2c4c96e5bc32f44cf63, type: 3}
       propertyPath: m_Name
       value: FlatChisel
@@ -3717,10 +3755,6 @@ PrefabInstance:
     - target: {fileID: 3147502701587215497, guid: b65e3770425bc2c4c96e5bc32f44cf63, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9148920263473920348, guid: b65e3770425bc2c4c96e5bc32f44cf63, type: 3}
-      propertyPath: m_Size.y
-      value: 0.4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3861,6 +3895,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: be9bff8353507a844accc1b19d2fbcc8, type: 3}
+--- !u!4 &7544607033575490707 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4448373475198698986, guid: be9bff8353507a844accc1b19d2fbcc8, type: 3}
+  m_PrefabInstance: {fileID: 7544607033575490706}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8318727854624371220
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3869,6 +3908,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 897848666576477714, guid: 50fe91728b430884c83c354b9e13f538, type: 3}
+      propertyPath: 'CollisionModule.m_Planes.Array.data[0]'
+      value: 
+      objectReference: {fileID: 7544607033575490707}
     - target: {fileID: 1542780213245083985, guid: 50fe91728b430884c83c354b9e13f538, type: 3}
       propertyPath: m_Name
       value: RoundChisel
@@ -3913,6 +3956,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6437338483280655636, guid: 50fe91728b430884c83c354b9e13f538, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7944368244401472798, guid: 50fe91728b430884c83c354b9e13f538, type: 3}
       propertyPath: _stone
       value: 
@@ -3922,10 +3969,19 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 813992593}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 7662001744634279635, guid: 50fe91728b430884c83c354b9e13f538, type: 3}
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 7458423484248234457, guid: 50fe91728b430884c83c354b9e13f538, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1259071876}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 50fe91728b430884c83c354b9e13f538, type: 3}
+--- !u!4 &8318727854624371221 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7458423484248234457, guid: 50fe91728b430884c83c354b9e13f538, type: 3}
+  m_PrefabInstance: {fileID: 8318727854624371220}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8599688069019698427
 PrefabInstance:
   m_ObjectHideFlags: 0
