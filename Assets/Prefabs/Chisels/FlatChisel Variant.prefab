@@ -89,9 +89,10 @@ MonoBehaviour:
   _stone: {fileID: 0}
   _collider: {fileID: 9148920263473920348}
   _hammer: {fileID: 0}
-  _maxImpactRange: 30
+  _maxImpactRange: 50
   _hapticSource: {fileID: 7096944250933745285}
   _audioSource: {fileID: 1240929272111350890}
+  _particleSystem: {fileID: 78847480523005808, guid: 3732624f49fa1e74985a6b5402a9aa85, type: 3}
   _sensitivity: 20
 --- !u!1 &5753874497159719023 stripped
 GameObject:
@@ -117,7 +118,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 0.2, z: 1}
+  m_Size: {x: 1, y: 0.4, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7096944250933745285 stripped
 MonoBehaviour:

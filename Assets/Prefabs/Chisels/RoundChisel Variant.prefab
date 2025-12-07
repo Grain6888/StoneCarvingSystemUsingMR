@@ -57,9 +57,17 @@ PrefabInstance:
       value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 7273763232703764734, guid: 388a9ba5341755241aefdc7536e7304e, type: 3}
+      propertyPath: _carvedParticle
+      value: 
+      objectReference: {fileID: 78847480523005808, guid: 3732624f49fa1e74985a6b5402a9aa85, type: 3}
+    - target: {fileID: 7273763232703764734, guid: 388a9ba5341755241aefdc7536e7304e, type: 3}
       propertyPath: _maxImpactRange
       value: 40
       objectReference: {fileID: 0}
+    - target: {fileID: 7273763232703764734, guid: 388a9ba5341755241aefdc7536e7304e, type: 3}
+      propertyPath: _particleSystem
+      value: 
+      objectReference: {fileID: 78847480523005808, guid: 3732624f49fa1e74985a6b5402a9aa85, type: 3}
     m_RemovedComponents:
     - {fileID: 5578481447593544762, guid: 388a9ba5341755241aefdc7536e7304e, type: 3}
     m_RemovedGameObjects: []

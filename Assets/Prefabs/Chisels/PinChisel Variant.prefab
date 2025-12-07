@@ -16,6 +16,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4376980114854071517, guid: 7e4eadab6a0b8ac409f92cf994d5d823, type: 3}
+      propertyPath: _particleSystem
+      value: 
+      objectReference: {fileID: 78847480523005808, guid: 3732624f49fa1e74985a6b5402a9aa85, type: 3}
     - target: {fileID: 8020018203462174736, guid: 7e4eadab6a0b8ac409f92cf994d5d823, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.2

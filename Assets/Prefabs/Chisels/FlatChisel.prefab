@@ -234,7 +234,6 @@ GameObject:
   - component: {fileID: 2079801181044708901}
   - component: {fileID: 3174294088372557727}
   - component: {fileID: 4987478969778870671}
-  - component: {fileID: 8678504133230063737}
   - component: {fileID: 3965672444352048028}
   - component: {fileID: 4921631454772099443}
   - component: {fileID: 98007429854269120}
@@ -401,22 +400,6 @@ MonoBehaviour:
         Min: 1
         Max: 1
   _resetScaleResponsivenessOnConstraintOvershoot: 0
---- !u!114 &8678504133230063737
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5148350696969112584}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a322a89ba50f6d4486cca3fe400c24d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MRSculpture.FlatChiselController
-  _hapticSource: {fileID: 3965672444352048028}
-  _audioSource: {fileID: 4921631454772099443}
-  _center: {fileID: 1922000738224100726}
-  _target: {fileID: 0}
 --- !u!114 &3965672444352048028
 MonoBehaviour:
   m_ObjectHideFlags: 0
