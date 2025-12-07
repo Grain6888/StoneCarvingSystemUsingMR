@@ -92,6 +92,7 @@ MonoBehaviour:
   _maxImpactRange: 50
   _hapticSource: {fileID: 7096944250933745285}
   _audioSource: {fileID: 1240929272111350890}
+  _particleSystem: {fileID: 78847480523005808, guid: 3732624f49fa1e74985a6b5402a9aa85, type: 3}
   _sensitivity: 20
 --- !u!1 &5753874497159719023 stripped
 GameObject:

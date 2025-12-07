@@ -1,6 +1,7 @@
 ﻿using Oculus.Haptics;
-using UnityEngine;
 using System;
+using UnityEngine;
+using static UnityEngine.ParticleSystem;
 
 namespace MRSculpture
 {
@@ -70,6 +71,13 @@ namespace MRSculpture
         [SerializeField] private AudioSource _audioSource;
 
         /// <summary>
+        /// 視覚フィードバック用 ParticleSystem
+        /// </summary>
+        [SerializeField] private ParticleSystem _particleSystem;
+
+        private ParticleSystem _carvedParticle;
+
+        /// <summary>
         /// ボクセルの削除解像度 (1で等倍)
         /// </summary>
         private int _lowPolyLevel;
@@ -91,6 +99,8 @@ namespace MRSculpture
             _stoneController = _stone.GetComponent<StoneController>();
             _colliderTransform = _collider.transform;
             _hammerController = _hammer.GetComponent<HammerController>();
+
+            _carvedParticle = Instantiate(_particleSystem);
         }
 
         /// <summary>
@@ -239,6 +249,23 @@ namespace MRSculpture
             {
                 _audioSource.volume = amplitude;
                 _audioSource.Play();
+            }
+
+            if (_carvedParticle != null)
+            {
+                _carvedParticle.Stop();
+                _carvedParticle.transform.position = _colliderTransform.position;
+                MainModule carvedParticleMainModule = _carvedParticle.main;
+                carvedParticleMainModule.maxParticles = Math.Max(5, _impactRange);
+                _carvedParticle.Play();
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (_carvedParticle != null)
+            {
+                Destroy(_carvedParticle.gameObject);
             }
         }
     }
