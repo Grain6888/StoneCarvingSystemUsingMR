@@ -75,6 +75,9 @@ namespace MRSculpture
         /// </summary>
         [SerializeField] private ParticleSystem _particleSystem;
 
+        /// <summary>
+        /// パーティクルのインスタンス
+        /// </summary>
         private ParticleSystem _carvedParticle;
 
         /// <summary>
@@ -175,7 +178,7 @@ namespace MRSculpture
 
             if (removedCount > 0)
             {
-                PlayFeedback();
+                PlayFeedback(removedCount);
             }
         }
 
@@ -235,7 +238,7 @@ namespace MRSculpture
         /// <summary>
         /// フィードバックを再生する
         /// </summary>
-        private void PlayFeedback()
+        private void PlayFeedback(in int removedCount)
         {
             float amplitude = Mathf.Clamp01(_impactRange / 10f);
 
@@ -253,10 +256,11 @@ namespace MRSculpture
 
             if (_carvedParticle != null)
             {
-                _carvedParticle.Stop();
                 _carvedParticle.transform.position = _colliderTransform.position;
-                MainModule carvedParticleMainModule = _carvedParticle.main;
-                carvedParticleMainModule.maxParticles = Math.Max(5, _impactRange);
+                EmissionModule carvedParticleEmissionModule = _carvedParticle.emission;
+                Burst burstSetting = carvedParticleEmissionModule.GetBurst(0);
+                burstSetting.count = Math.Max(2, removedCount / 256);
+                carvedParticleEmissionModule.SetBurst(0, burstSetting);
                 _carvedParticle.Play();
             }
         }
