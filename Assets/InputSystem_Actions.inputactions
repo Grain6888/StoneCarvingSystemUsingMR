@@ -86,15 +86,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "Menu",
-                    "type": "Button",
-                    "id": "d60429bd-646b-4bb3-a19d-5e6e7f252bb4",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -480,28 +471,6 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Crouch",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "d75a2e86-de3e-455c-a5d1-518670c88c3d",
-                    "path": "<XRController>{LeftHand}/{MenuButton}",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";XR",
-                    "action": "Menu",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "0a911fb3-6f88-4152-85d2-1cee2a948176",
-                    "path": "<XRController>{LeftHand}/{Menu}",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";XR",
-                    "action": "Menu",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
