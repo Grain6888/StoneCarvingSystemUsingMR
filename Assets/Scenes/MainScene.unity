@@ -119,11 +119,17 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &7602268 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1299027413538844945, guid: b65e3770425bc2c4c96e5bc32f44cf63, type: 3}
+--- !u!114 &7602273 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 205497617521191288, guid: b65e3770425bc2c4c96e5bc32f44cf63, type: 3}
   m_PrefabInstance: {fileID: 1310546737828517629}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 344cbc957d5f0fa459d4dc650b0c6bdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MRSculpture.ChiselController
 --- !u!1 &36133704 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5525962229547929510, guid: 0a7d2469f24041c4284c66706f84c45e, type: 3}
@@ -973,6 +979,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57d33861cf9e02f4aaf442e0826d8f49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &591202691 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7024648313499467186, guid: 2f2699e874963734a819cc4e69f08049, type: 3}
+  m_PrefabInstance: {fileID: 5329379558266549201}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 591202682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e632f70658fe1440bd76f84987cff21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MRSculpture.MaterialSwitcher
 --- !u!1001 &813992592
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3616,16 +3633,28 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2129552716}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &310273912679368763 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1542780213245083985, guid: 50fe91728b430884c83c354b9e13f538, type: 3}
+--- !u!114 &310273912679368768 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7944368244401472798, guid: 50fe91728b430884c83c354b9e13f538, type: 3}
   m_PrefabInstance: {fileID: 8318727854624371220}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &867005069088673710 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6050092350960469927, guid: b49ec861e4f19934e9dd70149308cd8d, type: 3}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 344cbc957d5f0fa459d4dc650b0c6bdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MRSculpture.ChiselController
+--- !u!114 &867005069088673715 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6128381842206590005, guid: b49ec861e4f19934e9dd70149308cd8d, type: 3}
   m_PrefabInstance: {fileID: 8599688069019698427}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 344cbc957d5f0fa459d4dc650b0c6bdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MRSculpture.ChiselController
 --- !u!1001 &1310546737828517629
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3700,25 +3729,17 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 5749685076871990883, guid: 2f2699e874963734a819cc4e69f08049, type: 3}
-      propertyPath: _hammer
+      propertyPath: _pinChiselController
       value: 
-      objectReference: {fileID: 813992593}
+      objectReference: {fileID: 867005069088673715}
     - target: {fileID: 5749685076871990883, guid: 2f2699e874963734a819cc4e69f08049, type: 3}
-      propertyPath: _tester
+      propertyPath: _flatChiselController
       value: 
-      objectReference: {fileID: 1104615371}
+      objectReference: {fileID: 7602273}
     - target: {fileID: 5749685076871990883, guid: 2f2699e874963734a819cc4e69f08049, type: 3}
-      propertyPath: _pinChisel
+      propertyPath: _roundChiselController
       value: 
-      objectReference: {fileID: 867005069088673710}
-    - target: {fileID: 5749685076871990883, guid: 2f2699e874963734a819cc4e69f08049, type: 3}
-      propertyPath: _flatChisel
-      value: 
-      objectReference: {fileID: 7602268}
-    - target: {fileID: 5749685076871990883, guid: 2f2699e874963734a819cc4e69f08049, type: 3}
-      propertyPath: _roundChisel
-      value: 
-      objectReference: {fileID: 310273912679368763}
+      objectReference: {fileID: 310273912679368768}
     - target: {fileID: 7288610678156359353, guid: 2f2699e874963734a819cc4e69f08049, type: 3}
       propertyPath: m_Name
       value: Stone
@@ -3865,33 +3886,9 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1030039602543150051, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1030039602543150051, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1030039602543150051, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 591202683}
-    - target: {fileID: 1030039602543150051, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1030039602543150051, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: LoadFile
-      objectReference: {fileID: 0}
-    - target: {fileID: 1030039602543150051, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: MRSculpture.StoneController, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 1030039602543150051, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
     - target: {fileID: 1119410195737152441, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -4059,35 +4056,11 @@ PrefabInstance:
     - target: {fileID: 2849989811944291543, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3046338728479869727, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3046338728479869727, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3046338728479869727, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 591202683}
-    - target: {fileID: 3046338728479869727, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 3046338728479869727, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SaveFile
-      objectReference: {fileID: 0}
-    - target: {fileID: 3046338728479869727, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: MRSculpture.StoneController, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 3046338728479869727, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
     - target: {fileID: 3185469834382209807, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -4105,21 +4078,9 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3435009356147157249, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3435009356147157249, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 3435009356147157249, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[5].m_Arguments.m_BoolArgument
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3435009356147157249, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[6].m_Arguments.m_BoolArgument
-      value: 0
-      objectReference: {fileID: 0}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 591202691}
     - target: {fileID: 3681681352160924198, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -4205,29 +4166,9 @@ PrefabInstance:
       value: MainMenu
       objectReference: {fileID: 0}
     - target: {fileID: 4083974522746642572, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4083974522746642572, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[8].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4083974522746642572, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4083974522746642572, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[8].m_MethodName
-      value: ApplyCurrentTheme
-      objectReference: {fileID: 0}
-    - target: {fileID: 4083974522746642572, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[8].m_TargetAssemblyTypeName
-      value: Oculus.Interaction.UIThemeManager, Oculus.Interaction.Samples
-      objectReference: {fileID: 0}
-    - target: {fileID: 4083974522746642572, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[7].m_Arguments.m_BoolArgument
-      value: 1
-      objectReference: {fileID: 0}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 591202691}
     - target: {fileID: 4668452763397872388, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -4273,33 +4214,9 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5185484808154857061, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5185484808154857061, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5185484808154857061, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 591202683}
-    - target: {fileID: 5185484808154857061, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5185484808154857061, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: NewFile
-      objectReference: {fileID: 0}
-    - target: {fileID: 5185484808154857061, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: MRSculpture.StoneController, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 5185484808154857061, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
     - target: {fileID: 5349569067078650285, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -4373,13 +4290,9 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6053459308726929841, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6053459308726929841, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 591202691}
     - target: {fileID: 6449736324439112261, guid: e2f324b3db2ebca469ad94306bb58188, type: 3}
       propertyPath: m_SizeDelta.x
       value: 0

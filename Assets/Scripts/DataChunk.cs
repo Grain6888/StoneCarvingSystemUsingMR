@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
@@ -12,6 +13,8 @@ namespace MRSculpture
         public readonly int xLength;
         public readonly int yLength;
         public readonly int zLength;
+
+        public readonly bool IsCreated => _data.IsCreated;
 
         /// <summary>
         /// 生成範囲の配列を初期化
@@ -245,18 +248,28 @@ namespace MRSculpture
             string path = Path.Combine(UnityEngine.Application.persistentDataPath, fileName);
             try
             {
-                using (var fs = new FileStream(path, FileMode.Create, FileAccess.Write))
-                using (var bw = new BinaryWriter(fs))
+                using (FileStream fs = new(path, FileMode.Create, FileAccess.Write))
+                using (BinaryWriter bw = new(fs))
                 {
                     for (int i = 0; i < _data.Length; i++)
                     {
-                        byte value = ((_data[i].status & (uint)CellFlags.IsFilled) != 0) ? (byte)1 : (byte)0;
+                        byte value;
+                        if (HasFlag(i, CellFlags.IsFilled))
+                        {
+                            value = (byte)1;
+                        }
+                        else
+                        {
+                            value = (byte)0;
+                        }
                         bw.Write(value);
                     }
-                    bw.Flush(); // 明示的にフラッシュ
+                    bw.Flush();
+                    bw.Close();
+                    fs.Close();
                 }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-                UnityEngine.Debug.Log($"MRSculpture : Saved file. {path}");
+                UnityEngine.Debug.Log($"MRSculpture : Saved to {path}");
 #endif
             }
             catch (Exception ex)
@@ -272,24 +285,36 @@ namespace MRSculpture
         /// </summary>
         /// <param name="fileName">ファイル名</param>
         /// <param name="chunk">データを格納するDataChunk（refで渡す）</param>
-        public static void LoadDat(string fileName, ref DataChunk chunk)
+        public void LoadDat(string fileName)
         {
+            UnityEngine.Debug.Log($"MRSculpture : LoadDat → chunkLength : {_data.Length}");
             string path = Path.Combine(UnityEngine.Application.persistentDataPath, fileName);
-            using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read))
-            using (var br = new BinaryReader(fs))
+            try
             {
-                for (int i = 0; i < chunk.Length; i++)
+                using (FileStream fs = new(path, FileMode.Open, FileAccess.Read))
+                using (BinaryReader br = new(fs))
                 {
-                    byte value = br.ReadByte();
-                    if (value == 1)
+                    for (int i = 0; i < _data.Length; i++)
                     {
-                        chunk.AddFlag(i, CellFlags.IsFilled);
+                        byte value = br.ReadByte();
+                        if (value == 1)
+                        {
+                            AddFlag(i, CellFlags.IsFilled);
+                        }
                     }
+                    br.Close();
+                    fs.Close();
                 }
-            }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            UnityEngine.Debug.Log($"MRSculpture : Opened {path}");
+                UnityEngine.Debug.Log($"MRSculpture : Loaded from {path}");
 #endif
+            }
+            catch (Exception ex)
+            {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                UnityEngine.Debug.LogError($"MRSculpture : Load failed because {ex.Message}");
+#endif
+            }
         }
 
         // _dataへの読み取り専用プロパティ

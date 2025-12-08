@@ -71,6 +71,7 @@ GameObject:
   - component: {fileID: 7225358425353883830}
   - component: {fileID: 7953534238053369104}
   - component: {fileID: 3535703010690890771}
+  - component: {fileID: 7024648313499467186}
   m_Layer: 0
   m_Name: Stone
   m_TagString: Untagged
@@ -107,13 +108,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _boundsSize: {x: 150, y: 250, z: 120}
+  _boundsCollider: {fileID: 7915533992906918824}
   _triangleBudget: 1048606
   _builderCompute: {fileID: 7200000, guid: 5676387eaa52f3e4ea7d01daa2457019, type: 3}
-  _pinChisel: {fileID: 0}
-  _roundChisel: {fileID: 0}
-  _flatChisel: {fileID: 0}
-  _hammer: {fileID: 0}
-  _tester: {fileID: 0}
+  _pinChiselController: {fileID: 0}
+  _roundChiselController: {fileID: 0}
+  _flatChiselController: {fileID: 0}
 --- !u!33 &2848881931665970154
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -303,3 +303,16 @@ MonoBehaviour:
         Min: 0.25
         Max: 4
   _resetScaleResponsivenessOnConstraintOvershoot: 0
+--- !u!114 &7024648313499467186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7288610678156359353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e632f70658fe1440bd76f84987cff21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MRSculpture.MaterialSwitcher
+  _targetRenderer: {fileID: 5713017460364757568}

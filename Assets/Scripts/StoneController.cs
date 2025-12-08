@@ -21,7 +21,7 @@ namespace MRSculpture
         /// <summary>
         /// 石材の BoxCollider
         /// </summary>
-        private BoxCollider _boundsCollider = null;
+        [SerializeField] private BoxCollider _boundsCollider;
 
         /// <summary>
         /// メッシュ生成時の三角形の最大数
@@ -31,7 +31,7 @@ namespace MRSculpture
         /// <summary>
         /// メッシュ生成に使用する ComputeShader
         /// </summary>
-        [SerializeField] ComputeShader _builderCompute = null;
+        [SerializeField] ComputeShader _builderCompute;
 
         /// <summary>
         /// 等値面の値
@@ -56,52 +56,38 @@ namespace MRSculpture
         /// <summary>
         /// 精密ノミ
         /// </summary>
-        [SerializeField] private GameObject _pinChisel;
-
-        /// <summary>
-        /// 精密ノミ用コントローラ
-        /// </summary>
-        private ChiselController _pinChiselController;
+        [SerializeField] private ChiselController _pinChiselController;
 
         /// <summary>
         /// 丸ノミ
         /// </summary>
-        [SerializeField] private GameObject _roundChisel;
-
-        /// <summary>
-        /// 丸ノミ用のコントローラ
-        /// </summary>
-        private ChiselController _roundChiselController;
+        [SerializeField] private ChiselController _roundChiselController;
 
         /// <summary>
         /// 平ノミ
         /// </summary>
-        [SerializeField] private GameObject _flatChisel;
-
-        /// <summary>
-        /// 平ノミ用のコントローラ
-        /// </summary>
-        private ChiselController _flatChiselController;
+        [SerializeField] private ChiselController _flatChiselController;
 
         private void Awake()
         {
-            _boundsCollider = GetComponent<BoxCollider>();
-            SetupBoundsCollider();
-
-            _roundChiselController = _roundChisel.GetComponent<ChiselController>();
-            _pinChiselController = _pinChisel.GetComponent<ChiselController>();
-            _flatChiselController = _flatChisel.GetComponent<ChiselController>();
-
-            _voxelDataChunk = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
-
-            _voxelBuffer = new ComputeBuffer(VoxelCount, sizeof(uint));
-            _builder = new MeshBuilder(_boundsSize, _triangleBudget, _builderCompute);
-
             NewFile();
         }
 
-        private void Start()
+        private void CommonBehaviour()
         {
+            SetupBoundsCollider();
+
+            _voxelDataChunk = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
+            _voxelBuffer = new ComputeBuffer(VoxelCount, sizeof(uint));
+            _builder = new MeshBuilder(_boundsSize, _triangleBudget, _builderCompute);
+        }
+
+        private void AttachDataChunks()
+        {
+            _voxelBuffer.SetData(_voxelDataChunk.DataArray);
+            _builder.BuildIsosurface(_voxelBuffer, _builtTargetValue);
+            GetComponent<MeshFilter>().sharedMesh = _builder.Mesh;
+
             _roundChiselController.AttachDataChunk(ref _voxelDataChunk);
             _pinChiselController.AttachDataChunk(ref _voxelDataChunk);
             _flatChiselController.AttachDataChunk(ref _voxelDataChunk);
@@ -114,19 +100,26 @@ namespace MRSculpture
         /// </summary>
         public async void LoadFile()
         {
+            OnDestroy();
+
             string fileName = "model.dat";
             string path = Path.Combine(Application.persistentDataPath, fileName);
 
             if (File.Exists(path))
             {
+                CommonBehaviour();
+                Debug.Log($"MRSculpture : StoneController → DataChunkLength : {_voxelDataChunk.Length}");
+
                 await System.Threading.Tasks.Task.Run(() =>
                 {
-                    DataChunk.LoadDat(fileName, ref _voxelDataChunk);
+                    _voxelDataChunk.LoadDat(fileName);
                 });
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log($"MRSculpture : DataChunk loaded from {fileName}");
 #endif
+
+                AttachDataChunks();
             }
             else
             {
@@ -157,6 +150,9 @@ namespace MRSculpture
         /// </summary>
         public void NewFile()
         {
+            OnDestroy();
+            CommonBehaviour();
+
             for (int y = 0; y < _voxelDataChunk.yLength; y++)
             {
                 for (int z = 0; z < _voxelDataChunk.zLength; z++)
@@ -168,13 +164,11 @@ namespace MRSculpture
                 }
             }
 
-            _voxelBuffer.SetData(_voxelDataChunk.DataArray);
-            _builder.BuildIsosurface(_voxelBuffer, _builtTargetValue);
-            GetComponent<MeshFilter>().sharedMesh = _builder.Mesh;
-
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log("MRSculpture : New DataChunk created.");
 #endif
+
+            AttachDataChunks();
         }
 
         /// <summary>
@@ -209,9 +203,12 @@ namespace MRSculpture
 
         private void OnDestroy()
         {
-            _voxelDataChunk.Dispose();
-            _voxelBuffer.Dispose();
-            _builder.Dispose();
+            if (_voxelDataChunk.Length > 0)
+            {
+                _voxelDataChunk.Dispose();
+            }
+            _voxelBuffer?.Dispose();
+            _builder?.Dispose();
         }
 
 #if UNITY_EDITOR
