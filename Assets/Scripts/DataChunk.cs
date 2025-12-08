@@ -16,6 +16,9 @@ namespace MRSculpture
 
         public readonly bool IsCreated => _data.IsCreated;
 
+        // _dataへの読み取り専用プロパティ
+        public NativeArray<CellManager> DataArray => _data;
+
         /// <summary>
         /// 生成範囲の配列を初期化
         /// </summary>
@@ -243,9 +246,16 @@ namespace MRSculpture
         /// <summary>
         /// Datファイルを出力
         /// </summary>
-        public void SaveDat(string fileName)
+        public void SaveDat(string path)
         {
-            string path = Path.Combine(UnityEngine.Application.persistentDataPath, fileName);
+            if (!_data.IsCreated)
+            {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                UnityEngine.Debug.LogError("MRSculpture : SaveDat failed because NativeArray is not created.");
+#endif
+                return;
+            }
+
             try
             {
                 using (FileStream fs = new(path, FileMode.Create, FileAccess.Write))
@@ -256,17 +266,15 @@ namespace MRSculpture
                         byte value;
                         if (HasFlag(i, CellFlags.IsFilled))
                         {
-                            value = (byte)1;
+                            value = 1;
                         }
                         else
                         {
-                            value = (byte)0;
+                            value = 0;
                         }
                         bw.Write(value);
                     }
                     bw.Flush();
-                    bw.Close();
-                    fs.Close();
                 }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 UnityEngine.Debug.Log($"MRSculpture : Saved to {path}");
@@ -283,12 +291,18 @@ namespace MRSculpture
         /// <summary>
         /// Datファイルを入力
         /// </summary>
-        /// <param name="fileName">ファイル名</param>
+        /// <param name="path">ファイルパス</param>
         /// <param name="chunk">データを格納するDataChunk（refで渡す）</param>
-        public void LoadDat(string fileName)
+        public void LoadDat(string path)
         {
-            UnityEngine.Debug.Log($"MRSculpture : LoadDat → chunkLength : {_data.Length}");
-            string path = Path.Combine(UnityEngine.Application.persistentDataPath, fileName);
+            if (!_data.IsCreated)
+            {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                UnityEngine.Debug.LogError("MRSculpture : LoadDat failed because NativeArray is not created.");
+#endif
+                return;
+            }
+
             try
             {
                 using (FileStream fs = new(path, FileMode.Open, FileAccess.Read))
@@ -302,8 +316,6 @@ namespace MRSculpture
                             AddFlag(i, CellFlags.IsFilled);
                         }
                     }
-                    br.Close();
-                    fs.Close();
                 }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 UnityEngine.Debug.Log($"MRSculpture : Loaded from {path}");
@@ -316,8 +328,5 @@ namespace MRSculpture
 #endif
             }
         }
-
-        // _dataへの読み取り専用プロパティ
-        public NativeArray<CellManager> DataArray => _data;
     }
 }

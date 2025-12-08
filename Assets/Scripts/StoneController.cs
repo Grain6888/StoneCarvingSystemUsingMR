@@ -108,25 +108,22 @@ namespace MRSculpture
             if (File.Exists(path))
             {
                 CommonBehaviour();
-                Debug.Log($"MRSculpture : StoneController → DataChunkLength : {_voxelDataChunk.Length}");
 
                 await System.Threading.Tasks.Task.Run(() =>
                 {
-                    _voxelDataChunk.LoadDat(fileName);
+                    _voxelDataChunk.LoadDat(path);
                 });
-
+                AttachDataChunks();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log($"MRSculpture : DataChunk loaded from {fileName}");
 #endif
-
-                AttachDataChunks();
             }
             else
             {
+                NewFile();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.LogWarning("MRSculpture : DataChunk load failed.");
 #endif
-                NewFile();
             }
         }
 
@@ -138,10 +135,11 @@ namespace MRSculpture
         public async void SaveFile()
         {
             string fileName = "model.dat";
+            string path = Path.Combine(Application.persistentDataPath, fileName);
 
             await System.Threading.Tasks.Task.Run(() =>
             {
-                _voxelDataChunk.SaveDat(fileName);
+                _voxelDataChunk.SaveDat(path);
             });
         }
 
@@ -163,12 +161,10 @@ namespace MRSculpture
                     }
                 }
             }
-
+            AttachDataChunks();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log("MRSculpture : New DataChunk created.");
 #endif
-
-            AttachDataChunks();
         }
 
         /// <summary>
@@ -203,7 +199,7 @@ namespace MRSculpture
 
         private void OnDestroy()
         {
-            if (_voxelDataChunk.Length > 0)
+            if (_voxelDataChunk.IsCreated)
             {
                 _voxelDataChunk.Dispose();
             }
