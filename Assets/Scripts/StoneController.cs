@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Collections.Generic;
 using UnityEngine;
 using MarchingCubes;
 
@@ -15,21 +16,17 @@ namespace MRSculpture
 
         public Vector3Int BoundsSize => _boundsSize;
 
-        /// <summary>
-        /// 彫刻素材のボクセルデータを格納する DataChunk
-        /// </summary>
         private DataChunk _voxelDataChunk;
 
-        /// <summary>
-        /// ひとつ前の状態を保存する DataChunk
-        /// </summary>
-        private DataChunk _beforeCarve;
+        private struct VoxelDiff
+        {
+            public int Index;
+            public uint Before;
+            public uint After;
+        }
+        private List<VoxelDiff> _lastCarveDiffs = new();
+        private bool _canRedo = false;
 
-        private DataChunk _afterCarve;
-
-        /// <summary>
-        /// 石材の BoxCollider
-        /// </summary>
         [SerializeField] private BoxCollider _boundsCollider;
 
         /// <summary>
@@ -87,8 +84,6 @@ namespace MRSculpture
             SetupBoundsCollider();
 
             _voxelDataChunk = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
-            _beforeCarve = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
-            _afterCarve = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
             _voxelBuffer = new ComputeBuffer(VoxelCount, sizeof(uint));
             _builder = new MeshBuilder(_boundsSize, _triangleBudget, _builderCompute);
         }
@@ -135,7 +130,6 @@ namespace MRSculpture
             CommonBehaviour();
             LoadFile(fileName);
             AttachDataChunks();
-            _voxelDataChunk.DataArray.CopyTo(_beforeCarve.DataArray);
         }
 
         /// <summary>
@@ -186,7 +180,6 @@ namespace MRSculpture
             CommonBehaviour();
             NewFile();
             AttachDataChunks();
-            _voxelDataChunk.DataArray.CopyTo(_beforeCarve.DataArray);
         }
 
         /// <summary>
@@ -219,30 +212,28 @@ namespace MRSculpture
 #endif
         }
 
-        private bool redoFlag = false;
-
-        private void RedoDataChunk()
+        // 差分記録用API
+        public void SetCarveDiffs(List<(int index, uint before, uint after)> diffs)
         {
-            _afterCarve.DataArray.CopyTo(_voxelDataChunk.DataArray);
-            UpdateMesh();
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            Debug.Log("MRSculpture : Redo");
-#endif
-        }
-
-        public void OnRedo()
-        {
-            if (!redoFlag)
+            _lastCarveDiffs.Clear();
+            foreach (var diff in diffs)
             {
-                RedoDataChunk();
-                redoFlag = true;
+                _lastCarveDiffs.Add(new VoxelDiff { Index = diff.index, Before = diff.before, After = diff.after });
             }
+            _canRedo = true;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log($"MRSculpture : SetCarveDiffs count={_lastCarveDiffs.Count}");
+#endif
         }
 
         private void UndoDataChunk()
         {
-            _voxelDataChunk.DataArray.CopyTo(_afterCarve.DataArray);
-            _beforeCarve.DataArray.CopyTo(_voxelDataChunk.DataArray);
+            if (_lastCarveDiffs.Count == 0) return;
+            var arr = _voxelDataChunk.DataArray;
+            foreach (var diff in _lastCarveDiffs)
+            {
+                arr[diff.Index] = new CellManager { status = diff.Before };
+            }
             UpdateMesh();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log("MRSculpture : Undo");
@@ -251,20 +242,34 @@ namespace MRSculpture
 
         public void OnUndo()
         {
-            if (redoFlag)
+            if (_canRedo)
             {
                 UndoDataChunk();
-                redoFlag = false;
+                _canRedo = false;
             }
         }
 
-        public void SetPreVoxelDataChunk(DataChunk inputDataChunk)
+        private void RedoDataChunk()
         {
-            inputDataChunk.DataArray.CopyTo(_beforeCarve.DataArray);
-            redoFlag = true;
+            if (_lastCarveDiffs.Count == 0) return;
+            var arr = _voxelDataChunk.DataArray;
+            foreach (var diff in _lastCarveDiffs)
+            {
+                arr[diff.Index] = new CellManager { status = diff.After };
+            }
+            UpdateMesh();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            Debug.Log("MRSculpture : Set PreVoxelDataChunk");
+            Debug.Log("MRSculpture : Redo");
 #endif
+        }
+
+        public void OnRedo()
+        {
+            if (!_canRedo)
+            {
+                RedoDataChunk();
+                _canRedo = true;
+            }
         }
 
         private void OnDestroy()
@@ -272,14 +277,6 @@ namespace MRSculpture
             if (_voxelDataChunk.IsCreated)
             {
                 _voxelDataChunk.Dispose();
-            }
-            if (_beforeCarve.IsCreated)
-            {
-                _beforeCarve.Dispose();
-            }
-            if (_afterCarve.IsCreated)
-            {
-                _afterCarve.Dispose();
             }
             _voxelBuffer?.Dispose();
             _builder?.Dispose();
