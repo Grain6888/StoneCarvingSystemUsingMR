@@ -13,10 +13,19 @@ namespace MRSculpture
         /// </summary>
         [SerializeField] private Vector3Int _boundsSize = new(100, 100, 100);
 
+        public Vector3Int BoundsSize => _boundsSize;
+
         /// <summary>
         /// 彫刻素材のボクセルデータを格納する DataChunk
         /// </summary>
         private DataChunk _voxelDataChunk;
+
+        /// <summary>
+        /// ひとつ前の状態を保存する DataChunk
+        /// </summary>
+        private DataChunk _beforeCarve;
+
+        private DataChunk _afterCarve;
 
         /// <summary>
         /// 石材の BoxCollider
@@ -70,7 +79,7 @@ namespace MRSculpture
 
         private void Awake()
         {
-            NewFile();
+            OnNewFile();
         }
 
         private void CommonBehaviour()
@@ -78,6 +87,8 @@ namespace MRSculpture
             SetupBoundsCollider();
 
             _voxelDataChunk = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
+            _beforeCarve = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
+            _afterCarve = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
             _voxelBuffer = new ComputeBuffer(VoxelCount, sizeof(uint));
             _builder = new MeshBuilder(_boundsSize, _triangleBudget, _builderCompute);
         }
@@ -98,22 +109,13 @@ namespace MRSculpture
         /// ファイルからボクセルデータを読み込む．ファイルが存在しない場合は新規作成する．
         /// </para>
         /// </summary>
-        public async void LoadFile()
+        private void LoadFile(string fileName)
         {
-            OnDestroy();
-
-            string fileName = "model.dat";
             string path = Path.Combine(Application.persistentDataPath, fileName);
 
             if (File.Exists(path))
             {
-                CommonBehaviour();
-
-                await System.Threading.Tasks.Task.Run(() =>
-                {
-                    _voxelDataChunk.LoadDat(path);
-                });
-                AttachDataChunks();
+                _voxelDataChunk.LoadDat(path);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log($"MRSculpture : DataChunk loaded from {fileName}");
 #endif
@@ -127,30 +129,45 @@ namespace MRSculpture
             }
         }
 
+        public void OnLoadFile(string fileName)
+        {
+            OnDestroy();
+            CommonBehaviour();
+            LoadFile(fileName);
+            AttachDataChunks();
+            _voxelDataChunk.DataArray.CopyTo(_beforeCarve.DataArray);
+        }
+
         /// <summary>
         /// <para>
         /// 現在のボクセルデータをファイルに保存する．
         /// </para>
         /// </summary>
-        public async void SaveFile()
+        private void SaveFile(string fileName)
         {
-            string fileName = "model.dat";
             string path = Path.Combine(Application.persistentDataPath, fileName);
 
-            await System.Threading.Tasks.Task.Run(() =>
-            {
-                _voxelDataChunk.SaveDat(path);
-            });
+            _voxelDataChunk.SaveDat(path);
+        }
+
+        public void OnSaveFile(string fileName)
+        {
+            SaveFile(fileName);
         }
 
         /// <summary>
         /// DataChunk を全て埋まった状態で初期化し，初期メッシュを生成する．
         /// </summary>
-        public void NewFile()
+        private void NewFile()
         {
-            OnDestroy();
-            CommonBehaviour();
+            FillVoxelDataChunk();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log("MRSculpture : New DataChunk created.");
+#endif
+        }
 
+        private void FillVoxelDataChunk()
+        {
             for (int y = 0; y < _voxelDataChunk.yLength; y++)
             {
                 for (int z = 0; z < _voxelDataChunk.zLength; z++)
@@ -161,10 +178,15 @@ namespace MRSculpture
                     }
                 }
             }
+        }
+
+        public void OnNewFile()
+        {
+            OnDestroy();
+            CommonBehaviour();
+            NewFile();
             AttachDataChunks();
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            Debug.Log("MRSculpture : New DataChunk created.");
-#endif
+            _voxelDataChunk.DataArray.CopyTo(_beforeCarve.DataArray);
         }
 
         /// <summary>
@@ -197,11 +219,67 @@ namespace MRSculpture
 #endif
         }
 
+        private bool redoFlag = false;
+
+        private void RedoDataChunk()
+        {
+            _afterCarve.DataArray.CopyTo(_voxelDataChunk.DataArray);
+            UpdateMesh();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log("MRSculpture : Redo");
+#endif
+        }
+
+        public void OnRedo()
+        {
+            if (!redoFlag)
+            {
+                RedoDataChunk();
+                redoFlag = true;
+            }
+        }
+
+        private void UndoDataChunk()
+        {
+            _voxelDataChunk.DataArray.CopyTo(_afterCarve.DataArray);
+            _beforeCarve.DataArray.CopyTo(_voxelDataChunk.DataArray);
+            UpdateMesh();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log("MRSculpture : Undo");
+#endif
+        }
+
+        public void OnUndo()
+        {
+            if (redoFlag)
+            {
+                UndoDataChunk();
+                redoFlag = false;
+            }
+        }
+
+        public void SetPreVoxelDataChunk(DataChunk inputDataChunk)
+        {
+            inputDataChunk.DataArray.CopyTo(_beforeCarve.DataArray);
+            redoFlag = true;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log("MRSculpture : Set PreVoxelDataChunk");
+#endif
+        }
+
         private void OnDestroy()
         {
             if (_voxelDataChunk.IsCreated)
             {
                 _voxelDataChunk.Dispose();
+            }
+            if (_beforeCarve.IsCreated)
+            {
+                _beforeCarve.Dispose();
+            }
+            if (_afterCarve.IsCreated)
+            {
+                _afterCarve.Dispose();
             }
             _voxelBuffer?.Dispose();
             _builder?.Dispose();

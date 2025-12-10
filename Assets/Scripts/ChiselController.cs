@@ -138,6 +138,9 @@ namespace MRSculpture
         /// </summary>
         public void Carve()
         {
+            DataChunk preVoxelDataChunk = new(_stoneController.BoundsSize.x, _stoneController.BoundsSize.y, _stoneController.BoundsSize.z);
+            _voxelDataChunk.DataArray.CopyTo(preVoxelDataChunk.DataArray);
+
             float scaling = _initialStoneScaleX * _impactRange / transform.localScale.x;
             _colliderTransform.localScale = Vector3.one * scaling;
 
@@ -178,6 +181,7 @@ namespace MRSculpture
 
             if (removedCount > 0)
             {
+                _stoneController.SetPreVoxelDataChunk(preVoxelDataChunk);
                 PlayFeedback(removedCount);
             }
         }

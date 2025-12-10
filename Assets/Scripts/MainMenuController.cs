@@ -67,6 +67,11 @@ public class MainMenuController : MonoBehaviour
         this.EndStart(ref _started);
     }
 
+    private void Awake()
+    {
+        _menuParent.SetActive(false);
+    }
+
     /// <summary>
     /// Show/hide the menu.
     /// </summary>
