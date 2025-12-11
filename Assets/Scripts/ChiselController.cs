@@ -13,7 +13,9 @@ namespace MRSculpture
         /// <summary>
         /// 石材
         /// </summary>
-        [SerializeField] private GameObject _stone;
+        [SerializeField]
+        [Header("石材")]
+        private GameObject _stone;
 
         /// <summary>
         /// 石材の Transform
@@ -28,7 +30,9 @@ namespace MRSculpture
         /// <summary>
         /// 衝撃判定用 Collider
         /// </summary>
-        [SerializeField] private Collider _collider;
+        [SerializeField]
+        [Header("衝撃判定用 Collider")]
+        private Collider _collider;
 
         /// <summary>
         /// Collider の Transform
@@ -38,7 +42,9 @@ namespace MRSculpture
         /// <summary>
         /// ハンマー
         /// </summary>
-        [SerializeField] private GameObject _hammer;
+        [SerializeField]
+        [Header("ハンマー")]
+        private GameObject _hammer;
 
         /// <summary>
         /// ハンマーコントローラ
@@ -53,7 +59,19 @@ namespace MRSculpture
         /// <summary>
         /// ImpactRange の最大値
         /// </summary>
-        [SerializeField, Range(0, 200)] private int _maxImpactRange = 70;
+        [SerializeField]
+        [Range(0, 200)]
+        [Header("Impact Range の最大値")]
+        private int _maxImpactRange = 70;
+
+        /// <summary>
+        /// ハンマーの衝撃感度
+        /// </summary>
+        [SerializeField]
+        [Range(0, 50)]
+        [Header("ハンマーの衝撃感度")]
+        [Tooltip("0 を指定すると Update 毎に Carve が実行されます")]
+        private int _sensitivity = 20;
 
         /// <summary>
         /// ボクセル DataChunk
@@ -63,17 +81,23 @@ namespace MRSculpture
         /// <summary>
         /// 触覚フィードバック用 HapticSource
         /// </summary>
-        [SerializeField] private HapticSource _hapticSource;
+        [SerializeField]
+        [Header("触覚フィードバック用 Haptic Source")]
+        private HapticSource _hapticSource;
 
         /// <summary>
         /// 音響フィードバック用 AudioSource
         /// </summary>
-        [SerializeField] private AudioSource _audioSource;
+        [SerializeField]
+        [Header("音響フィードバック用 Audio Source")]
+        private AudioSource _audioSource;
 
         /// <summary>
         /// 視覚フィードバック用 ParticleSystem
         /// </summary>
-        [SerializeField] private ParticleSystem _particleSystem;
+        [SerializeField]
+        [Header("視覚フィードバック用 Particle System")]
+        private ParticleSystem _particleSystem;
 
         /// <summary>
         /// パーティクルのインスタンス
@@ -84,11 +108,6 @@ namespace MRSculpture
         /// ボクセルの削除解像度 (1で等倍)
         /// </summary>
         private int _lowPolyLevel;
-
-        /// <summary>
-        /// ハンマーの衝撃感度
-        /// </summary>
-        [SerializeField, Range(1, 50)] private int _sensitivity = 20;
 
         /// <summary>
         /// 石材の初期スケール (X軸)
@@ -126,7 +145,7 @@ namespace MRSculpture
             }
             else
             {
-                _impactRange = _maxImpactRange;
+                _impactRange = 0;
             }
 
             UpdateLowPolyLevelByStoneScale();
@@ -142,6 +161,12 @@ namespace MRSculpture
                 Carve();
                 _stoneController.UpdateMesh();
             }
+
+            if (_sensitivity == 0)
+            {
+                Carve();
+                _stoneController.UpdateMesh();
+            }
         }
 
         /// <summary>
@@ -150,12 +175,14 @@ namespace MRSculpture
         public void Carve()
         {
             var diffs = new System.Collections.Generic.List<(int index, uint before, uint after)>();
-            // Carve前の値を記録しつつCarve処理
-            float scaling = _initialStoneScaleX * _impactRange / transform.localScale.x;
-            _colliderTransform.localScale = Vector3.one * scaling;
+
+            if (_sensitivity > 0)
+            {
+                float scaling = _initialStoneScaleX * _impactRange / transform.localScale.x;
+                _colliderTransform.localScale = Vector3.one * scaling;
+            }
             ExtractVoxel(out int minX, out int maxX, out int minY, out int maxY, out int minZ, out int maxZ);
             Matrix4x4 targetMatrix = _stoneTransform.localToWorldMatrix;
-            Collider[] hitColliders = new Collider[10];
             int removedCount = 0;
             for (int y = minY; y <= maxY; y += _lowPolyLevel)
             {

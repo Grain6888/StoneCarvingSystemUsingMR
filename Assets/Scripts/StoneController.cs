@@ -109,6 +109,11 @@ namespace MRSculpture
         /// </summary>
         [SerializeField] private ChiselController _flatChiselController;
 
+        /// <summary>
+        /// デバッグ用
+        /// </summary>
+        [SerializeField] private ChiselController _debugSphere;
+
         private void Awake()
         {
             OnNewFile();
@@ -132,6 +137,7 @@ namespace MRSculpture
             _roundChiselController.AttachDataChunk(ref _voxelDataChunk);
             _pinChiselController.AttachDataChunk(ref _voxelDataChunk);
             _flatChiselController.AttachDataChunk(ref _voxelDataChunk);
+            _debugSphere.AttachDataChunk(ref _voxelDataChunk);
         }
 
         /// <summary>
@@ -217,7 +223,6 @@ namespace MRSculpture
             CommonBehaviour();
             NewFile();
             AttachDataChunks();
-            //_undoQueue.Clear();
             _undoDeque.Clear();
             _redoStack.Clear();
         }
