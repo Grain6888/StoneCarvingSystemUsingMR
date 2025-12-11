@@ -13,20 +13,55 @@ namespace MRSculpture
         /// 石材の生成範囲 (単位はボクセル)
         /// </summary>
         [SerializeField] private Vector3Int _boundsSize = new(100, 100, 100);
-
         public Vector3Int BoundsSize => _boundsSize;
 
+        /// <summary>
+        /// 彫刻素材のボクセルデータを格納する DataChunk
+        /// </summary>
         private DataChunk _voxelDataChunk;
 
+        /// <summary>
+        /// 彫刻前後のボクセルデータの差分を管理する構造体
+        /// </summary>
         private struct VoxelDiff
         {
+            /// <summary>
+            /// インデックス
+            /// </summary>
             public int Index;
+            /// <summary>
+            /// 彫刻前の状態
+            /// </summary>
             public uint Before;
+            /// <summary>
+            /// 彫刻後の状態
+            /// </summary>
             public uint After;
         }
-        private List<VoxelDiff> _lastCarveDiffs = new();
-        private bool _canRedo = false;
+        /// <summary>
+        /// Undo の差分を管理するキュー
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// 最大5世代を記憶
+        /// </para>
+        /// </remarks>
+        private readonly LinkedList<List<VoxelDiff>> _undoDeque = new();
+        /// <summary>
+        /// Redo の差分を管理するスタック
+        /// </summary>
+        /// <remarks>
+        /// 最大5世代を記憶
+        /// </remarks>
+        private readonly Stack<List<VoxelDiff>> _redoStack = new();
+        /// <summary>
+        /// 記憶可能な世代の最大数
+        /// </summary>
+        private const int MaxHistory = 5;
 
+        /// <summary>
+        /// 石材の BoxCollider
+        /// </summary>
         [SerializeField] private BoxCollider _boundsCollider;
 
         /// <summary>
@@ -130,6 +165,8 @@ namespace MRSculpture
             CommonBehaviour();
             LoadFile(fileName);
             AttachDataChunks();
+            _undoDeque.Clear();
+            _redoStack.Clear();
         }
 
         /// <summary>
@@ -180,6 +217,9 @@ namespace MRSculpture
             CommonBehaviour();
             NewFile();
             AttachDataChunks();
+            //_undoQueue.Clear();
+            _undoDeque.Clear();
+            _redoStack.Clear();
         }
 
         /// <summary>
@@ -212,28 +252,52 @@ namespace MRSculpture
 #endif
         }
 
-        // 差分記録用API
+        /// <summary>
+        /// ボクセルデータの差分を記録する．
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// 記録された世代数が MaxHistory を超えると最も古い世代から削除される．
+        /// </para>
+        /// <para>
+        /// Undo の差分が記録されると Redo の差分が削除される．
+        /// </para>
+        /// </remarks>
+        /// <param name="diffs">
+        /// ボクセルデータの差分
+        /// </param>
         public void SetCarveDiffs(List<(int index, uint before, uint after)> diffs)
         {
-            _lastCarveDiffs.Clear();
-            foreach (var diff in diffs)
+            var diffList = new List<VoxelDiff>(diffs.Count);
+            foreach (var d in diffs)
             {
-                _lastCarveDiffs.Add(new VoxelDiff { Index = diff.index, Before = diff.before, After = diff.after });
+                diffList.Add(new VoxelDiff { Index = d.index, Before = d.before, After = d.after });
             }
-            _canRedo = true;
+            if (diffList.Count > 0)
+            {
+                _undoDeque.AddLast(diffList);
+                if (_undoDeque.Count > MaxHistory)
+                {
+                    _undoDeque.RemoveFirst();
+                }
+                _redoStack.Clear();
+            }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            Debug.Log($"MRSculpture : SetCarveDiffs count={_lastCarveDiffs.Count}");
+            Debug.Log($"MRSculpture : SetCarveDiffs count={diffList.Count}");
 #endif
         }
 
         private void UndoDataChunk()
         {
-            if (_lastCarveDiffs.Count == 0) return;
+            if (_undoDeque.Count == 0) return;
+            var last = _undoDeque.Last.Value;
             var arr = _voxelDataChunk.DataArray;
-            foreach (var diff in _lastCarveDiffs)
+            foreach (var diff in last)
             {
                 arr[diff.Index] = new CellManager { status = diff.Before };
             }
+            _redoStack.Push(last);
+            _undoDeque.RemoveLast();
             UpdateMesh();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log("MRSculpture : Undo");
@@ -242,18 +306,15 @@ namespace MRSculpture
 
         public void OnUndo()
         {
-            if (_canRedo)
-            {
-                UndoDataChunk();
-                _canRedo = false;
-            }
+            UndoDataChunk();
         }
 
         private void RedoDataChunk()
         {
-            if (_lastCarveDiffs.Count == 0) return;
+            if (_redoStack.Count == 0) return;
+            var last = _redoStack.Pop();
             var arr = _voxelDataChunk.DataArray;
-            foreach (var diff in _lastCarveDiffs)
+            foreach (var diff in last)
             {
                 arr[diff.Index] = new CellManager { status = diff.After };
             }
@@ -265,11 +326,7 @@ namespace MRSculpture
 
         public void OnRedo()
         {
-            if (!_canRedo)
-            {
-                RedoDataChunk();
-                _canRedo = true;
-            }
+            RedoDataChunk();
         }
 
         private void OnDestroy()
