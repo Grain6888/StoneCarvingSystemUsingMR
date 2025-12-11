@@ -120,13 +120,24 @@ namespace MRSculpture
 
         private void Update()
         {
-            _impactRange = Mathf.Min(_maxImpactRange, (int)(_hammerController.ImpactMagnitude * _sensitivity));
+            if (_sensitivity > 0)
+            {
+                _impactRange = Mathf.Min(_maxImpactRange, (int)(_hammerController.ImpactMagnitude * _sensitivity));
+            }
+            else
+            {
+                _impactRange = _maxImpactRange;
+            }
+
             UpdateLowPolyLevelByStoneScale();
 
             if (_impactRange > 0)
             {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-                Debug.Log($"MRSculpture : {name} cought ImpactRange = {_impactRange}");
+                if (_sensitivity > 0)
+                {
+                    Debug.Log($"MRSculpture : {name} cought ImpactRange = {_impactRange}");
+                }
 #endif
                 Carve();
                 _stoneController.UpdateMesh();
