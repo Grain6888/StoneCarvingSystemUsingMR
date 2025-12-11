@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Collections.Generic;
 using UnityEngine;
 using MarchingCubes;
 
@@ -12,6 +13,7 @@ namespace MRSculpture
         /// 石材の生成範囲 (単位はボクセル)
         /// </summary>
         [SerializeField] private Vector3Int _boundsSize = new(100, 100, 100);
+        public Vector3Int BoundsSize => _boundsSize;
 
         /// <summary>
         /// 彫刻素材のボクセルデータを格納する DataChunk
@@ -19,9 +21,48 @@ namespace MRSculpture
         private DataChunk _voxelDataChunk;
 
         /// <summary>
+        /// 彫刻前後のボクセルデータの差分を管理する構造体
+        /// </summary>
+        private struct VoxelDiff
+        {
+            /// <summary>
+            /// インデックス
+            /// </summary>
+            public int Index;
+            /// <summary>
+            /// 彫刻前の状態
+            /// </summary>
+            public uint Before;
+            /// <summary>
+            /// 彫刻後の状態
+            /// </summary>
+            public uint After;
+        }
+        /// <summary>
+        /// Undo の差分を管理するキュー
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// 最大5世代を記憶
+        /// </para>
+        /// </remarks>
+        private readonly LinkedList<List<VoxelDiff>> _undoDeque = new();
+        /// <summary>
+        /// Redo の差分を管理するスタック
+        /// </summary>
+        /// <remarks>
+        /// 最大5世代を記憶
+        /// </remarks>
+        private readonly Stack<List<VoxelDiff>> _redoStack = new();
+        /// <summary>
+        /// 記憶可能な世代の最大数
+        /// </summary>
+        private const int MaxHistory = 5;
+
+        /// <summary>
         /// 石材の BoxCollider
         /// </summary>
-        private BoxCollider _boundsCollider = null;
+        [SerializeField] private BoxCollider _boundsCollider;
 
         /// <summary>
         /// メッシュ生成時の三角形の最大数
@@ -31,7 +72,7 @@ namespace MRSculpture
         /// <summary>
         /// メッシュ生成に使用する ComputeShader
         /// </summary>
-        [SerializeField] ComputeShader _builderCompute = null;
+        [SerializeField] ComputeShader _builderCompute;
 
         /// <summary>
         /// 等値面の値
@@ -56,52 +97,38 @@ namespace MRSculpture
         /// <summary>
         /// 精密ノミ
         /// </summary>
-        [SerializeField] private GameObject _pinChisel;
-
-        /// <summary>
-        /// 精密ノミ用コントローラ
-        /// </summary>
-        private ChiselController _pinChiselController;
+        [SerializeField] private ChiselController _pinChiselController;
 
         /// <summary>
         /// 丸ノミ
         /// </summary>
-        [SerializeField] private GameObject _roundChisel;
-
-        /// <summary>
-        /// 丸ノミ用のコントローラ
-        /// </summary>
-        private ChiselController _roundChiselController;
+        [SerializeField] private ChiselController _roundChiselController;
 
         /// <summary>
         /// 平ノミ
         /// </summary>
-        [SerializeField] private GameObject _flatChisel;
-
-        /// <summary>
-        /// 平ノミ用のコントローラ
-        /// </summary>
-        private ChiselController _flatChiselController;
+        [SerializeField] private ChiselController _flatChiselController;
 
         private void Awake()
         {
-            _boundsCollider = GetComponent<BoxCollider>();
-            SetupBoundsCollider();
-
-            _roundChiselController = _roundChisel.GetComponent<ChiselController>();
-            _pinChiselController = _pinChisel.GetComponent<ChiselController>();
-            _flatChiselController = _flatChisel.GetComponent<ChiselController>();
-
-            _voxelDataChunk = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
-
-            _voxelBuffer = new ComputeBuffer(VoxelCount, sizeof(uint));
-            _builder = new MeshBuilder(_boundsSize, _triangleBudget, _builderCompute);
-
-            NewFile();
+            OnNewFile();
         }
 
-        private void Start()
+        private void CommonBehaviour()
         {
+            SetupBoundsCollider();
+
+            _voxelDataChunk = new DataChunk(_boundsSize.x, _boundsSize.y, _boundsSize.z);
+            _voxelBuffer = new ComputeBuffer(VoxelCount, sizeof(uint));
+            _builder = new MeshBuilder(_boundsSize, _triangleBudget, _builderCompute);
+        }
+
+        private void AttachDataChunks()
+        {
+            _voxelBuffer.SetData(_voxelDataChunk.DataArray);
+            _builder.BuildIsosurface(_voxelBuffer, _builtTargetValue);
+            GetComponent<MeshFilter>().sharedMesh = _builder.Mesh;
+
             _roundChiselController.AttachDataChunk(ref _voxelDataChunk);
             _pinChiselController.AttachDataChunk(ref _voxelDataChunk);
             _flatChiselController.AttachDataChunk(ref _voxelDataChunk);
@@ -112,29 +139,34 @@ namespace MRSculpture
         /// ファイルからボクセルデータを読み込む．ファイルが存在しない場合は新規作成する．
         /// </para>
         /// </summary>
-        public async void LoadFile()
+        private void LoadFile(string fileName)
         {
-            string fileName = "model.dat";
             string path = Path.Combine(Application.persistentDataPath, fileName);
 
             if (File.Exists(path))
             {
-                await System.Threading.Tasks.Task.Run(() =>
-                {
-                    DataChunk.LoadDat(fileName, ref _voxelDataChunk);
-                });
-
+                _voxelDataChunk.LoadDat(path);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log($"MRSculpture : DataChunk loaded from {fileName}");
 #endif
             }
             else
             {
+                NewFile();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.LogWarning("MRSculpture : DataChunk load failed.");
 #endif
-                NewFile();
             }
+        }
+
+        public void OnLoadFile(string fileName)
+        {
+            OnDestroy();
+            CommonBehaviour();
+            LoadFile(fileName);
+            AttachDataChunks();
+            _undoDeque.Clear();
+            _redoStack.Clear();
         }
 
         /// <summary>
@@ -142,20 +174,30 @@ namespace MRSculpture
         /// 現在のボクセルデータをファイルに保存する．
         /// </para>
         /// </summary>
-        public async void SaveFile()
+        private void SaveFile(string fileName)
         {
-            string fileName = "model.dat";
+            string path = Path.Combine(Application.persistentDataPath, fileName);
 
-            await System.Threading.Tasks.Task.Run(() =>
-            {
-                _voxelDataChunk.SaveDat(fileName);
-            });
+            _voxelDataChunk.SaveDat(path);
+        }
+
+        public void OnSaveFile(string fileName)
+        {
+            SaveFile(fileName);
         }
 
         /// <summary>
         /// DataChunk を全て埋まった状態で初期化し，初期メッシュを生成する．
         /// </summary>
-        public void NewFile()
+        private void NewFile()
+        {
+            FillVoxelDataChunk();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log("MRSculpture : New DataChunk created.");
+#endif
+        }
+
+        private void FillVoxelDataChunk()
         {
             for (int y = 0; y < _voxelDataChunk.yLength; y++)
             {
@@ -167,14 +209,17 @@ namespace MRSculpture
                     }
                 }
             }
+        }
 
-            _voxelBuffer.SetData(_voxelDataChunk.DataArray);
-            _builder.BuildIsosurface(_voxelBuffer, _builtTargetValue);
-            GetComponent<MeshFilter>().sharedMesh = _builder.Mesh;
-
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            Debug.Log("MRSculpture : New DataChunk created.");
-#endif
+        public void OnNewFile()
+        {
+            OnDestroy();
+            CommonBehaviour();
+            NewFile();
+            AttachDataChunks();
+            //_undoQueue.Clear();
+            _undoDeque.Clear();
+            _redoStack.Clear();
         }
 
         /// <summary>
@@ -207,11 +252,91 @@ namespace MRSculpture
 #endif
         }
 
+        /// <summary>
+        /// ボクセルデータの差分を記録する．
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// 記録された世代数が MaxHistory を超えると最も古い世代から削除される．
+        /// </para>
+        /// <para>
+        /// Undo の差分が記録されると Redo の差分が削除される．
+        /// </para>
+        /// </remarks>
+        /// <param name="diffs">
+        /// ボクセルデータの差分
+        /// </param>
+        public void SetCarveDiffs(List<(int index, uint before, uint after)> diffs)
+        {
+            var diffList = new List<VoxelDiff>(diffs.Count);
+            foreach (var d in diffs)
+            {
+                diffList.Add(new VoxelDiff { Index = d.index, Before = d.before, After = d.after });
+            }
+            if (diffList.Count > 0)
+            {
+                _undoDeque.AddLast(diffList);
+                if (_undoDeque.Count > MaxHistory)
+                {
+                    _undoDeque.RemoveFirst();
+                }
+                _redoStack.Clear();
+            }
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log($"MRSculpture : SetCarveDiffs count={diffList.Count}");
+#endif
+        }
+
+        private void UndoDataChunk()
+        {
+            if (_undoDeque.Count == 0) return;
+            var last = _undoDeque.Last.Value;
+            var arr = _voxelDataChunk.DataArray;
+            foreach (var diff in last)
+            {
+                arr[diff.Index] = new CellManager { status = diff.Before };
+            }
+            _redoStack.Push(last);
+            _undoDeque.RemoveLast();
+            UpdateMesh();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log("MRSculpture : Undo");
+#endif
+        }
+
+        public void OnUndo()
+        {
+            UndoDataChunk();
+        }
+
+        private void RedoDataChunk()
+        {
+            if (_redoStack.Count == 0) return;
+            var last = _redoStack.Pop();
+            var arr = _voxelDataChunk.DataArray;
+            foreach (var diff in last)
+            {
+                arr[diff.Index] = new CellManager { status = diff.After };
+            }
+            UpdateMesh();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log("MRSculpture : Redo");
+#endif
+        }
+
+        public void OnRedo()
+        {
+            RedoDataChunk();
+        }
+
         private void OnDestroy()
         {
-            _voxelDataChunk.Dispose();
-            _voxelBuffer.Dispose();
-            _builder.Dispose();
+            if (_voxelDataChunk.IsCreated)
+            {
+                _voxelDataChunk.Dispose();
+            }
+            _voxelBuffer?.Dispose();
+            _builder?.Dispose();
         }
 
 #if UNITY_EDITOR

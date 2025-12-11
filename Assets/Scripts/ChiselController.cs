@@ -2,6 +2,7 @@
 using System;
 using UnityEngine;
 using static UnityEngine.ParticleSystem;
+using MRSculpture;
 
 namespace MRSculpture
 {
@@ -138,11 +139,11 @@ namespace MRSculpture
         /// </summary>
         public void Carve()
         {
+            var diffs = new System.Collections.Generic.List<(int index, uint before, uint after)>();
+            // Carve前の値を記録しつつCarve処理
             float scaling = _initialStoneScaleX * _impactRange / transform.localScale.x;
             _colliderTransform.localScale = Vector3.one * scaling;
-
             ExtractVoxel(out int minX, out int maxX, out int minY, out int maxY, out int minZ, out int maxZ);
-
             Matrix4x4 targetMatrix = _stoneTransform.localToWorldMatrix;
             Collider[] hitColliders = new Collider[10];
             int removedCount = 0;
@@ -165,8 +166,13 @@ namespace MRSculpture
                                         if (xx < 0 || xx >= _voxelDataChunk.xLength ||
                                             yy < 0 || yy >= _voxelDataChunk.yLength ||
                                             zz < 0 || zz >= _voxelDataChunk.zLength) continue;
-                                        if (!_voxelDataChunk.HasFlag(xx, yy, zz, CellFlags.IsFilled)) continue;
+                                        int idx = _voxelDataChunk.GetIndex(xx, yy, zz);
+                                        var arr = _voxelDataChunk.DataArray;
+                                        uint before = arr[idx].status;
+                                        if (!_voxelDataChunk.HasFlag(idx, CellFlags.IsFilled)) continue;
                                         _voxelDataChunk.RemoveFlag(xx, yy, zz, CellFlags.IsFilled);
+                                        uint after = arr[idx].status;
+                                        diffs.Add((idx, before, after));
                                         removedCount++;
                                     }
                                 }
@@ -175,9 +181,9 @@ namespace MRSculpture
                     }
                 }
             }
-
             if (removedCount > 0)
             {
+                _stoneController.SetCarveDiffs(diffs);
                 PlayFeedback(removedCount);
             }
         }
