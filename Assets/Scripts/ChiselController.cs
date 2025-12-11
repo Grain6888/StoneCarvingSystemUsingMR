@@ -2,7 +2,6 @@
 using System;
 using UnityEngine;
 using static UnityEngine.ParticleSystem;
-using MRSculpture;
 
 namespace MRSculpture
 {
@@ -154,8 +153,7 @@ namespace MRSculpture
                     for (int z = minZ; z <= maxZ; z += _lowPolyLevel)
                     {
                         _voxelDataChunk.GetWorldPosition(x, y, z, targetMatrix, out Vector3 cellWorldPos);
-                        int hits = Physics.OverlapSphereNonAlloc(cellWorldPos, 0f, hitColliders);
-                        if (Array.IndexOf(hitColliders, _collider, 0, hits) >= 0)
+                        if (_collider.ClosestPoint(cellWorldPos) == cellWorldPos)
                         {
                             for (int yy = y - _lowPolyLevel / 2; yy <= y + _lowPolyLevel / 2; yy++)
                             {
