@@ -1216,10 +1216,10 @@ MonoBehaviour:
   _collider: {fileID: 1104615372}
   _hammer: {fileID: 813992593}
   _maxImpactRange: 10
+  _sensitivity: 0
   _hapticSource: {fileID: 1104615383}
   _audioSource: {fileID: 1104615382}
   _particleSystem: {fileID: 78847480523005808, guid: 3732624f49fa1e74985a6b5402a9aa85, type: 3}
-  _sensitivity: 0
 --- !u!114 &1104615380
 MonoBehaviour:
   m_ObjectHideFlags: 0
