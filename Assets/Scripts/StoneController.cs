@@ -217,7 +217,6 @@ namespace MRSculpture
             CommonBehaviour();
             NewFile();
             AttachDataChunks();
-            //_undoQueue.Clear();
             _undoDeque.Clear();
             _redoStack.Clear();
         }
@@ -318,6 +317,7 @@ namespace MRSculpture
             {
                 arr[diff.Index] = new CellManager { status = diff.After };
             }
+            _undoDeque.AddLast(last);
             UpdateMesh();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log("MRSculpture : Redo");
