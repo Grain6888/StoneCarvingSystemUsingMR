@@ -261,10 +261,22 @@ namespace MRSculpture
             if (_carvedParticle != null)
             {
                 _carvedParticle.transform.position = _colliderTransform.position;
+
                 EmissionModule carvedParticleEmissionModule = _carvedParticle.emission;
                 Burst burstSetting = carvedParticleEmissionModule.GetBurst(0);
-                burstSetting.count = Math.Max(2, removedCount / 256);
+                burstSetting.count = Math.Max(2, removedCount / 512);
                 carvedParticleEmissionModule.SetBurst(0, burstSetting);
+
+                MainModule carvedParticleMainModule = _carvedParticle.main;
+                float scaleMaginification = _stoneTransform.localScale.x / _initialStoneScaleX;
+                float min_size = 0.01f * scaleMaginification;
+                float max_size = 0.03f * scaleMaginification;
+                //carvedParticleMainModule.startSizeX = UnityEngine.Random.Range(0.01f, 0.05f) * scaleMaginification;
+                carvedParticleMainModule.startSizeX = new MinMaxCurve(min_size, max_size);
+                //carvedParticleMainModule.startSizeY = UnityEngine.Random.Range(0.01f, 0.05f) * scaleMaginification;
+                carvedParticleMainModule.startSizeY = new MinMaxCurve(min_size, max_size);
+                //carvedParticleMainModule.startSizeZ = UnityEngine.Random.Range(0.01f, 0.05f) * scaleMaginification;
+                carvedParticleMainModule.startSizeZ = new MinMaxCurve(min_size, max_size);
                 _carvedParticle.Play();
             }
         }
