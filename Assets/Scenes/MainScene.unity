@@ -1136,20 +1136,20 @@ MonoBehaviour:
   _scaleConstraints:
     ConstraintsAreRelative: 1
     XAxis:
-      ConstrainAxis: 0
+      ConstrainAxis: 1
       AxisRange:
-        Min: 1
-        Max: 1
+        Min: 0.1
+        Max: 1.5
     YAxis:
-      ConstrainAxis: 0
+      ConstrainAxis: 1
       AxisRange:
-        Min: 1
-        Max: 1
+        Min: 0.1
+        Max: 1.5
     ZAxis:
-      ConstrainAxis: 0
+      ConstrainAxis: 1
       AxisRange:
-        Min: 1
-        Max: 1
+        Min: 0.1
+        Max: 1.5
   _resetScaleResponsivenessOnConstraintOvershoot: 0
 --- !u!114 &1104615377
 MonoBehaviour:

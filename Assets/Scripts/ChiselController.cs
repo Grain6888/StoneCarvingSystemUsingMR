@@ -181,14 +181,14 @@ namespace MRSculpture
                 float scaling = _initialStoneScaleX * _impactRange / transform.localScale.x;
                 _colliderTransform.localScale = Vector3.one * scaling;
             }
-            ExtractVoxel(out int minX, out int maxX, out int minY, out int maxY, out int minZ, out int maxZ);
+            ExtractVoxel(out Vector3Int min, out Vector3Int max);
             Matrix4x4 targetMatrix = _stoneTransform.localToWorldMatrix;
             int removedCount = 0;
-            for (int y = minY; y <= maxY; y += _lowPolyLevel)
+            for (int y = min.y; y <= max.y; y += _lowPolyLevel)
             {
-                for (int x = minX; x <= maxX; x += _lowPolyLevel)
+                for (int x = min.x; x <= max.x; x += _lowPolyLevel)
                 {
-                    for (int z = minZ; z <= maxZ; z += _lowPolyLevel)
+                    for (int z = min.z; z <= max.z; z += _lowPolyLevel)
                     {
                         _voxelDataChunk.GetWorldPosition(x, y, z, targetMatrix, out Vector3 cellWorldPos);
                         if (_collider.ClosestPoint(cellWorldPos) == cellWorldPos)
@@ -252,29 +252,37 @@ namespace MRSculpture
         /// <summary>
         /// Collider の中心と大きさから処理対象の範囲を算出する
         /// </summary>
-        /// <param name="minX">処理範囲の最小X座標</param>
-        /// <param name="maxX">処理範囲の最大X座標</param>
-        /// <param name="minY">処理範囲の最小Y座標</param>
-        /// <param name="maxY">処理範囲の最大Y座標</param>
-        /// <param name="minZ">処理範囲の最小Z座標</param>
-        /// <param name="maxZ">処理範囲の最大Z座標</param>
-        private void ExtractVoxel(out int minX, out int maxX, out int minY, out int maxY, out int minZ, out int maxZ)
+        /// <param name="min">処理範囲の最小座標</param>
+        /// <param name="max">処理範囲の最大座標</param>
+        private void ExtractVoxel(out Vector3Int min, out Vector3Int max)
         {
-            Vector3 impactCenterWorldPosition = _colliderTransform.position;
-            Vector3 impactCenterLocalPosition = _stoneTransform.InverseTransformPoint(impactCenterWorldPosition);
+            Bounds bounds = _collider.bounds;
 
-            Vector3 colliderLocalScale = new(
-                _colliderTransform.localScale.x * transform.localScale.x / _stoneTransform.localScale.x,
-                _colliderTransform.localScale.y * transform.localScale.y / _stoneTransform.localScale.y,
-                _colliderTransform.localScale.z * transform.localScale.z / _stoneTransform.localScale.z
-            );
+            // 8頂点をワールド空間で取得
+            Vector3[] worldCorners = new Vector3[8];
+            Vector3 bmin = bounds.min;
+            Vector3 bmax = bounds.max;
+            worldCorners[0] = new Vector3(bmin.x, bmin.y, bmin.z);
+            worldCorners[1] = new Vector3(bmax.x, bmin.y, bmin.z);
+            worldCorners[2] = new Vector3(bmin.x, bmax.y, bmin.z);
+            worldCorners[3] = new Vector3(bmax.x, bmax.y, bmin.z);
+            worldCorners[4] = new Vector3(bmin.x, bmin.y, bmax.z);
+            worldCorners[5] = new Vector3(bmax.x, bmin.y, bmax.z);
+            worldCorners[6] = new Vector3(bmin.x, bmax.y, bmax.z);
+            worldCorners[7] = new Vector3(bmax.x, bmax.y, bmax.z);
 
-            minX = Mathf.Max(0, Mathf.FloorToInt(impactCenterLocalPosition.x - colliderLocalScale.x));
-            maxX = Mathf.Min(_voxelDataChunk.xLength - 1, Mathf.CeilToInt(impactCenterLocalPosition.x + colliderLocalScale.x));
-            minY = Mathf.Max(0, Mathf.FloorToInt(impactCenterLocalPosition.y - colliderLocalScale.y));
-            maxY = Mathf.Min(_voxelDataChunk.yLength - 1, Mathf.CeilToInt(impactCenterLocalPosition.y + colliderLocalScale.y));
-            minZ = Mathf.Max(0, Mathf.FloorToInt(impactCenterLocalPosition.z - colliderLocalScale.z));
-            maxZ = Mathf.Min(_voxelDataChunk.zLength - 1, Mathf.CeilToInt(impactCenterLocalPosition.z + colliderLocalScale.z));
+            // 各頂点をstoneのローカル空間に変換
+            Vector3 localMin = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+            Vector3 localMax = new Vector3(float.MinValue, float.MinValue, float.MinValue);
+            for (int i = 0; i < 8; i++)
+            {
+                Vector3 local = _stoneTransform.InverseTransformPoint(worldCorners[i]);
+                localMin = Vector3.Min(localMin, local);
+                localMax = Vector3.Max(localMax, local);
+            }
+
+            min = Vector3Int.FloorToInt(localMin);
+            max = Vector3Int.CeilToInt(localMax);
         }
 
         /// <summary>
@@ -309,11 +317,8 @@ namespace MRSculpture
                 float scaleMaginification = _stoneTransform.localScale.x / _initialStoneScaleX;
                 float min_size = 0.01f * scaleMaginification;
                 float max_size = 0.03f * scaleMaginification;
-                //carvedParticleMainModule.startSizeX = UnityEngine.Random.Range(0.01f, 0.05f) * scaleMaginification;
                 carvedParticleMainModule.startSizeX = new MinMaxCurve(min_size, max_size);
-                //carvedParticleMainModule.startSizeY = UnityEngine.Random.Range(0.01f, 0.05f) * scaleMaginification;
                 carvedParticleMainModule.startSizeY = new MinMaxCurve(min_size, max_size);
-                //carvedParticleMainModule.startSizeZ = UnityEngine.Random.Range(0.01f, 0.05f) * scaleMaginification;
                 carvedParticleMainModule.startSizeZ = new MinMaxCurve(min_size, max_size);
                 _carvedParticle.Play();
             }
