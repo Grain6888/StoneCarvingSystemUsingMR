@@ -10,6 +10,8 @@ namespace MRSculpture
     /// </summary>
     public class ChiselController : MonoBehaviour
     {
+        private const string DUMMY_CHISEL_NAME = "DUMMY_CHISEL";
+
         /// <summary>
         /// 石材
         /// </summary>
@@ -114,6 +116,9 @@ namespace MRSculpture
         /// </summary>
         private float _initialStoneScaleX;
 
+        private GameObject _dummyChisel;
+        private bool _isAimed = false;
+
         private void Awake()
         {
             _stoneTransform = _stone.transform;
@@ -139,6 +144,15 @@ namespace MRSculpture
 
         private void Update()
         {
+            if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch) && !_isAimed)
+            {
+                SetAim();
+            }
+            if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch) && _isAimed)
+            {
+                UnsetAim();
+            }
+
             if (_sensitivity > 0)
             {
                 _impactRange = Mathf.Min(_maxImpactRange, (int)(_hammerController.ImpactMagnitude * _sensitivity));
@@ -321,6 +335,54 @@ namespace MRSculpture
                 carvedParticleMainModule.startSizeY = new MinMaxCurve(min_size, max_size);
                 carvedParticleMainModule.startSizeZ = new MinMaxCurve(min_size, max_size);
                 _carvedParticle.Play();
+            }
+        }
+
+        private void SetAim()
+        {
+            _isAimed = true;
+            _dummyChisel = Instantiate(gameObject, transform.position, transform.rotation);
+            _dummyChisel.name = DUMMY_CHISEL_NAME;
+
+            // dummyChisel配下のImpactCenterを探してコライダを設定
+            var impactCenter = _dummyChisel.transform.Find("ImpactCenter");
+            if (impactCenter != null)
+            {
+                _collider = impactCenter.GetComponent<Collider>();
+                _colliderTransform = _collider.transform;
+            }
+
+            foreach (var mr in GetComponentsInChildren<MeshRenderer>(true))
+            {
+                if (mr.gameObject != _dummyChisel)
+                {
+                    mr.enabled = false;
+                }
+            }
+        }
+
+        private void UnsetAim()
+        {
+            _isAimed = false;
+
+            // this.gameObject配下のImpactCenterを探してコライダを設定
+            var impactCenter = transform.Find("ImpactCenter");
+            if (impactCenter != null)
+            {
+                _collider = impactCenter.GetComponent<Collider>();
+                _colliderTransform = _collider.transform;
+            }
+
+            foreach (var mr in GetComponentsInChildren<MeshRenderer>(true))
+            {
+                if (mr.gameObject != _dummyChisel)
+                {
+                    mr.enabled = true;
+                }
+            }
+            if (_dummyChisel.name == DUMMY_CHISEL_NAME)
+            {
+                Destroy(_dummyChisel);
             }
         }
 

@@ -16,6 +16,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: fadf4ab759020d549bdc810492267a97, type: 2}
+    - target: {fileID: 7537542577788446693, guid: fc4f3410bb9789544b4dcc61b02e0ff2, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
     - target: {fileID: 9141078151683672464, guid: fc4f3410bb9789544b4dcc61b02e0ff2, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.2
@@ -94,10 +98,10 @@ MonoBehaviour:
   _collider: {fileID: 9148920263473920348}
   _hammer: {fileID: 0}
   _maxImpactRange: 50
+  _sensitivity: 20
   _hapticSource: {fileID: 7096944250933745285}
   _audioSource: {fileID: 1240929272111350890}
   _particleSystem: {fileID: 78847480523005808, guid: 3732624f49fa1e74985a6b5402a9aa85, type: 3}
-  _sensitivity: 20
 --- !u!1 &5753874497159719023 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1922000738224100726, guid: fc4f3410bb9789544b4dcc61b02e0ff2, type: 3}
