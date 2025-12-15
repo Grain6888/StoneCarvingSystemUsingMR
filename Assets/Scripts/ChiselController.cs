@@ -258,11 +258,31 @@ namespace MRSculpture
         {
             Bounds bounds = _collider.bounds;
 
-            Vector3 min_bounds = _stoneTransform.InverseTransformPoint(bounds.min);
-            Vector3 max_bounds = _stoneTransform.InverseTransformPoint(bounds.max);
+            // 8頂点をワールド空間で取得
+            Vector3[] worldCorners = new Vector3[8];
+            Vector3 bmin = bounds.min;
+            Vector3 bmax = bounds.max;
+            worldCorners[0] = new Vector3(bmin.x, bmin.y, bmin.z);
+            worldCorners[1] = new Vector3(bmax.x, bmin.y, bmin.z);
+            worldCorners[2] = new Vector3(bmin.x, bmax.y, bmin.z);
+            worldCorners[3] = new Vector3(bmax.x, bmax.y, bmin.z);
+            worldCorners[4] = new Vector3(bmin.x, bmin.y, bmax.z);
+            worldCorners[5] = new Vector3(bmax.x, bmin.y, bmax.z);
+            worldCorners[6] = new Vector3(bmin.x, bmax.y, bmax.z);
+            worldCorners[7] = new Vector3(bmax.x, bmax.y, bmax.z);
 
-            min = Vector3Int.FloorToInt(min_bounds);
-            max = Vector3Int.CeilToInt(max_bounds);
+            // 各頂点をstoneのローカル空間に変換
+            Vector3 localMin = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+            Vector3 localMax = new Vector3(float.MinValue, float.MinValue, float.MinValue);
+            for (int i = 0; i < 8; i++)
+            {
+                Vector3 local = _stoneTransform.InverseTransformPoint(worldCorners[i]);
+                localMin = Vector3.Min(localMin, local);
+                localMax = Vector3.Max(localMax, local);
+            }
+
+            min = Vector3Int.FloorToInt(localMin);
+            max = Vector3Int.CeilToInt(localMax);
         }
 
         /// <summary>
