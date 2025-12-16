@@ -3047,6 +3047,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DebugSphere
       objectReference: {fileID: 0}
+    - target: {fileID: 8186338123284207940, guid: d49470b2bd142d447a74a91be19b0379, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8401385430499275751, guid: d49470b2bd142d447a74a91be19b0379, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -3205,10 +3209,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5456785876115194242, guid: b49ec861e4f19934e9dd70149308cd8d, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 49b00ee46c5392846bbbc236c515acf0, type: 2}
     - target: {fileID: 6050092350960469927, guid: b49ec861e4f19934e9dd70149308cd8d, type: 3}
       propertyPath: m_Name
       value: PinChisel
