@@ -82,6 +82,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4198608406479654735, guid: 7e4eadab6a0b8ac409f92cf994d5d823, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8616191259751715525}
     - targetCorrespondingSourceObject: {fileID: 8020179982226132349, guid: 7e4eadab6a0b8ac409f92cf994d5d823, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7879584888345236301}
@@ -114,3 +117,88 @@ CapsuleCollider:
   m_Height: 2.5
   m_Direction: 0
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &6050092350960469927 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4198608406479654735, guid: 7e4eadab6a0b8ac409f92cf994d5d823, type: 3}
+  m_PrefabInstance: {fileID: 7616232286681221352}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8616191259751715525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6050092350960469927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2f8f6e9e6f3e114b9bf9a57c2160615, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Oculus.Interaction::Oculus.Interaction.PointableUnityEventWrapper
+  _pointable: {fileID: 6807462573744206608}
+  _whenRelease:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenHover:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenUnhover:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenSelect:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6128381842206590005}
+        m_TargetAssemblyTypeName: MRSculpture.ChiselController, Assembly-CSharp
+        m_MethodName: OnSelect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  _whenUnselect:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6128381842206590005}
+        m_TargetAssemblyTypeName: MRSculpture.ChiselController, Assembly-CSharp
+        m_MethodName: OnUnselect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  _whenMove:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenCancel:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &6128381842206590005 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4376980114854071517, guid: 7e4eadab6a0b8ac409f92cf994d5d823, type: 3}
+  m_PrefabInstance: {fileID: 7616232286681221352}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6050092350960469927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 344cbc957d5f0fa459d4dc650b0c6bdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MRSculpture.ChiselController
+--- !u!114 &6807462573744206608 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4020234306482142200, guid: 7e4eadab6a0b8ac409f92cf994d5d823, type: 3}
+  m_PrefabInstance: {fileID: 7616232286681221352}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6050092350960469927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43f86b14a27b52f4f9298c33015b5c26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Oculus.Interaction::Oculus.Interaction.Grabbable

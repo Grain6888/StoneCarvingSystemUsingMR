@@ -54,11 +54,6 @@ namespace MRSculpture
         private HammerController _hammerController;
 
         /// <summary>
-        /// 現在の衝撃範囲
-        /// </summary>
-        private int _impactRange;
-
-        /// <summary>
         /// ImpactRange の最大値
         /// </summary>
         [SerializeField]
@@ -118,6 +113,7 @@ namespace MRSculpture
 
         private GameObject _dummyChisel;
         private bool _isAimed = false;
+        private bool _isSelected = false;
 
         private void Awake()
         {
@@ -144,6 +140,8 @@ namespace MRSculpture
 
         private void Update()
         {
+            if (!_isSelected) return;
+
             if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch) && !_isAimed)
             {
                 SetAim();
@@ -153,32 +151,33 @@ namespace MRSculpture
                 UnsetAim();
             }
 
+            int impactRange = 0;
             if (_sensitivity > 0)
             {
-                _impactRange = Mathf.Min(_maxImpactRange, (int)(_hammerController.ImpactMagnitude * _sensitivity));
+                impactRange = Mathf.Min(_maxImpactRange, (int)(_hammerController.ImpactMagnitude * _sensitivity));
             }
             else
             {
-                _impactRange = 0;
+                impactRange = 0;
             }
 
             UpdateLowPolyLevelByStoneScale();
 
-            if (_impactRange > 0)
+            if (impactRange > 0)
             {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 if (_sensitivity > 0)
                 {
-                    Debug.Log($"MRSculpture : {name} cought ImpactRange = {_impactRange}");
+                    Debug.Log($"MRSculpture : {name} cought ImpactRange = {impactRange}");
                 }
 #endif
-                Carve();
+                Carve(impactRange);
                 _stoneController.UpdateMesh();
             }
 
             if (_sensitivity == 0)
             {
-                Carve();
+                Carve(impactRange);
                 _stoneController.UpdateMesh();
             }
         }
@@ -186,13 +185,13 @@ namespace MRSculpture
         /// <summary>
         /// Collider 内のボクセルを削除する
         /// </summary>
-        public void Carve()
+        public void Carve(int impactRange)
         {
             var diffs = new System.Collections.Generic.List<(int index, uint before, uint after)>();
 
             if (_sensitivity > 0)
             {
-                float scaling = _initialStoneScaleX * _impactRange / transform.localScale.x;
+                float scaling = _initialStoneScaleX * impactRange / transform.localScale.x;
                 _colliderTransform.localScale = Vector3.one * scaling;
             }
             ExtractVoxel(out Vector3Int min, out Vector3Int max);
@@ -234,7 +233,7 @@ namespace MRSculpture
             if (removedCount > 0)
             {
                 _stoneController.SetCarveDiffs(diffs);
-                PlayFeedback(removedCount);
+                PlayFeedback(impactRange, removedCount);
             }
         }
 
@@ -302,9 +301,9 @@ namespace MRSculpture
         /// <summary>
         /// フィードバックを再生する
         /// </summary>
-        private void PlayFeedback(in int removedCount)
+        private void PlayFeedback(int impactRange, int removedCount)
         {
-            float amplitude = Mathf.Clamp01(_impactRange / 10f);
+            float amplitude = Mathf.Clamp01(impactRange / 10f);
 
             if (_hapticSource != null)
             {
@@ -392,6 +391,16 @@ namespace MRSculpture
             {
                 Destroy(_carvedParticle.gameObject);
             }
+        }
+
+        public void OnSelect()
+        {
+            _isSelected = true;
+        }
+
+        public void OnUnselect()
+        {
+            _isSelected = false;
         }
     }
 }
