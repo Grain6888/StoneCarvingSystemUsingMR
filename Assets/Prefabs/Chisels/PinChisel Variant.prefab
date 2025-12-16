@@ -25,6 +25,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7879584888345236301}
     - target: {fileID: 4376980114854071517, guid: 7e4eadab6a0b8ac409f92cf994d5d823, type: 3}
+      propertyPath: _sensitivity
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 4376980114854071517, guid: 7e4eadab6a0b8ac409f92cf994d5d823, type: 3}
+      propertyPath: _maxImpactRange
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4376980114854071517, guid: 7e4eadab6a0b8ac409f92cf994d5d823, type: 3}
       propertyPath: _particleSystem
       value: 
       objectReference: {fileID: 78847480523005808, guid: 3732624f49fa1e74985a6b5402a9aa85, type: 3}
@@ -113,7 +121,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.2
   m_Height: 2.5
   m_Direction: 0
   m_Center: {x: 0, y: 0, z: 0}

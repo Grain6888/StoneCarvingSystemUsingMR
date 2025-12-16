@@ -41,6 +41,11 @@ namespace MRSculpture
         /// </summary>
         private Transform _colliderTransform;
 
+        private float _capsuleInitialRadius;
+        private float _capsuleInitialHeight;
+
+        private Vector3 _boxInitialSize;
+
         /// <summary>
         /// ハンマー
         /// </summary>
@@ -121,6 +126,19 @@ namespace MRSculpture
             _initialStoneScaleX = _stoneTransform.localScale.x;
             _stoneController = _stone.GetComponent<StoneController>();
             _colliderTransform = _collider.transform;
+
+            if (_collider.GetType() == typeof(CapsuleCollider))
+            {
+                CapsuleCollider capsule = (CapsuleCollider)_collider;
+                _capsuleInitialRadius = capsule.radius;
+                _capsuleInitialHeight = capsule.height;
+            }
+            else if (_collider.GetType() == typeof(BoxCollider))
+            {
+                BoxCollider box = (BoxCollider)_collider;
+                _boxInitialSize = box.size;
+            }
+
             _hammerController = _hammer.GetComponent<HammerController>();
 
             _carvedParticle = Instantiate(_particleSystem);
@@ -142,6 +160,8 @@ namespace MRSculpture
         {
             if (!_isSelected) return;
 
+            UpdateLowPolyLevelByStoneScale();
+
             if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch) && !_isAimed)
             {
                 SetAim();
@@ -155,31 +175,30 @@ namespace MRSculpture
             if (_sensitivity > 0)
             {
                 impactRange = Mathf.Min(_maxImpactRange, (int)(_hammerController.ImpactMagnitude * _sensitivity));
+                if (impactRange == 0) return;
+                float scaling = _initialStoneScaleX / transform.localScale.x * impactRange;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                Debug.Log($"MRSculpture : {name} cought ImpactRange = {impactRange}");
+                Debug.Log($"MRSculpture : scaling = {scaling}");
+#endif
+                if (_collider.GetType() == typeof(BoxCollider))
+                {
+                    BoxCollider box = (BoxCollider)_collider;
+                    box.size = _boxInitialSize * scaling;
+                }
+                else if (_collider.GetType() == typeof(CapsuleCollider))
+                {
+                    CapsuleCollider capsule = (CapsuleCollider)_collider;
+                    capsule.radius = _capsuleInitialRadius * scaling;
+                    capsule.height = _capsuleInitialHeight * scaling;
+                }
             }
             else
             {
                 impactRange = 0;
             }
-
-            UpdateLowPolyLevelByStoneScale();
-
-            if (impactRange > 0)
-            {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-                if (_sensitivity > 0)
-                {
-                    Debug.Log($"MRSculpture : {name} cought ImpactRange = {impactRange}");
-                }
-#endif
-                Carve(impactRange);
-                _stoneController.UpdateMesh();
-            }
-
-            if (_sensitivity == 0)
-            {
-                Carve(impactRange);
-                _stoneController.UpdateMesh();
-            }
+            Carve(impactRange);
+            _stoneController.UpdateMesh();
         }
 
         /// <summary>
@@ -189,11 +208,6 @@ namespace MRSculpture
         {
             var diffs = new System.Collections.Generic.List<(int index, uint before, uint after)>();
 
-            if (_sensitivity > 0)
-            {
-                float scaling = _initialStoneScaleX * impactRange / transform.localScale.x;
-                _colliderTransform.localScale = Vector3.one * scaling;
-            }
             ExtractVoxel(out Vector3Int min, out Vector3Int max);
             Matrix4x4 targetMatrix = _stoneTransform.localToWorldMatrix;
             int removedCount = 0;
