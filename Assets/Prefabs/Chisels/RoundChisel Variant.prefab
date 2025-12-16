@@ -57,8 +57,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: 275b2c99765ede142919b05d8a0a22b0, type: 2}
     - target: {fileID: 7273763232703764734, guid: 388a9ba5341755241aefdc7536e7304e, type: 3}
+      propertyPath: _collider
+      value: 
+      objectReference: {fileID: 1068577623049332774}
+    - target: {fileID: 7273763232703764734, guid: 388a9ba5341755241aefdc7536e7304e, type: 3}
       propertyPath: _sensitivity
-      value: 20
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7273763232703764734, guid: 388a9ba5341755241aefdc7536e7304e, type: 3}
       propertyPath: _carvedParticle
@@ -66,15 +70,147 @@ PrefabInstance:
       objectReference: {fileID: 78847480523005808, guid: 3732624f49fa1e74985a6b5402a9aa85, type: 3}
     - target: {fileID: 7273763232703764734, guid: 388a9ba5341755241aefdc7536e7304e, type: 3}
       propertyPath: _maxImpactRange
-      value: 40
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 7273763232703764734, guid: 388a9ba5341755241aefdc7536e7304e, type: 3}
       propertyPath: _particleSystem
       value: 
       objectReference: {fileID: 78847480523005808, guid: 3732624f49fa1e74985a6b5402a9aa85, type: 3}
+    - target: {fileID: 7867838477992674361, guid: 388a9ba5341755241aefdc7536e7304e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7867838477992674361, guid: 388a9ba5341755241aefdc7536e7304e, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8246786167150245974, guid: 388a9ba5341755241aefdc7536e7304e, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5578481447593544762, guid: 388a9ba5341755241aefdc7536e7304e, type: 3}
+    - {fileID: 8246786167150245974, guid: 388a9ba5341755241aefdc7536e7304e, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2294733142500760753, guid: 388a9ba5341755241aefdc7536e7304e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5845303115215206435}
+    - targetCorrespondingSourceObject: {fileID: 6133343899544720004, guid: 388a9ba5341755241aefdc7536e7304e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1068577623049332774}
   m_SourcePrefab: {fileID: 100100000, guid: 388a9ba5341755241aefdc7536e7304e, type: 3}
+--- !u!114 &1308424638752871275 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1772725599422418571, guid: 388a9ba5341755241aefdc7536e7304e, type: 3}
+  m_PrefabInstance: {fileID: 770548522770193888}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1542780213245083985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43f86b14a27b52f4f9298c33015b5c26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Oculus.Interaction::Oculus.Interaction.Grabbable
+--- !u!1 &1542780213245083985 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2294733142500760753, guid: 388a9ba5341755241aefdc7536e7304e, type: 3}
+  m_PrefabInstance: {fileID: 770548522770193888}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5845303115215206435
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1542780213245083985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2f8f6e9e6f3e114b9bf9a57c2160615, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Oculus.Interaction::Oculus.Interaction.PointableUnityEventWrapper
+  _pointable: {fileID: 1308424638752871275}
+  _whenRelease:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenHover:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenUnhover:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenSelect:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7944368244401472798}
+        m_TargetAssemblyTypeName: MRSculpture.ChiselController, Assembly-CSharp
+        m_MethodName: OnSelect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  _whenUnselect:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7944368244401472798}
+        m_TargetAssemblyTypeName: MRSculpture.ChiselController, Assembly-CSharp
+        m_MethodName: OnUnselect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  _whenMove:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenCancel:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!1 &6894881336059187044 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6133343899544720004, guid: 388a9ba5341755241aefdc7536e7304e, type: 3}
+  m_PrefabInstance: {fileID: 770548522770193888}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &1068577623049332774
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6894881336059187044}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.3
+  m_Height: 2.5
+  m_Direction: 0
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &7944368244401472798 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7273763232703764734, guid: 388a9ba5341755241aefdc7536e7304e, type: 3}
+  m_PrefabInstance: {fileID: 770548522770193888}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1542780213245083985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 344cbc957d5f0fa459d4dc650b0c6bdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MRSculpture.ChiselController

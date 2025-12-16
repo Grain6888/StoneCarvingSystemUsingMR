@@ -41,6 +41,11 @@ namespace MRSculpture
         /// </summary>
         private Transform _colliderTransform;
 
+        private float _capsuleInitialRadius;
+        private float _capsuleInitialHeight;
+
+        private Vector3 _boxInitialSize;
+
         /// <summary>
         /// ハンマー
         /// </summary>
@@ -52,11 +57,6 @@ namespace MRSculpture
         /// ハンマーコントローラ
         /// </summary>
         private HammerController _hammerController;
-
-        /// <summary>
-        /// 現在の衝撃範囲
-        /// </summary>
-        private int _impactRange;
 
         /// <summary>
         /// ImpactRange の最大値
@@ -118,6 +118,7 @@ namespace MRSculpture
 
         private GameObject _dummyChisel;
         private bool _isAimed = false;
+        private bool _isSelected = false;
 
         private void Awake()
         {
@@ -125,6 +126,19 @@ namespace MRSculpture
             _initialStoneScaleX = _stoneTransform.localScale.x;
             _stoneController = _stone.GetComponent<StoneController>();
             _colliderTransform = _collider.transform;
+
+            if (_collider.GetType() == typeof(CapsuleCollider))
+            {
+                CapsuleCollider capsule = (CapsuleCollider)_collider;
+                _capsuleInitialRadius = capsule.radius;
+                _capsuleInitialHeight = capsule.height;
+            }
+            else if (_collider.GetType() == typeof(BoxCollider))
+            {
+                BoxCollider box = (BoxCollider)_collider;
+                _boxInitialSize = box.size;
+            }
+
             _hammerController = _hammer.GetComponent<HammerController>();
 
             _carvedParticle = Instantiate(_particleSystem);
@@ -144,6 +158,10 @@ namespace MRSculpture
 
         private void Update()
         {
+            if (!_isSelected) return;
+
+            UpdateLowPolyLevelByStoneScale();
+
             if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch) && !_isAimed)
             {
                 SetAim();
@@ -153,48 +171,43 @@ namespace MRSculpture
                 UnsetAim();
             }
 
+            int impactRange = 0;
             if (_sensitivity > 0)
             {
-                _impactRange = Mathf.Min(_maxImpactRange, (int)(_hammerController.ImpactMagnitude * _sensitivity));
+                impactRange = Mathf.Min(_maxImpactRange, (int)(_hammerController.ImpactMagnitude * _sensitivity));
+                if (impactRange == 0) return;
+                float scaling = _initialStoneScaleX / transform.localScale.x * impactRange;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                Debug.Log($"MRSculpture : {name} cought ImpactRange = {impactRange}");
+                Debug.Log($"MRSculpture : scaling = {scaling}");
+#endif
+                if (_collider.GetType() == typeof(BoxCollider))
+                {
+                    BoxCollider box = (BoxCollider)_collider;
+                    box.size = _boxInitialSize * scaling;
+                }
+                else if (_collider.GetType() == typeof(CapsuleCollider))
+                {
+                    CapsuleCollider capsule = (CapsuleCollider)_collider;
+                    capsule.radius = _capsuleInitialRadius * scaling;
+                    capsule.height = _capsuleInitialHeight * scaling;
+                }
             }
             else
             {
-                _impactRange = 0;
+                impactRange = 0;
             }
-
-            UpdateLowPolyLevelByStoneScale();
-
-            if (_impactRange > 0)
-            {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-                if (_sensitivity > 0)
-                {
-                    Debug.Log($"MRSculpture : {name} cought ImpactRange = {_impactRange}");
-                }
-#endif
-                Carve();
-                _stoneController.UpdateMesh();
-            }
-
-            if (_sensitivity == 0)
-            {
-                Carve();
-                _stoneController.UpdateMesh();
-            }
+            Carve(impactRange);
+            _stoneController.UpdateMesh();
         }
 
         /// <summary>
         /// Collider 内のボクセルを削除する
         /// </summary>
-        public void Carve()
+        public void Carve(int impactRange)
         {
             var diffs = new System.Collections.Generic.List<(int index, uint before, uint after)>();
 
-            if (_sensitivity > 0)
-            {
-                float scaling = _initialStoneScaleX * _impactRange / transform.localScale.x;
-                _colliderTransform.localScale = Vector3.one * scaling;
-            }
             ExtractVoxel(out Vector3Int min, out Vector3Int max);
             Matrix4x4 targetMatrix = _stoneTransform.localToWorldMatrix;
             int removedCount = 0;
@@ -234,7 +247,7 @@ namespace MRSculpture
             if (removedCount > 0)
             {
                 _stoneController.SetCarveDiffs(diffs);
-                PlayFeedback(removedCount);
+                PlayFeedback(impactRange, removedCount);
             }
         }
 
@@ -286,8 +299,8 @@ namespace MRSculpture
             worldCorners[7] = new Vector3(bmax.x, bmax.y, bmax.z);
 
             // 各頂点をstoneのローカル空間に変換
-            Vector3 localMin = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
-            Vector3 localMax = new Vector3(float.MinValue, float.MinValue, float.MinValue);
+            Vector3 localMin = new(_stoneController.BoundsSize.x, _stoneController.BoundsSize.y, _stoneController.BoundsSize.z);
+            Vector3 localMax = new(0.0f, 0.0f, 0.0f);
             for (int i = 0; i < 8; i++)
             {
                 Vector3 local = _stoneTransform.InverseTransformPoint(worldCorners[i]);
@@ -302,9 +315,9 @@ namespace MRSculpture
         /// <summary>
         /// フィードバックを再生する
         /// </summary>
-        private void PlayFeedback(in int removedCount)
+        private void PlayFeedback(int impactRange, int removedCount)
         {
-            float amplitude = Mathf.Clamp01(_impactRange / 10f);
+            float amplitude = Mathf.Clamp01(impactRange / 10f);
 
             if (_hapticSource != null)
             {
@@ -392,6 +405,16 @@ namespace MRSculpture
             {
                 Destroy(_carvedParticle.gameObject);
             }
+        }
+
+        public void OnSelect()
+        {
+            _isSelected = true;
+        }
+
+        public void OnUnselect()
+        {
+            _isSelected = false;
         }
     }
 }
