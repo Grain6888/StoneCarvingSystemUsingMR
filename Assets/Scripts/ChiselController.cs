@@ -286,8 +286,8 @@ namespace MRSculpture
             worldCorners[7] = new Vector3(bmax.x, bmax.y, bmax.z);
 
             // 各頂点をstoneのローカル空間に変換
-            Vector3 localMin = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
-            Vector3 localMax = new Vector3(float.MinValue, float.MinValue, float.MinValue);
+            Vector3 localMin = new(_stoneController.BoundsSize.x, _stoneController.BoundsSize.y, _stoneController.BoundsSize.z);
+            Vector3 localMax = new(0.0f, 0.0f, 0.0f);
             for (int i = 0; i < 8; i++)
             {
                 Vector3 local = _stoneTransform.InverseTransformPoint(worldCorners[i]);
