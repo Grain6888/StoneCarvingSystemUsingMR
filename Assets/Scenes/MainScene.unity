@@ -2869,6 +2869,18 @@ PrefabInstance:
       value: Stone
       objectReference: {fileID: 0}
     - target: {fileID: 7935628380353662937, guid: 2f2699e874963734a819cc4e69f08049, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.002
+      objectReference: {fileID: 0}
+    - target: {fileID: 7935628380353662937, guid: 2f2699e874963734a819cc4e69f08049, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.002
+      objectReference: {fileID: 0}
+    - target: {fileID: 7935628380353662937, guid: 2f2699e874963734a819cc4e69f08049, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.002
+      objectReference: {fileID: 0}
+    - target: {fileID: 7935628380353662937, guid: 2f2699e874963734a819cc4e69f08049, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -3049,7 +3061,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8186338123284207940, guid: d49470b2bd142d447a74a91be19b0379, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8401385430499275751, guid: d49470b2bd142d447a74a91be19b0379, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3221,6 +3233,14 @@ PrefabInstance:
       propertyPath: _hammer
       value: 
       objectReference: {fileID: 813992593}
+    - target: {fileID: 6128381842206590005, guid: b49ec861e4f19934e9dd70149308cd8d, type: 3}
+      propertyPath: _sensitivity
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 6128381842206590005, guid: b49ec861e4f19934e9dd70149308cd8d, type: 3}
+      propertyPath: _maxImpactRange
+      value: 30
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

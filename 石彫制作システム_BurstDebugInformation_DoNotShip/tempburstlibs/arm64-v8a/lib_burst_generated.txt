@@ -10,7 +10,6 @@ Library: D:\Grain6888_GitHub\MixedRealitySculpture_URP_Unity6\Temp\BurstOutput\t
 --target-framework=NetFramework
 --generate-link-xml=Temp\burst.link.xml
 --temp-folder=D:\Grain6888_GitHub\MixedRealitySculpture_URP_Unity6\Temp\Burst
---debug=Full
 --key-folder=C:/Program Files/Unity/Hub/Editor/6000.2.6f2/Editor/Data/PlaybackEngines/AndroidPlayer
 --decode-folder=D:\Grain6888_GitHub\MixedRealitySculpture_URP_Unity6\Library\Burst
 --output=D:\Grain6888_GitHub\MixedRealitySculpture_URP_Unity6\Temp\BurstOutput\tempburstlibs\arm64-v8a\lib_burst_generated
@@ -112,7 +111,6 @@ Library: D:\Grain6888_GitHub\MixedRealitySculpture_URP_Unity6\Temp\BurstOutput\t
 --float-mode=Fast
 --generate-link-xml=Temp\burst.link.xml
 --temp-folder=D:\Grain6888_GitHub\MixedRealitySculpture_URP_Unity6\Temp\Burst
---debug=Full
 --key-folder=C:/Program Files/Unity/Hub/Editor/6000.2.6f2/Editor/Data/PlaybackEngines/AndroidPlayer
 --decode-folder=D:\Grain6888_GitHub\MixedRealitySculpture_URP_Unity6\Library\Burst
 --output=D:\Grain6888_GitHub\MixedRealitySculpture_URP_Unity6\Temp\BurstOutput\tempburstlibs\arm64-v8a\lib_burst_generated
