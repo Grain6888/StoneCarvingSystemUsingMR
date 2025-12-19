@@ -1,5 +1,8 @@
 ﻿using Oculus.Haptics;
 using System;
+using Unity.Collections;
+using Unity.Jobs;
+using Unity.Mathematics;
 using UnityEngine;
 using static UnityEngine.ParticleSystem;
 
@@ -211,14 +214,35 @@ namespace MRSculpture
             ExtractVoxel(out Vector3Int min, out Vector3Int max);
             Matrix4x4 targetMatrix = _stoneTransform.localToWorldMatrix;
             int removedCount = 0;
+
             for (int y = min.y; y <= max.y; y += _lowPolyLevel)
             {
+                // 1レイヤ分のコマンド・結果配列を作成
+                int layerCount = ((max.x - min.x) / _lowPolyLevel + 1) * ((max.z - min.z) / _lowPolyLevel + 1);
+                NativeArray<Vector3> results = new(layerCount, Allocator.TempJob);
+                NativeArray<ClosestPointCommand> commands = new(layerCount, Allocator.TempJob);
+
+                // XZ平面でコマンドをセット
+                int i = 0;
                 for (int x = min.x; x <= max.x; x += _lowPolyLevel)
                 {
                     for (int z = min.z; z <= max.z; z += _lowPolyLevel)
                     {
                         _voxelDataChunk.GetWorldPosition(x, y, z, targetMatrix, out Vector3 cellWorldPos);
-                        if (_collider.ClosestPoint(cellWorldPos) == cellWorldPos)
+                        commands[i++] = new ClosestPointCommand(cellWorldPos, _collider, _colliderTransform.position, _colliderTransform.rotation, _colliderTransform.lossyScale);
+                    }
+                }
+
+                // Jobスケジューリング・完了
+                JobHandle handle = ClosestPointCommand.ScheduleBatch(commands, results, layerCount, default);
+                handle.Complete();
+
+                for (int x = min.x; x <= max.x; x += _lowPolyLevel)
+                {
+                    for (int z = min.z; z <= max.z; z += _lowPolyLevel)
+                    {
+                        _voxelDataChunk.GetWorldPosition(x, y, z, targetMatrix, out Vector3 cellWorldPos);
+                        if (results[i++] == cellWorldPos)
                         {
                             for (int yy = y - _lowPolyLevel / 2; yy <= y + _lowPolyLevel / 2; yy++)
                             {
@@ -243,7 +267,11 @@ namespace MRSculpture
                         }
                     }
                 }
+
+                results.Dispose();
+                commands.Dispose();
             }
+
             if (removedCount > 0)
             {
                 _stoneController.SetCarveDiffs(diffs);
