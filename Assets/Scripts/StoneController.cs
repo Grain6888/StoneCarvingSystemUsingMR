@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using MarchingCubes;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 namespace MRSculpture
 {
@@ -198,6 +200,7 @@ namespace MRSculpture
         private void NewFile()
         {
             FillVoxelDataChunk();
+            //FillSphereVoxelDataChunk();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log("MRSculpture : New DataChunk created.");
 #endif
@@ -212,6 +215,32 @@ namespace MRSculpture
                     for (int x = 0; x < _voxelDataChunk.xLength; x++)
                     {
                         _voxelDataChunk.AddFlag(x, y, z, CellFlags.IsFilled);
+                    }
+                }
+            }
+        }
+
+        private void FillSphereVoxelDataChunk()
+        {
+            int minLength = Mathf.Min(_voxelDataChunk.xLength, Mathf.Min(_voxelDataChunk.yLength, _voxelDataChunk.zLength));
+            Vector3 center = new(
+                _boundsSize.x * 0.5f,
+                _boundsSize.y * 0.5f,
+                _boundsSize.z * 0.5f
+                );
+            int radius = minLength / 2 - 1;
+            int radiusSquared = radius * radius;
+            for (int y = 0; y < _voxelDataChunk.yLength; y++)
+            {
+                for (int z = 0; z < _voxelDataChunk.zLength; z++)
+                {
+                    for (int x = 0; x < _voxelDataChunk.xLength; x++)
+                    {
+                        Vector3 pos = new(x + 0.5f, y + 0.5f, z + 0.5f);
+                        if ((pos - center).sqrMagnitude <= radiusSquared)
+                        {
+                            _voxelDataChunk.AddFlag(x, y, z, CellFlags.IsFilled);
+                        }
                     }
                 }
             }
@@ -249,11 +278,19 @@ namespace MRSculpture
         /// </summary>
         public void UpdateMesh()
         {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Stopwatch stopwatch = new();
+            stopwatch.Start();
+#endif
             _voxelBuffer.SetData(_voxelDataChunk.DataArray);
             _builder.BuildIsosurface(_voxelBuffer, _builtTargetValue);
             GetComponent<MeshFilter>().sharedMesh = _builder.Mesh;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            Debug.Log("MRSculpture : Mesh updated.");
+            stopwatch.Stop();
+            long ticks = stopwatch.ElapsedTicks;
+            long frequency = Stopwatch.Frequency;
+            double deltaTime = (double)ticks / frequency * 1000.0;
+            Debug.Log($"MRSculpture : Mesh updated in {deltaTime} ms.");
 #endif
         }
 
