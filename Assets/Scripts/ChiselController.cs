@@ -1,7 +1,9 @@
 ﻿using Oculus.Haptics;
 using System;
+using System.Diagnostics;
 using UnityEngine;
 using static UnityEngine.ParticleSystem;
+using Debug = UnityEngine.Debug;
 
 namespace MRSculpture
 {
@@ -206,6 +208,10 @@ namespace MRSculpture
         /// </summary>
         public void Carve(int impactRange)
         {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Stopwatch stopwatch = new();
+            stopwatch.Start();
+#endif
             var diffs = new System.Collections.Generic.List<(int index, uint before, uint after)>();
 
             ExtractVoxel(out Vector3Int min, out Vector3Int max);
@@ -249,6 +255,13 @@ namespace MRSculpture
                 _stoneController.SetCarveDiffs(diffs);
                 PlayFeedback(impactRange, removedCount);
             }
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            stopwatch.Stop();
+            long ticks = stopwatch.ElapsedTicks;
+            long frequency = Stopwatch.Frequency;
+            double deltaTime = (double)ticks / frequency * 1000.0;
+            Debug.Log($"MRSculpture : Carved in {deltaTime} ms.");
+#endif
         }
 
         /// <summary>
