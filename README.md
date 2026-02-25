@@ -1,6 +1,6 @@
 # 本システムについて
 
-<img width="auto" height="auto" alt="image" src="https://github.com/user-attachments/assets/e2e8f802-ee23-4aab-bf15-5714a4917ed6" />
+<img width="100%" height="auto" alt="image" src="https://github.com/user-attachments/assets/e2e8f802-ee23-4aab-bf15-5714a4917ed6" />
 
 石彫を手軽かつ安全に制作できる『MRを用いた石彫制作システム』を開発しました．本システムでは，ユーザが扱う工具の向きや力加減に合わせて，実物体を観察しながら石材をインタラクティブに削ることができます．また，制作した作品を3Dプリンタで印刷することで，MRゴーグルがなくても作品を鑑賞することができます．これにより，利用者に石彫の機会と楽しさを提供し，観察力の向上を図ります．
 
@@ -66,7 +66,7 @@
 
 > [!warning]
 > Meta All in One SDKが提供するツールバーに関する警告が出る場合はツールバー上の空白を右クリックして**Unsupported User Elements**を有効化すると解決する  
-> <img width="480" height="auto" alt="image" src="https://github.com/user-attachments/assets/43f7f12e-d541-4a6a-88a3-868e8dd02e04" />
+> <img width="360" height="auto" alt="image" src="https://github.com/user-attachments/assets/43f7f12e-d541-4a6a-88a3-868e8dd02e04" />
 
 # 使い方
 
@@ -99,27 +99,24 @@
 コントローラを操作することで，工具を握って操作することができる．
 
 1. コントローラを工具の方へ向ける  
-   <img width="480" height="auto" alt="db4d9a12-04" src="https://github.com/user-attachments/assets/f00d3576-fdcf-48c2-b0e1-a46941d11c15" />
+   <img width="360" height="auto" alt="db4d9a12-04" src="https://github.com/user-attachments/assets/f00d3576-fdcf-48c2-b0e1-a46941d11c15" />
 
 2. コントローラの中指のボタンを握りこむ  
-   <img width="480" height="auto" alt="db4d9a12-05" src="https://github.com/user-attachments/assets/2ad04739-f70c-42fc-9baa-e41b8ceb26c3" />
+   <img width="360" height="auto" alt="db4d9a12-05" src="https://github.com/user-attachments/assets/2ad04739-f70c-42fc-9baa-e41b8ceb26c3" />
 
 3. ノミの先端を石材の表面にあてがう
 4. ノミの持ち手側をハンマーで叩く
 
 > [!note]
 > + 勢いよく叩くと大きく削れ，ゆっくり叩くと小さく削れる  
->   <img width="480" height="auto" alt="db4d9a12-07" src="https://github.com/user-attachments/assets/6f985a16-ce3e-4fd3-b3f4-dc75b70b8bfc" />
->
 > + 人差し指のボタンを握りこむと手ブレ防止機能が有効になる  
->   <img width="480" height="auto" alt="db4d9a12-06" src="https://github.com/user-attachments/assets/e4441ac0-8e4f-4965-b907-396ed38eca67" />
 
-> [!warning]
+> [!caution]
 > 左右逆のコントローラで工具を操作すると正常に動作しない
 
 ### ノミの種類
 
-<img width="480" height="auto" alt="db4d9a12-08" src="https://github.com/user-attachments/assets/6b4b2f70-7b4e-4a7a-af91-f7c7f11a7223" />
+<img width="360" height="auto" alt="db4d9a12-08" src="https://github.com/user-attachments/assets/6b4b2f70-7b4e-4a7a-af91-f7c7f11a7223" />
 
 削れる形状が異なるノミを3種類用意しており，用途に合わせたものを選択して石材を整形することができる．
 
@@ -131,7 +128,7 @@
 
 ### リストメニューの使い方
 
-<img width="480" height="auto" alt="db4d9a12-09" src="https://github.com/user-attachments/assets/31514129-db72-4310-a8f4-62222f5964a8" />
+<img width="360" height="auto" alt="db4d9a12-09" src="https://github.com/user-attachments/assets/31514129-db72-4310-a8f4-62222f5964a8" />
 
 コントローラのメニューボタンを操作することで，リストメニューを表示する．メニューのボタンはコントローラで直接押下するか，コントローラのレイをボタンの方へ向けた状態で人差し指のボタンを握りこむことで選択することができる．
 
@@ -151,20 +148,20 @@
 
 ### 石材の操作
 
-<img width="480" height="auto" alt="db4d9a12-10" src="https://github.com/user-attachments/assets/3942a38c-f9a7-4bee-95fa-20df98edeb69" />
+<img width="360" height="auto" alt="db4d9a12-10" src="https://github.com/user-attachments/assets/3942a38c-f9a7-4bee-95fa-20df98edeb69" />
 
 コントローラを操作することで，石材をつかんで操作することができる．
 
 1. コントローラを石材にあてがう
 2. コントローラの中指のボタンを握りこむ
 3. コントローラを動かして石材を操作する
-   
-   | 操作 | コントローラの動き |
-   | :--: | :--: |
-   | 移動 | <img width="auto" height="128" alt="移動" src="https://github.com/user-attachments/assets/fe0e2c87-464c-4af3-9d84-c3400a5d1a65" /> |
-   | 回転 | <img width="auto" height="128" alt="回転" src="https://github.com/user-attachments/assets/1dc4e10a-ac7b-40d2-9b07-151af966bc6c" /> |
-   | 拡大 | <img width="auto" height="128" alt="拡大" src="https://github.com/user-attachments/assets/f2ba65ff-293f-4e42-ac32-45c042f655b9" /> |
-   | 縮小 | <img width="auto" height="128" alt="縮小" src="https://github.com/user-attachments/assets/133f4f70-a7cb-4b01-a49c-f7aa763cbd25" /> |
+
+| 操作 | コントローラの動き |
+| :--: | :--: |
+| 移動 | <img width="auto" height="128" alt="移動" src="https://github.com/user-attachments/assets/fe0e2c87-464c-4af3-9d84-c3400a5d1a65" /> |
+| 回転 | <img width="auto" height="128" alt="回転" src="https://github.com/user-attachments/assets/1dc4e10a-ac7b-40d2-9b07-151af966bc6c" /> |
+| 拡大 | <img width="auto" height="128" alt="拡大" src="https://github.com/user-attachments/assets/f2ba65ff-293f-4e42-ac32-45c042f655b9" /> |
+| 縮小 | <img width="auto" height="128" alt="縮小" src="https://github.com/user-attachments/assets/133f4f70-a7cb-4b01-a49c-f7aa763cbd25" /> |
 
 
 ## 制作した作品を3Dモデルに変換する
@@ -218,11 +215,12 @@
 > [参考：モバイルアプリのアイコン設定](https://www.am10.blog/archives/348)
 
 > [!tip]
-> + **Splash Image**の**Show Splash Screen**を無効にすることで，最初に出てくる黒字にUnityのロード画面を無効化できる  
->   <img width="480" height="auto" alt="image" src="https://github.com/user-attachments/assets/6b25570d-e114-45ed-b9dc-f4126fb302e6" />
->
-> + ロード中に表示されるアイコンは**Camera Rig**オブジェクトにアタッチされた**OVR Manager**コンポーネントの**Quest Features**の**General**に含まれる**System Splash Screen**から変更できる  
->   <img width="480" height="auto" alt="image" src="https://github.com/user-attachments/assets/ae334b15-92a8-45b6-811a-0dedca3b4d19" />
+> **Splash Image**の**Show Splash Screen**を無効にすることで，最初に出てくる黒字にUnityのロード画面を無効化できる  
+> <img width="360" height="auto" alt="image" src="https://github.com/user-attachments/assets/6b25570d-e114-45ed-b9dc-f4126fb302e6" />
+
+> [!tip]
+> ロード中に表示されるアイコンは**Camera Rig**オブジェクトにアタッチされた**OVR Manager**コンポーネントの**Quest Features**の**General**に含まれる**System Splash Screen**から変更できる  
+> <img width="360" height="auto" alt="image" src="https://github.com/user-attachments/assets/ae334b15-92a8-45b6-811a-0dedca3b4d19" />
 
 ## Stone
 
