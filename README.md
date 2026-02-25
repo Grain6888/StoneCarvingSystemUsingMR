@@ -1,13 +1,8 @@
 # 本システムについて
 
-<img width="480" height="320" alt="image" src="https://github.com/user-attachments/assets/e2e8f802-ee23-4aab-bf15-5714a4917ed6" />
+<img width="auto" height="auto" alt="image" src="https://github.com/user-attachments/assets/e2e8f802-ee23-4aab-bf15-5714a4917ed6" />
 
 石彫を手軽かつ安全に制作できる『MRを用いた石彫制作システム』を開発しました．本システムでは，ユーザが扱う工具の向きや力加減に合わせて，実物体を観察しながら石材をインタラクティブに削ることができます．また，制作した作品を3Dプリンタで印刷することで，MRゴーグルがなくても作品を鑑賞することができます．これにより，利用者に石彫の機会と楽しさを提供し，観察力の向上を図ります．
-
-> "彫刻の一つに既存の石材から工具を用いて削り出すことで作品を制作する「石彫」がある．石彫を通して，造形的な見方や考え方を働かせることで，創造力を養うことができる．しかし，本格的な彫刻は，工具の準備や片付けに労力を要するほか，刃物を扱うため怪我をする危険性がある．  
-> ところで，現実空間と仮想空間を緻密に組み合わせるMixed Reality(以下，MR)という技術がある．MRでは，実物体を伴わずにインタラクティブな空間を提供することができる．  
-> そこで本研究では，手軽かつ安全に石彫を制作することができるMRを用いた石彫制作システムを提案する．本システムにより，利用者に石彫の機会と楽しさを提供し，実物体を視ながら作品を制作することで観察力の向上を図る．"[^1]
-[^1]: [近藤龍太郎，冨田暁翔，村木祐太，”MRを用いた石彫制作システム”，情報処理学会 第88回全国大会 講演論文集，2026](#)
 
 # 環境構築
 
@@ -56,6 +51,18 @@
 
 4. Unity Hubにプロジェクトを追加  
    [参考：Unity Hubに既存プロジェクトを追加する方法](https://soft-rime.com/post-26163/)
+
+> [!note]
+> イチからUnityプロジェクトを作りたい場合は別途以下のアセットを導入すること．もちろん勧めない．
+>
+> | 名称 | 説明 |
+> | :--: | --- |
+> | 25+ Free Realistic Textures | 石材のテクスチャセット |
+> | Meta XR All-in-One SDK | UnityでMeta Quest用アプリケーションを制作する，付随するアセットも自動で導入 |
+> | Unity OpenXR Meta | MRに関する機能を追加する |
+> | Android Logcat | Meta Quest上でアプリケーションを実行したときにLogをUnity側で出力する |
+>
+> [参考：Meta XR SDKのインストールとプロジェクトの設定](https://qiita.com/Tks_Yoshinaga/items/7bd7ee0f30702581f68b)
 
 > [!warning]
 > Meta All in One SDKが提供するツールバーに関する警告が出る場合はツールバー上の空白を右クリックして**Unsupported User Elements**を有効化すると解決する  
@@ -136,10 +143,10 @@
 > [参考：モバイルアプリのアイコン設定](https://www.am10.blog/archives/348)
 
 > [!tip]
-> + **Splash Image**の**Show Splash Screen**を無効にすることで，最初に出てくる黒字にUnityのロード画面を無効化できる
+> + **Splash Image**の**Show Splash Screen**を無効にすることで，最初に出てくる黒字にUnityのロード画面を無効化できる  
 >   <img width="480" height="270" alt="image" src="https://github.com/user-attachments/assets/6b25570d-e114-45ed-b9dc-f4126fb302e6" />
 >
-> + ロード中に表示されるアイコンは**Camera Rig**オブジェクトにアタッチされた**OVR Manager**コンポーネントの**Quest Features**の**General**に含まれる**System Splash Screen**から変更できる
+> + ロード中に表示されるアイコンは**Camera Rig**オブジェクトにアタッチされた**OVR Manager**コンポーネントの**Quest Features**の**General**に含まれる**System Splash Screen**から変更できる  
 >   <img width="480" height="270" alt="image" src="https://github.com/user-attachments/assets/ae334b15-92a8-45b6-811a-0dedca3b4d19" />
 
 ## Stone
