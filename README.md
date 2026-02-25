@@ -66,7 +66,7 @@
 
 > [!warning]
 > Meta All in One SDKが提供するツールバーに関する警告が出る場合はツールバー上の空白を右クリックして**Unsupported User Elements**を有効化すると解決する  
-> <img width="480" height="270" alt="image" src="https://github.com/user-attachments/assets/43f7f12e-d541-4a6a-88a3-868e8dd02e04" />
+> <img width="480" height="auto" alt="image" src="https://github.com/user-attachments/assets/43f7f12e-d541-4a6a-88a3-868e8dd02e04" />
 
 # 使い方
 
@@ -91,6 +91,81 @@
 > 1. Meta Quest 3とPCを再接続
 > 2. Meta Quest 3で**USBデバッグを許可**みたいなのが出るので**常に許可**を選択
 > 3. **Refresh**を押下
+
+## 作品を制作する
+
+### 工具の使い方
+
+コントローラを操作することで，工具を握って操作することができる．
+
+1. コントローラを工具の方へ向ける  
+   <img width="480" height="auto" alt="db4d9a12-04" src="https://github.com/user-attachments/assets/f00d3576-fdcf-48c2-b0e1-a46941d11c15" />
+
+2. コントローラの中指のボタンを握りこむ  
+   <img width="480" height="auto" alt="db4d9a12-05" src="https://github.com/user-attachments/assets/2ad04739-f70c-42fc-9baa-e41b8ceb26c3" />
+
+3. ノミの先端を石材の表面にあてがう
+4. ノミの持ち手側をハンマーで叩く
+
+> [!note]
+> + 勢いよく叩くと大きく削れ，ゆっくり叩くと小さく削れる  
+>   <img width="480" height="auto" alt="db4d9a12-07" src="https://github.com/user-attachments/assets/6f985a16-ce3e-4fd3-b3f4-dc75b70b8bfc" />
+>
+> + 人差し指のボタンを握りこむと手ブレ防止機能が有効になる  
+>   <img width="480" height="auto" alt="db4d9a12-06" src="https://github.com/user-attachments/assets/e4441ac0-8e4f-4965-b907-396ed38eca67" />
+
+> [!warning]
+> 左右逆のコントローラで工具を操作すると正常に動作しない
+
+### ノミの種類
+
+<img width="480" height="auto" alt="db4d9a12-08" src="https://github.com/user-attachments/assets/6b4b2f70-7b4e-4a7a-af91-f7c7f11a7223" />
+
+削れる形状が異なるノミを3種類用意しており，用途に合わせたものを選択して石材を整形することができる．
+
+| 名称 | 用途 |
+| --- | --- |
+| 平ノミ | 平面および凸形状の整形 |
+| 丸ノミ | 曲面および凹形状の整形 |
+|精密ノミ | 細部および狭窄部の整形 |
+
+### リストメニューの使い方
+
+<img width="480" height="auto" alt="db4d9a12-09" src="https://github.com/user-attachments/assets/31514129-db72-4310-a8f4-62222f5964a8" />
+
+コントローラのメニューボタンを操作することで，リストメニューを表示する．メニューのボタンはコントローラで直接押下するか，コントローラのレイをボタンの方へ向けた状態で人差し指のボタンを握りこむことで選択することができる．
+
++ ファイル操作系
+  + 保存：常に上書きする
+  + 新規作成：石材を初期状態に戻す
+  + 開く：最後に保存した作品を開く
+  + 元に戻す：5つ前の状態まで戻す
+  + やり直す：5つ後の状態まで直す
++ 見た目系
+  + 荒い岩
+  + 磨かれた大理石
+  + 氷塊
+ 
+> [!warning]
+> 見た目を変えても削った時の音や破片の見た目は変わらない
+
+### 石材の操作
+
+<img width="480" height="auto" alt="db4d9a12-10" src="https://github.com/user-attachments/assets/3942a38c-f9a7-4bee-95fa-20df98edeb69" />
+
+コントローラを操作することで，石材をつかんで操作することができる．
+
+1. コントローラを石材にあてがう
+2. コントローラの中指のボタンを握りこむ
+3. コントローラを動かして石材を操作する
+   
+   | 操作 | コントローラの動き |
+   | :--: | :--: |
+   | 移動 | <img width="auto" height="128" alt="移動" src="https://github.com/user-attachments/assets/fe0e2c87-464c-4af3-9d84-c3400a5d1a65" /> |
+   | 回転 | <img width="auto" height="128" alt="回転" src="https://github.com/user-attachments/assets/1dc4e10a-ac7b-40d2-9b07-151af966bc6c" /> |
+   | 拡大 | <img width="auto" height="128" alt="拡大" src="https://github.com/user-attachments/assets/f2ba65ff-293f-4e42-ac32-45c042f655b9" /> |
+   | 縮小 | <img width="auto" height="128" alt="縮小" src="https://github.com/user-attachments/assets/133f4f70-a7cb-4b01-a49c-f7aa763cbd25" /> |
+
 
 ## 制作した作品を3Dモデルに変換する
 
@@ -144,10 +219,10 @@
 
 > [!tip]
 > + **Splash Image**の**Show Splash Screen**を無効にすることで，最初に出てくる黒字にUnityのロード画面を無効化できる  
->   <img width="480" height="270" alt="image" src="https://github.com/user-attachments/assets/6b25570d-e114-45ed-b9dc-f4126fb302e6" />
+>   <img width="480" height="auto" alt="image" src="https://github.com/user-attachments/assets/6b25570d-e114-45ed-b9dc-f4126fb302e6" />
 >
 > + ロード中に表示されるアイコンは**Camera Rig**オブジェクトにアタッチされた**OVR Manager**コンポーネントの**Quest Features**の**General**に含まれる**System Splash Screen**から変更できる  
->   <img width="480" height="270" alt="image" src="https://github.com/user-attachments/assets/ae334b15-92a8-45b6-811a-0dedca3b4d19" />
+>   <img width="480" height="auto" alt="image" src="https://github.com/user-attachments/assets/ae334b15-92a8-45b6-811a-0dedca3b4d19" />
 
 ## Stone
 
