@@ -143,7 +143,7 @@
   + 磨かれた大理石
   + 氷塊
  
-> [!warning]
+> [!important]
 > 見た目を変えても削った時の音や破片の見た目は変わらない
 
 ### 石材の操作
@@ -180,7 +180,9 @@
 > `Android/data/アプリケーション名/model.dat`
 
 > [!warning]
-> + Google Colabで**すべてのセルを実行**するとランタイムがクラッシュする場合は再度**すべてのセルを実行**すると解決する
+> Google Colabで**すべてのセルを実行**するとランタイムがクラッシュする場合は再度**すべてのセルを実行**すると解決する
+
+> [!important] 
 > + ファイル名は`model.dat`のみ対応
 > + フォルダ構成は`content/model.dat`のみ対応
 
@@ -264,7 +266,7 @@
 > + **Sensitivity**を0にするとハンマーで叩かなくても常に**Max Impact Range**で削れる
 
 > [!warning]
-> 新しく追加したノミに適用した**Chisel Controlelr**が正常に動作しない場合は次を試す
+> 新しく追加したノミに適用した**Chisel Controler**が正常に動作しない場合は次を試す
 > 1. ノミのオブジェクトをプレハブ化
 > 2. **プロジェクト**の中でプレハブを選択して右クリック
 > 3. メニューの中の**Create**から**Prefab Variant**を押下  
@@ -301,7 +303,7 @@
 > [!note]
 > 例えば，**保存ボタン**のアイコンは`ISDKMainMenu/PanelInteractable/CanvasPanel/UIBackplate+GridLayoutGroup/SaveFile/Content/Background/Elements/`の子要素である`Icon`オブジェクトにアタッチされた**Image**コンポーネントで定義される．
 
-### Text Mesh Pro - Text(UI)
+### Text Mesh Pro
 
 ボタンの名前や説明文を表示するために必要なコンポーネント．
 
@@ -322,5 +324,6 @@
 + UnityのScene内のToolsを再表示する方法：[UnityのSceneにあるToolsが消えてしまった時に、再度出す方法。](http://halcyonsystemblog.jp/blog-entry-1063.html)
 
 # 著作権情報
+
 + Chisels(3D model)：[Nillusion / Chisels](https://www.fab.com/listings/b9e04a99-ea62-4e71-8c30-f814556c14dd)
 + Hammer(3D model)：[FlorisArt / Hammer Handpainted Stylized - VR/Game Ready](https://www.fab.com/listings/b3a1faf7-1480-411f-bbd1-9b5bb75b1d8c)
