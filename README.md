@@ -26,17 +26,17 @@
 
    | 名称 | 説明 | アタッチすべきオブジェクト |
    | :--: | --- | --- |
-   | [CellFlags](https://github.com/Grain6888/StoneCarvingSystemUsingMR/blob/main/UnityProjectFiles/Assets/Scripts/CellFlags.cs) | ボクセルの状態を定義するビットフラグ | なし |
-   | [CellManager](https://github.com/Grain6888/StoneCarvingSystemUsingMR/blob/main/UnityProjectFiles/Assets/Scripts/CellManager.cs) | CellFlagsの操作 | なし |
-   | [ChiselController](https://github.com/Grain6888/StoneCarvingSystemUsingMR/blob/main/UnityProjectFiles/Assets/Scripts/ChiselController.cs) | ノミの制御，切削時のボクセルの削除 | `Chisel` |
-   | [DataChunk](https://github.com/Grain6888/StoneCarvingSystemUsingMR/blob/main/UnityProjectFiles/Assets/Scripts/DataChunk.cs) | ボクセルを格納する1次元配列の管理，作品データの入出力 | なし |
-   | [HammerController](https://github.com/Grain6888/StoneCarvingSystemUsingMR/blob/main/UnityProjectFiles/Assets/Scripts/HammerController.cs) | ハンマーの制御，衝撃範囲の算出 | `Hammer` |
-   | [HandDeviceController](https://github.com/Grain6888/StoneCarvingSystemUsingMR/blob/main/UnityProjectFiles/Assets/Scripts/HandDeviceController.cs) | コントローラの表示/非表示の制御 | `Camera Rig/OVRInteractionComprehensive/OVRControllerPrefab` |
-   | [MaterialSwitcher](https://github.com/Grain6888/StoneCarvingSystemUsingMR/blob/main/UnityProjectFiles/Assets/Scripts/MaterialSwitcher.cs) | 石材のマテリアルの切り替え制御 | `Stone` |
-   | [MeshBuilder](https://github.com/Grain6888/StoneCarvingSystemUsingMR/blob/main/UnityProjectFiles/Assets/Scripts/MeshBuilder.cs) | `MarchingCubes.compute`の制御，石材の描画 | なし |
-   | [StoneController](https://github.com/Grain6888/StoneCarvingSystemUsingMR/blob/main/UnityProjectFiles/Assets/Scripts/StoneController.cs) | 石材の制御，操作履歴管理，石材の初期化 | `Stone` |
-   | [TriangleTable](https://github.com/Grain6888/StoneCarvingSystemUsingMR/blob/main/UnityProjectFiles/Assets/Scripts/TriangleTable.cs) | Marching Cubes法の定義済みテーブル | なし |
-   | [Util](https://github.com/Grain6888/StoneCarvingSystemUsingMR/blob/main/UnityProjectFiles/Assets/Scripts/Util.cs) | `MeshBuilder`が利用するユーティリティ群の定義 | なし |
+   | CellFlags | ボクセルの状態を定義するビットフラグ | なし |
+   | CellManager | CellFlagsの操作 | なし |
+   | ChiselController | ノミの制御，切削時のボクセルの削除 | `Chisel` |
+   | DataChunk | ボクセルを格納する1次元配列の管理，作品データの入出力 | なし |
+   | HammerController | ハンマーの制御，衝撃範囲の算出 | `Hammer` |
+   | HandDeviceController | コントローラの表示/非表示の制御 | `Camera Rig/OVRInteractionComprehensive/OVRControllerPrefab` |
+   | MaterialSwitcher | 石材のマテリアルの切り替え制御 | `Stone` |
+   | MeshBuilder | `MarchingCubes.compute`の制御，石材の描画 | なし |
+   | StoneController | 石材の制御，操作履歴管理，石材の初期化 | `Stone` |
+   | TriangleTable | Marching Cubes法の定義済みテーブル | なし |
+   | Util | `MeshBuilder`が利用するユーティリティ群の定義 | なし |
 
    </details>
 
@@ -45,7 +45,7 @@
      
      | 名称 | 説明 |
      | :--: | --- |
-     | [MarchingCubes.compute](https://github.com/Grain6888/StoneCarvingSystemUsingMR/blob/main/UnityProjectFiles/Assets/Shaders/MarchingCubes.compute) | Marching Cubes法によるリアルタイムメッシュ生成をGPUを用いて演算 |
+     | MarchingCubes.compute | Marching Cubes法によるリアルタイムメッシュ生成をGPUを用いて演算 |
    
    </details>
 
