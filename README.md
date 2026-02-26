@@ -202,14 +202,15 @@
 
 1. **Edit**から**Project Settings**を選択
 2. **Player**の**Default Icon**にベースとなるアイコン(512x512)をアタッチ  
-   <img width="64" height="64" alt="Base" src="https://github.com/Grain6888/StoneCarvingSystemUsingMR/blob/main/UnityProjectFiles/Assets/Icon/Base.png" />
+   <img width="64" height="64" alt="Base" src="https://github.com/user-attachments/assets/0d8abb76-8927-4139-83c6-f91331729b1b" />
+
 
 4. **Icon**の**Adaptive icons**を選択
 5. **xxxhdpi**の**Background**にアイコンの背景画像(512x512)をアタッチ  
-   <img width="64" height="64" alt="Background" src="https://github.com/Grain6888/StoneCarvingSystemUsingMR/blob/main/UnityProjectFiles/Assets/Icon/Background.png" />
+   <img width="64" height="64" alt="Background" src="https://github.com/user-attachments/assets/28561321-5992-418c-9f06-aab45c0e41fb" />
 
 7. 同じく**xxxhdpi**の**Foreground**にアイコンのメイン画像(512x512)をアタッチ  
-   <img width="64" height="64" alt="Cutout" src="https://github.com/Grain6888/StoneCarvingSystemUsingMR/blob/main/UnityProjectFiles/Assets/Icon/Cutout.png" />
+   <img width="64" height="64" alt="Cutout" src="https://github.com/user-attachments/assets/08f38e54-fa97-4f50-880f-165b57a4fed7" />
 
 
 > [!note]
