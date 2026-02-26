@@ -6,19 +6,20 @@
 
 # 環境構築
 
-1. エディタをインストール
-   | エディタ名 | 用途 | バージョン | 備考 |
-   | --- | --- | --- | --- |
-   | Unity Hub | UnityエディタのインストールとUnityプロジェクトの管理 | 3.16.2 | 任意の最新版でよい |
-   | Unity | Unityプロジェクトの編集 | 6000.3.2f1 | Unity Hubからインストール，**Android Build Support**に✅を |
-   | Visual Studio 2026 | スクリプトの編集 | 18.3.1 | 任意の最新版でよい，**Unityによるゲーム開発**に✅を |
-   | Meta Haptic Studio | コントローラの振動の編集 | 2.0.0 | 任意の最新版でよい，振動波形を編集したい場合のみ必須 |
-   | Creality Print | 3Dプリンタ用データの編集 | 7.0 | 任意の最新版でよい，印刷する場合のみ必須 |
-   | GitHub Desktop | バージョン管理 | 3.5.5 | 任意の最新版でよい，バージョン管理する場合のみ必須 |
-   | Git | バージョン管理 | 2.53.0.windows.1 | 任意の最新版でよい，バージョン管理する場合のみ必須 |
-   | Git LFS | 100MB超ファイルのバージョン管理 | 3.7.1 | 任意の最新版でよい，バージョン管理する場合のみ必須 |
+1. エディタをインストール  
+   
+   | 名称 | バージョン | 説明 |
+   | --- | --- | --- |
+   | Unity Hub | 3.16.2 | UnityエディタのインストールとUnityプロジェクトの管理<br>任意の最新版でよい |
+   | Unity | 6000.3.2f1 | Unityプロジェクトの編集<br>Unity Hubからインストール<br>**Android Build Support**に✅を |
+   | Visual Studio 2026 | 18.3.1 | スクリプトの編集<br>任意の最新版でよい<br>**Unityによるゲーム開発**に✅を |
+   | Meta Haptic Studio | 2.0.0 | コントローラの振動の編集<br>任意の最新版でよい<br>振動波形を編集したい場合のみ必須 |
+   | Creality Print | 7.0 | 3Dプリンタ用データの編集<br>任意の最新版でよい<br>印刷する場合のみ必須 |
+   | GitHub Desktop | 3.5.5 | 任意の最新版でよい<br>バージョン管理する場合のみ必須 |
+   | Git | 2.53.0.windows.1 | 任意の最新版でよい<br>バージョン管理する場合のみ必須 |
+   | Git LFS | 3.7.1 | 任意の最新版でよい<br>100MB超ファイルをバージョン管理する場合のみ必須 |
 
-2. ソースコードを配置  
+3. ソースコードを配置  
    [参考：GitHubからソースコードをダウンロードする完全ガイド！初心者でも迷わない全方法を解説](https://www.choge-blog.com/web/githubdownloadsourcecode/)
 
    <details>
@@ -28,15 +29,15 @@
    | :--: | --- | --- |
    | CellFlags | ボクセルの状態を定義するビットフラグ | なし |
    | CellManager | CellFlagsの操作 | なし |
-   | ChiselController | ノミの制御，切削時のボクセルの削除 | `Chisel` |
-   | DataChunk | ボクセルを格納する1次元配列の管理，作品データの入出力 | なし |
-   | HammerController | ハンマーの制御，衝撃範囲の算出 | `Hammer` |
+   | ChiselController | ノミの制御<br>切削時のボクセルの削除 | `Chisel` |
+   | DataChunk | ボクセルを格納する1次元配列の管理<br>作品データの入出力 | なし |
+   | HammerController | ハンマーの制御<br>衝撃範囲の算出 | `Hammer` |
    | HandDeviceController | コントローラの表示/非表示の制御 | `Camera Rig/OVRInteractionComprehensive/OVRControllerPrefab` |
    | MaterialSwitcher | 石材のマテリアルの切り替え制御 | `Stone` |
-   | MeshBuilder | `MarchingCubes.compute`の制御，石材の描画 | なし |
-   | StoneController | 石材の制御，操作履歴管理，石材の初期化 | `Stone` |
+   | MeshBuilder | `MarchingCubes.compute`の制御<br>石材の描画 | なし |
+   | StoneController | 石材の制御，操作履歴管理<br>石材の初期化 | `Stone` |
    | TriangleTable | Marching Cubes法の定義済みテーブル | なし |
-   | Util | `MeshBuilder`が利用するユーティリティ群の定義 | なし |
+   | Util | `MeshBuilder`が利用するユーティリティ群 | なし |
 
    </details>
 
@@ -52,19 +53,19 @@
 4. Unity Hubにプロジェクトを追加  
    [参考：Unity Hubに既存プロジェクトを追加する方法](https://soft-rime.com/post-26163/)
 
-> [!note]
+> [!note]  
 > イチからUnityプロジェクトを作りたい場合は別途以下のアセットを導入すること．もちろん勧めない．
 >
 > | 名称 | 説明 |
 > | :--: | --- |
 > | 25+ Free Realistic Textures | 石材のテクスチャセット |
-> | Meta XR All-in-One SDK | UnityでMeta Quest用アプリケーションを制作する，付随するアセットも自動で導入 |
+> | Meta XR All-in-One SDK | UnityでMeta Quest用アプリケーションを制作する<br>付随するアセットも自動で導入 |
 > | Unity OpenXR Meta | MRに関する機能を追加する |
-> | Android Logcat | Meta Quest上でアプリケーションを実行したときにLogをUnity側で出力する |
+> | Android Logcat | Meta Quest上でアプリケーションを実行したときにLogをUnity側で出力する |  
 >
 > [参考：Meta XR SDKのインストールとプロジェクトの設定](https://qiita.com/Tks_Yoshinaga/items/7bd7ee0f30702581f68b)
 
-> [!warning]
+> [!warning]  
 > Meta All in One SDKが提供するツールバーに関する警告が出る場合はツールバー上の空白を右クリックして**Unsupported User Elements**を有効化すると解決する  
 > <img width="360" height="auto" alt="image" src="https://github.com/user-attachments/assets/43f7f12e-d541-4a6a-88a3-868e8dd02e04" />
 
@@ -82,12 +83,15 @@
 8. **Platforms Settings**の**Run Device**から**Oculus Quest 3**を選択
 9. **Build and Run**を押下後，`APK`のエクスポート先を指定(どこでもよい)
 
-> [!note]
-> + Logの内容は，**Android Logcat**に出力される
-> + Logを出力する場合は**Platforms Settings**の**Development Build**を有効化すること
+> [!note]  
+> Logの内容は，**Android Logcat**に出力される
 
-> [!warning]
+> [!important]  
+> Logを出力する場合は**Platforms Settings**の**Development Build**を有効化すること
+
+> [!warning]  
 > **Run Device**に**Oculus Quest 3**が出ないときは次を試す
+> 
 > 1. Meta Quest 3とPCを再接続
 > 2. Meta Quest 3で**USBデバッグを許可**みたいなのが出るので**常に許可**を選択
 > 3. **Refresh**を押下
@@ -107,11 +111,13 @@
 3. ノミの先端を石材の表面にあてがう
 4. ノミの持ち手側をハンマーで叩く
 
-> [!note]
-> + 勢いよく叩くと大きく削れ，ゆっくり叩くと小さく削れる  
-> + 人差し指のボタンを握りこむと手ブレ防止機能が有効になる  
+> [!tip]  
+> 勢いよく叩くと大きく削れ，ゆっくり叩くと小さく削れる
 
-> [!caution]
+> [!note]  
+> 人差し指のボタンを握りこむと手ブレ防止機能が有効になる
+
+> [!caution]  
 > 左右逆のコントローラで工具を操作すると正常に動作しない
 
 ### ノミの種類
@@ -143,7 +149,7 @@
   + 磨かれた大理石
   + 氷塊
  
-> [!important]
+> [!important]  
 > 見た目を変えても削った時の音や破片の見た目は変わらない
 
 ### 石材の操作
@@ -175,16 +181,15 @@
 7. **すべてのセルを実行**を押下して待機
 8. `output.obj`が出力される
 
-> [!note]
+> [!note]  
 > 作品データはMeta Quest 3内の次のディレクトリに出力される  
 > `Android/data/アプリケーション名/model.dat`
 
-> [!warning]
+> [!warning]  
 > Google Colabで**すべてのセルを実行**するとランタイムがクラッシュする場合は再度**すべてのセルを実行**すると解決する
 
-> [!important] 
-> + ファイル名は`model.dat`のみ対応
-> + フォルダ構成は`content/model.dat`のみ対応
+> [!important]  
+> ファイル名と入力ディレクトリは`content/model.dat`のみ対応
 
 ## 3Dモデルを3Dプリンタで印刷する
 
@@ -213,15 +218,15 @@
    <img width="64" height="64" alt="Cutout" src="https://github.com/user-attachments/assets/08f38e54-fa97-4f50-880f-165b57a4fed7" />
 
 
-> [!note]
+> [!note]  
 > androidの仕様上，アイコンとして指定できる画像はAdaptive iconsに準拠する必要がある  
 > [参考：モバイルアプリのアイコン設定](https://www.am10.blog/archives/348)
 
-> [!tip]
+> [!tip]  
 > **Splash Image**の**Show Splash Screen**を無効にすることで，最初に出てくる黒字にUnityのロード画面を無効化できる  
 > <img width="360" height="auto" alt="image" src="https://github.com/user-attachments/assets/6b25570d-e114-45ed-b9dc-f4126fb302e6" />
 
-> [!tip]
+> [!tip]  
 > ロード中に表示されるアイコンは**Camera Rig**オブジェクトにアタッチされた**OVR Manager**コンポーネントの**Quest Features**の**General**に含まれる**System Splash Screen**から変更できる  
 > <img width="360" height="auto" alt="image" src="https://github.com/user-attachments/assets/ae334b15-92a8-45b6-811a-0dedca3b4d19" />
 
@@ -242,7 +247,7 @@
 | Flat Chisel Controller | 平ノミの**ChiselController** |
 | Debug Sphere | デバッグ用ツールの**ChiselController** |
   
-> [!tip]
+> [!tip]  
 > 解像度を変えずに石材の大きさを変えたい場合は，**Transform**から，**Scale**を変更する
 
 ## Chisel
@@ -262,12 +267,16 @@
 | Audio System | ノミで石材を削った時の音を提示する**Audio Source** |
 | Particle System | ノミで石材を削った時の破片を提示する**Particle System** |
 
-> [!note]
-> + **Sensitivity**が大きいほどハンマーで弱く叩いても大きく削れる
-> + **Sensitivity**を0にするとハンマーで叩かなくても常に**Max Impact Range**で削れる
+> [!note]  
+> **Sensitivity**が大きいほどハンマーで弱く叩いても大きく削れる
 
-> [!warning]
-> 新しく追加したノミに適用した**Chisel Controler**が正常に動作しない場合は次を試す
+> [!tip]
+> **Sensitivity**を0にするとハンマーで叩かなくても常に**Max Impact Range**で削れる  
+> デバッグ用におすすめ
+
+> [!warning]  
+> 新しく追加したノミに適用した**Chisel Controler**が正常に動作しない場合は次を試す  
+> 
 > 1. ノミのオブジェクトをプレハブ化
 > 2. **プロジェクト**の中でプレハブを選択して右クリック
 > 3. メニューの中の**Create**から**Prefab Variant**を押下  
@@ -294,21 +303,21 @@
 
 **On Value Changed**に実行したいスクリプトやコンポーネントをアタッチすることで，処理を定義．
 
-> [!note]
+> [!note]  
 > 例えば，**保存ボタン**の動作は`WristMenu/ISDKMainMenu/PanelInteractable/CanvasPanel/UIBackplate+GridLayoutGroup/`の子要素である`SaveFile`オブジェクトにアタッチされた**Toggle**コンポーネントで定義される．
 
 ### Image
 
 ボタンのアイコンを表示するために必要なコンポーネント．
 
-> [!note]
+> [!note]  
 > 例えば，**保存ボタン**のアイコンは`ISDKMainMenu/PanelInteractable/CanvasPanel/UIBackplate+GridLayoutGroup/SaveFile/Content/Background/Elements/`の子要素である`Icon`オブジェクトにアタッチされた**Image**コンポーネントで定義される．
 
 ### Text Mesh Pro
 
 ボタンの名前や説明文を表示するために必要なコンポーネント．
 
-> [!note]
+> [!note]  
 > 例えば，**保存ボタン**の文字は`ISDKMainMenu/PanelInteractable/CanvasPanel/UIBackplate+GridLayoutGroup/SaveFile/Content/Background/Elements/`の子要素である`Label`，`Label (1)`オブジェクトにアタッチされた**Text Mesh Pro**コンポーネントで定義される．
   
 # 参考
