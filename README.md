@@ -182,8 +182,8 @@
 8. `output.obj`が出力される
 
 > [!note]  
-> 作品データはMeta Quest 3内の次のディレクトリに出力される  
-> `Android/data/アプリケーション名/model.dat`
+> Meta Quest 3内の作品データは次のディレクトリに出力される  
+> `\Android\data\com.VCL.StoneCarvingSystemUsingMR\files\model.dat`
 
 > [!warning]  
 > Google Colabで**すべてのセルを実行**するとランタイムがクラッシュする場合は再度**すべてのセルを実行**すると解決する
